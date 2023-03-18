@@ -1,0 +1,15 @@
+output   = "db/models"
+wipe     = true
+no-tests = true
+add-enum-types = true
+
+[psql]
+  host   = "db"
+  dbname = "portfolio-playground"
+  user   = "postgres"
+  pass   = "password"
+  schema = "public"
+  sslmode  = "disable"
+  blacklist = ["migrations", "other"]
+[aliases]
+  tables = "psql"
