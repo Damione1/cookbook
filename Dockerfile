@@ -1,11 +1,10 @@
-FROM golang:1.19.0
+FROM golang:1.20.2
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-RUN go install github.com/cosmtrek/air@latest
 # Install sqlboiler and the PostgreSQL driver
 RUN go install github.com/volatiletech/sqlboiler/v4@latest
 RUN go install github.com/volatiletech/sqlboiler/v4/drivers/sqlboiler-psql@latest
 
-COPY . .
-RUN go mod tidy
+COPY go.mod go.sum ./
+RUN go mod download

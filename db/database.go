@@ -44,20 +44,20 @@ func ConnectDb() error {
 }
 
 func runDBMigration(migrationURL string, db *sql.DB) {
-	fmt.Printf("Running migration...\n")
-
 	driver, err := postgres.WithInstance(db, &postgres.Config{})
 	m, err := migrate.NewWithDatabaseInstance(migrationURL, "postgres", driver)
 	if err != nil {
-		fmt.Printf("Failed to run migration2. \n", err)
+		fmt.Printf("Failed to create migration instance. %v \n", err)
 		os.Exit(2)
 	}
+
+	fmt.Printf("Running migration")
 	err = m.Up()
 	if err != nil {
 		if err == migrate.ErrNoChange {
 			fmt.Printf("No migration to run. \n")
 		} else {
-			fmt.Printf("Failed to run migration 2. \n", err)
+			fmt.Printf("Failed to run migration. \n", err)
 			os.Exit(2)
 		}
 	}
