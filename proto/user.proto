@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package pb;
+//import "google/protobuf/timestamp.proto";
+
+option go_package = "portfolio-playground/pkg/proto;pb";
+
+
+message User {
+    // ID is the unique identifier for the user.
+    string id = 1;
+    // Name is the user's name.
+    string name = 2;
+    // Email is the user's email.
+    string email = 3;
+}
+
+message CreateUserRequest {
+    // Name is the user's name.
+    string name = 1;
+    // Email is the user's email.
+    string email = 2;
+    // Password is the user's password.
+    string password = 3;
+}
+
+message CreateUserResponse {
+    // User is the created user.
+    User user = 1;
+}
+
+message GetUserRequest {
+    // ID is the unique identifier for the user.
+    string id = 1;
+}
+
+message GetUserResponse {
+    // User is the user.
+    User user = 1;
+}
+
+message UpdateUserRequest {
+    // ID is the unique identifier for the user.
+    string id = 1;
+    // Name is the user's name.
+    string name = 2;
+    // Email is the user's email.
+    string email = 3;
+}
+
+message UpdateUserResponse {
+    // User is the updated user.
+    User user = 1;
+}
+
+message DeleteUserRequest {
+    // ID is the unique identifier for the user.
+    string id = 1;
+}
+
+message DeleteUserResponse {
+    // User is the deleted user.
+    User user = 1;
+}

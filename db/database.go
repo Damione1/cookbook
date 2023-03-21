@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/Damione1/portfolio-playground/util"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
@@ -12,18 +13,12 @@ import (
 	"github.com/volatiletech/sqlboiler/boil"
 )
 
-type Dbinstance struct {
-	Db *sql.DB
-}
-
-var DB Dbinstance
-
-func ConnectDb() error {
+func ConnectDb(config util.Config) (*sql.DB, error) {
 	dsn := fmt.Sprintf(
-		"host=db user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Shanghai",
-		os.Getenv("POSTGRES_USER"),
-		os.Getenv("POSTGRES_PASSWORD"),
-		os.Getenv("POSTGRES_DB"),
+		"host=db user=%s password=%s dbname=%s sslmode=disable TimeZone=America/New_York",
+		config.PostgresUser,
+		config.PostgresPassword,
+		config.PostgresDb,
 	)
 
 	db, err := sql.Open("postgres", dsn)
@@ -32,15 +27,13 @@ func ConnectDb() error {
 		os.Exit(2)
 	}
 
-	runDBMigration(os.Getenv("MIGRATION_PATH"), db)
+	fmt.Printf("Running database migration %s", config.MigrationPath)
+
+	runDBMigration(config.MigrationPath, db)
 
 	boil.SetDB(db)
 
-	DB = Dbinstance{
-		Db: db,
-	}
-
-	return nil
+	return db, nil
 }
 
 func runDBMigration(migrationURL string, db *sql.DB) {

@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package pb;
+import "user.proto";
+import "post.proto";
+
+option go_package = "portfolio-playground/pkg/proto;pb";
+
+service PortfolioService {
+  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {}
+  rpc GetUser (GetUserRequest) returns (GetUserResponse) {}
+  rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {}
+  rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse) {}
+  rpc CreatePost (CreatePostRequest) returns (CreatePostResponse) {}
+  rpc GetPost (GetPostRequest) returns (GetPostResponse) {}
+  rpc ListPosts (ListPostsRequest) returns (ListPostsResponse) {}
+}
