@@ -18,21 +18,23 @@ func main() {
 
 	config, err := util.LoadConfig(".")
 	if err != nil {
-		log.Fatalf("Failed to load config. %v", err)
+		log.Println(fmt.Printf("Failed to load config. %v", err))
 	}
 
 	db, err := database.ConnectDb(config)
 	if err != nil {
-		log.Fatalf("Failed to connect to database. %v", err)
+		log.Println(fmt.Printf("Failed to connect to database. %v", err))
 	}
 
 	runGrpcServer(config, db)
+
 }
 
 func runGrpcServer(config util.Config, store *sql.DB) {
+	log.Println("Starting gRPC server")
 	server, err := grpcApi.NewServer(config)
 	if err != nil {
-		fmt.Errorf("Failed to create gRPC server. %v", err)
+		log.Println(fmt.Printf("Failed to create gRPC server. %v", err))
 	}
 	grpcServer := grpc.NewServer()
 	pb.RegisterPortfolioServiceServer(grpcServer, server)
@@ -40,11 +42,12 @@ func runGrpcServer(config util.Config, store *sql.DB) {
 
 	listener, err := net.Listen("tcp", config.GRPCServerAddress)
 	if err != nil {
-		fmt.Errorf("Failed to listen. %v", err)
+		log.Println(fmt.Printf("Failed to listen. %v", err))
 	}
 
 	fmt.Printf("Starting gRPC server on port %s", listener.Addr().String())
-	if err := grpcServer.Serve(listener); err != nil {
-		fmt.Errorf("Failed to serve gRPC server over port %s. %v", listener.Addr().String(), err)
+	err = grpcServer.Serve(listener)
+	if err != nil {
+		fmt.Printf("Failed to serve gRPC server over port %s. %v", listener.Addr().String(), err)
 	}
 }

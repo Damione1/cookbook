@@ -332,6 +332,11 @@ func AddSkillHook(hookPoint boil.HookPoint, skillHook SkillHook) {
 	}
 }
 
+// OneG returns a single skill record from the query using the global executor.
+func (q skillQuery) OneG(ctx context.Context) (*Skill, error) {
+	return q.One(ctx, boil.GetContextDB())
+}
+
 // One returns a single skill record from the query.
 func (q skillQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Skill, error) {
 	o := &Skill{}
@@ -351,6 +356,11 @@ func (q skillQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Skill,
 	}
 
 	return o, nil
+}
+
+// AllG returns all Skill records from the query using the global executor.
+func (q skillQuery) AllG(ctx context.Context) (SkillSlice, error) {
+	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all Skill records from the query.
@@ -373,6 +383,11 @@ func (q skillQuery) All(ctx context.Context, exec boil.ContextExecutor) (SkillSl
 	return o, nil
 }
 
+// CountG returns the count of all Skill records in the query using the global executor
+func (q skillQuery) CountG(ctx context.Context) (int64, error) {
+	return q.Count(ctx, boil.GetContextDB())
+}
+
 // Count returns the count of all Skill records in the query.
 func (q skillQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -386,6 +401,11 @@ func (q skillQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64
 	}
 
 	return count, nil
+}
+
+// ExistsG checks if the row exists in the table using the global executor.
+func (q skillQuery) ExistsG(ctx context.Context) (bool, error) {
+	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -795,6 +815,14 @@ func (skillL) LoadProjectSkills(ctx context.Context, e boil.ContextExecutor, sin
 	return nil
 }
 
+// SetImageG of the skill to the related item.
+// Sets o.R.Image to related.
+// Adds o to related.R.ImageSkills.
+// Uses the global database handle.
+func (o *Skill) SetImageG(ctx context.Context, insert bool, related *Medium) error {
+	return o.SetImage(ctx, boil.GetContextDB(), insert, related)
+}
+
 // SetImage of the skill to the related item.
 // Sets o.R.Image to related.
 // Adds o to related.R.ImageSkills.
@@ -842,6 +870,14 @@ func (o *Skill) SetImage(ctx context.Context, exec boil.ContextExecutor, insert 
 	return nil
 }
 
+// RemoveImageG relationship.
+// Sets o.R.Image to nil.
+// Removes o from all passed in related items' relationships struct.
+// Uses the global database handle.
+func (o *Skill) RemoveImageG(ctx context.Context, related *Medium) error {
+	return o.RemoveImage(ctx, boil.GetContextDB(), related)
+}
+
 // RemoveImage relationship.
 // Sets o.R.Image to nil.
 // Removes o from all passed in related items' relationships struct.
@@ -873,6 +909,15 @@ func (o *Skill) RemoveImage(ctx context.Context, exec boil.ContextExecutor, rela
 		break
 	}
 	return nil
+}
+
+// AddCurriculumVitaeSkillsG adds the given related objects to the existing relationships
+// of the skill, optionally inserting them as new records.
+// Appends related to o.R.CurriculumVitaeSkills.
+// Sets related.R.Skill appropriately.
+// Uses the global database handle.
+func (o *Skill) AddCurriculumVitaeSkillsG(ctx context.Context, insert bool, related ...*CurriculumVitaeSkill) error {
+	return o.AddCurriculumVitaeSkills(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddCurriculumVitaeSkills adds the given related objects to the existing relationships
@@ -926,6 +971,15 @@ func (o *Skill) AddCurriculumVitaeSkills(ctx context.Context, exec boil.ContextE
 		}
 	}
 	return nil
+}
+
+// AddProjectSkillsG adds the given related objects to the existing relationships
+// of the skill, optionally inserting them as new records.
+// Appends related to o.R.ProjectSkills.
+// Sets related.R.Skill appropriately.
+// Uses the global database handle.
+func (o *Skill) AddProjectSkillsG(ctx context.Context, insert bool, related ...*ProjectSkill) error {
+	return o.AddProjectSkills(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddProjectSkills adds the given related objects to the existing relationships
@@ -992,6 +1046,11 @@ func Skills(mods ...qm.QueryMod) skillQuery {
 	return skillQuery{q}
 }
 
+// FindSkillG retrieves a single record by ID.
+func FindSkillG(ctx context.Context, iD int, selectCols ...string) (*Skill, error) {
+	return FindSkill(ctx, boil.GetContextDB(), iD, selectCols...)
+}
+
 // FindSkill retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindSkill(ctx context.Context, exec boil.ContextExecutor, iD int, selectCols ...string) (*Skill, error) {
@@ -1020,6 +1079,11 @@ func FindSkill(ctx context.Context, exec boil.ContextExecutor, iD int, selectCol
 	}
 
 	return skillObj, nil
+}
+
+// InsertG a single record. See Insert for whitelist behavior description.
+func (o *Skill) InsertG(ctx context.Context, columns boil.Columns) error {
+	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -1108,6 +1172,12 @@ func (o *Skill) Insert(ctx context.Context, exec boil.ContextExecutor, columns b
 	return o.doAfterInsertHooks(ctx, exec)
 }
 
+// UpdateG a single Skill record using the global executor.
+// See Update for more documentation.
+func (o *Skill) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
+	return o.Update(ctx, boil.GetContextDB(), columns)
+}
+
 // Update uses an executor to update the Skill.
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
@@ -1171,6 +1241,11 @@ func (o *Skill) Update(ctx context.Context, exec boil.ContextExecutor, columns b
 	return rowsAff, o.doAfterUpdateHooks(ctx, exec)
 }
 
+// UpdateAllG updates all rows with the specified column values.
+func (q skillQuery) UpdateAllG(ctx context.Context, cols M) (int64, error) {
+	return q.UpdateAll(ctx, boil.GetContextDB(), cols)
+}
+
 // UpdateAll updates all rows with the specified column values.
 func (q skillQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	queries.SetUpdate(q.Query, cols)
@@ -1186,6 +1261,11 @@ func (q skillQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, co
 	}
 
 	return rowsAff, nil
+}
+
+// UpdateAllG updates all rows with the specified column values.
+func (o SkillSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
+	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
 }
 
 // UpdateAll updates all rows with the specified column values, using an executor.
@@ -1234,6 +1314,11 @@ func (o SkillSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, co
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all skill")
 	}
 	return rowsAff, nil
+}
+
+// UpsertG attempts an insert, and does an update or ignore on conflict.
+func (o *Skill) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
+	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1359,6 +1444,12 @@ func (o *Skill) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOnC
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
+// DeleteG deletes a single Skill record.
+// DeleteG will match against the primary key column to find the record to delete.
+func (o *Skill) DeleteG(ctx context.Context) (int64, error) {
+	return o.Delete(ctx, boil.GetContextDB())
+}
+
 // Delete deletes a single Skill record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *Skill) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1395,6 +1486,10 @@ func (o *Skill) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, e
 	return rowsAff, nil
 }
 
+func (q skillQuery) DeleteAllG(ctx context.Context) (int64, error) {
+	return q.DeleteAll(ctx, boil.GetContextDB())
+}
+
 // DeleteAll deletes all matching rows.
 func (q skillQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if q.Query == nil {
@@ -1414,6 +1509,11 @@ func (q skillQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (i
 	}
 
 	return rowsAff, nil
+}
+
+// DeleteAllG deletes all rows in the slice.
+func (o SkillSlice) DeleteAllG(ctx context.Context) (int64, error) {
+	return o.DeleteAll(ctx, boil.GetContextDB())
 }
 
 // DeleteAll deletes all rows in the slice, using an executor.
@@ -1465,6 +1565,15 @@ func (o SkillSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (i
 	return rowsAff, nil
 }
 
+// ReloadG refetches the object from the database using the primary keys.
+func (o *Skill) ReloadG(ctx context.Context) error {
+	if o == nil {
+		return errors.New("models: no Skill provided for reload")
+	}
+
+	return o.Reload(ctx, boil.GetContextDB())
+}
+
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *Skill) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1475,6 +1584,16 @@ func (o *Skill) Reload(ctx context.Context, exec boil.ContextExecutor) error {
 
 	*o = *ret
 	return nil
+}
+
+// ReloadAllG refetches every row with matching primary key column values
+// and overwrites the original object slice with the newly updated slice.
+func (o *SkillSlice) ReloadAllG(ctx context.Context) error {
+	if o == nil {
+		return errors.New("models: empty SkillSlice provided for reload all")
+	}
+
+	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1504,6 +1623,11 @@ func (o *SkillSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) e
 	*o = slice
 
 	return nil
+}
+
+// SkillExistsG checks if the Skill row exists.
+func SkillExistsG(ctx context.Context, iD int) (bool, error) {
+	return SkillExists(ctx, boil.GetContextDB(), iD)
 }
 
 // SkillExists checks if the Skill row exists.

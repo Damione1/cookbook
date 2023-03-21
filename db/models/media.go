@@ -373,6 +373,11 @@ func AddMediumHook(hookPoint boil.HookPoint, mediumHook MediumHook) {
 	}
 }
 
+// OneG returns a single medium record from the query using the global executor.
+func (q mediumQuery) OneG(ctx context.Context) (*Medium, error) {
+	return q.One(ctx, boil.GetContextDB())
+}
+
 // One returns a single medium record from the query.
 func (q mediumQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Medium, error) {
 	o := &Medium{}
@@ -392,6 +397,11 @@ func (q mediumQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Mediu
 	}
 
 	return o, nil
+}
+
+// AllG returns all Medium records from the query using the global executor.
+func (q mediumQuery) AllG(ctx context.Context) (MediumSlice, error) {
+	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all Medium records from the query.
@@ -414,6 +424,11 @@ func (q mediumQuery) All(ctx context.Context, exec boil.ContextExecutor) (Medium
 	return o, nil
 }
 
+// CountG returns the count of all Medium records in the query using the global executor
+func (q mediumQuery) CountG(ctx context.Context) (int64, error) {
+	return q.Count(ctx, boil.GetContextDB())
+}
+
 // Count returns the count of all Medium records in the query.
 func (q mediumQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -427,6 +442,11 @@ func (q mediumQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int6
 	}
 
 	return count, nil
+}
+
+// ExistsG checks if the row exists in the table using the global executor.
+func (q mediumQuery) ExistsG(ctx context.Context) (bool, error) {
+	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -1085,6 +1105,15 @@ func (mediumL) LoadAvatarUsers(ctx context.Context, e boil.ContextExecutor, sing
 	return nil
 }
 
+// AddImageBlogPostsG adds the given related objects to the existing relationships
+// of the medium, optionally inserting them as new records.
+// Appends related to o.R.ImageBlogPosts.
+// Sets related.R.Image appropriately.
+// Uses the global database handle.
+func (o *Medium) AddImageBlogPostsG(ctx context.Context, insert bool, related ...*BlogPost) error {
+	return o.AddImageBlogPosts(ctx, boil.GetContextDB(), insert, related...)
+}
+
 // AddImageBlogPosts adds the given related objects to the existing relationships
 // of the medium, optionally inserting them as new records.
 // Appends related to o.R.ImageBlogPosts.
@@ -1138,6 +1167,17 @@ func (o *Medium) AddImageBlogPosts(ctx context.Context, exec boil.ContextExecuto
 	return nil
 }
 
+// SetImageBlogPostsG removes all previously related items of the
+// medium replacing them completely with the passed
+// in related items, optionally inserting them as new records.
+// Sets o.R.Image's ImageBlogPosts accordingly.
+// Replaces o.R.ImageBlogPosts with related.
+// Sets related.R.Image's ImageBlogPosts accordingly.
+// Uses the global database handle.
+func (o *Medium) SetImageBlogPostsG(ctx context.Context, insert bool, related ...*BlogPost) error {
+	return o.SetImageBlogPosts(ctx, boil.GetContextDB(), insert, related...)
+}
+
 // SetImageBlogPosts removes all previously related items of the
 // medium replacing them completely with the passed
 // in related items, optionally inserting them as new records.
@@ -1170,6 +1210,14 @@ func (o *Medium) SetImageBlogPosts(ctx context.Context, exec boil.ContextExecuto
 	}
 
 	return o.AddImageBlogPosts(ctx, exec, insert, related...)
+}
+
+// RemoveImageBlogPostsG relationships from objects passed in.
+// Removes related items from R.ImageBlogPosts (uses pointer comparison, removal does not keep order)
+// Sets related.R.Image.
+// Uses the global database handle.
+func (o *Medium) RemoveImageBlogPostsG(ctx context.Context, related ...*BlogPost) error {
+	return o.RemoveImageBlogPosts(ctx, boil.GetContextDB(), related...)
 }
 
 // RemoveImageBlogPosts relationships from objects passed in.
@@ -1210,6 +1258,15 @@ func (o *Medium) RemoveImageBlogPosts(ctx context.Context, exec boil.ContextExec
 	}
 
 	return nil
+}
+
+// AddImagePortfolioPostsG adds the given related objects to the existing relationships
+// of the medium, optionally inserting them as new records.
+// Appends related to o.R.ImagePortfolioPosts.
+// Sets related.R.Image appropriately.
+// Uses the global database handle.
+func (o *Medium) AddImagePortfolioPostsG(ctx context.Context, insert bool, related ...*PortfolioPost) error {
+	return o.AddImagePortfolioPosts(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddImagePortfolioPosts adds the given related objects to the existing relationships
@@ -1265,6 +1322,17 @@ func (o *Medium) AddImagePortfolioPosts(ctx context.Context, exec boil.ContextEx
 	return nil
 }
 
+// SetImagePortfolioPostsG removes all previously related items of the
+// medium replacing them completely with the passed
+// in related items, optionally inserting them as new records.
+// Sets o.R.Image's ImagePortfolioPosts accordingly.
+// Replaces o.R.ImagePortfolioPosts with related.
+// Sets related.R.Image's ImagePortfolioPosts accordingly.
+// Uses the global database handle.
+func (o *Medium) SetImagePortfolioPostsG(ctx context.Context, insert bool, related ...*PortfolioPost) error {
+	return o.SetImagePortfolioPosts(ctx, boil.GetContextDB(), insert, related...)
+}
+
 // SetImagePortfolioPosts removes all previously related items of the
 // medium replacing them completely with the passed
 // in related items, optionally inserting them as new records.
@@ -1297,6 +1365,14 @@ func (o *Medium) SetImagePortfolioPosts(ctx context.Context, exec boil.ContextEx
 	}
 
 	return o.AddImagePortfolioPosts(ctx, exec, insert, related...)
+}
+
+// RemoveImagePortfolioPostsG relationships from objects passed in.
+// Removes related items from R.ImagePortfolioPosts (uses pointer comparison, removal does not keep order)
+// Sets related.R.Image.
+// Uses the global database handle.
+func (o *Medium) RemoveImagePortfolioPostsG(ctx context.Context, related ...*PortfolioPost) error {
+	return o.RemoveImagePortfolioPosts(ctx, boil.GetContextDB(), related...)
 }
 
 // RemoveImagePortfolioPosts relationships from objects passed in.
@@ -1337,6 +1413,15 @@ func (o *Medium) RemoveImagePortfolioPosts(ctx context.Context, exec boil.Contex
 	}
 
 	return nil
+}
+
+// AddImageProjectsG adds the given related objects to the existing relationships
+// of the medium, optionally inserting them as new records.
+// Appends related to o.R.ImageProjects.
+// Sets related.R.Image appropriately.
+// Uses the global database handle.
+func (o *Medium) AddImageProjectsG(ctx context.Context, insert bool, related ...*Project) error {
+	return o.AddImageProjects(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddImageProjects adds the given related objects to the existing relationships
@@ -1392,6 +1477,17 @@ func (o *Medium) AddImageProjects(ctx context.Context, exec boil.ContextExecutor
 	return nil
 }
 
+// SetImageProjectsG removes all previously related items of the
+// medium replacing them completely with the passed
+// in related items, optionally inserting them as new records.
+// Sets o.R.Image's ImageProjects accordingly.
+// Replaces o.R.ImageProjects with related.
+// Sets related.R.Image's ImageProjects accordingly.
+// Uses the global database handle.
+func (o *Medium) SetImageProjectsG(ctx context.Context, insert bool, related ...*Project) error {
+	return o.SetImageProjects(ctx, boil.GetContextDB(), insert, related...)
+}
+
 // SetImageProjects removes all previously related items of the
 // medium replacing them completely with the passed
 // in related items, optionally inserting them as new records.
@@ -1424,6 +1520,14 @@ func (o *Medium) SetImageProjects(ctx context.Context, exec boil.ContextExecutor
 	}
 
 	return o.AddImageProjects(ctx, exec, insert, related...)
+}
+
+// RemoveImageProjectsG relationships from objects passed in.
+// Removes related items from R.ImageProjects (uses pointer comparison, removal does not keep order)
+// Sets related.R.Image.
+// Uses the global database handle.
+func (o *Medium) RemoveImageProjectsG(ctx context.Context, related ...*Project) error {
+	return o.RemoveImageProjects(ctx, boil.GetContextDB(), related...)
 }
 
 // RemoveImageProjects relationships from objects passed in.
@@ -1464,6 +1568,15 @@ func (o *Medium) RemoveImageProjects(ctx context.Context, exec boil.ContextExecu
 	}
 
 	return nil
+}
+
+// AddImageSkillsG adds the given related objects to the existing relationships
+// of the medium, optionally inserting them as new records.
+// Appends related to o.R.ImageSkills.
+// Sets related.R.Image appropriately.
+// Uses the global database handle.
+func (o *Medium) AddImageSkillsG(ctx context.Context, insert bool, related ...*Skill) error {
+	return o.AddImageSkills(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddImageSkills adds the given related objects to the existing relationships
@@ -1519,6 +1632,17 @@ func (o *Medium) AddImageSkills(ctx context.Context, exec boil.ContextExecutor, 
 	return nil
 }
 
+// SetImageSkillsG removes all previously related items of the
+// medium replacing them completely with the passed
+// in related items, optionally inserting them as new records.
+// Sets o.R.Image's ImageSkills accordingly.
+// Replaces o.R.ImageSkills with related.
+// Sets related.R.Image's ImageSkills accordingly.
+// Uses the global database handle.
+func (o *Medium) SetImageSkillsG(ctx context.Context, insert bool, related ...*Skill) error {
+	return o.SetImageSkills(ctx, boil.GetContextDB(), insert, related...)
+}
+
 // SetImageSkills removes all previously related items of the
 // medium replacing them completely with the passed
 // in related items, optionally inserting them as new records.
@@ -1551,6 +1675,14 @@ func (o *Medium) SetImageSkills(ctx context.Context, exec boil.ContextExecutor, 
 	}
 
 	return o.AddImageSkills(ctx, exec, insert, related...)
+}
+
+// RemoveImageSkillsG relationships from objects passed in.
+// Removes related items from R.ImageSkills (uses pointer comparison, removal does not keep order)
+// Sets related.R.Image.
+// Uses the global database handle.
+func (o *Medium) RemoveImageSkillsG(ctx context.Context, related ...*Skill) error {
+	return o.RemoveImageSkills(ctx, boil.GetContextDB(), related...)
 }
 
 // RemoveImageSkills relationships from objects passed in.
@@ -1591,6 +1723,15 @@ func (o *Medium) RemoveImageSkills(ctx context.Context, exec boil.ContextExecuto
 	}
 
 	return nil
+}
+
+// AddAvatarUsersG adds the given related objects to the existing relationships
+// of the medium, optionally inserting them as new records.
+// Appends related to o.R.AvatarUsers.
+// Sets related.R.Avatar appropriately.
+// Uses the global database handle.
+func (o *Medium) AddAvatarUsersG(ctx context.Context, insert bool, related ...*User) error {
+	return o.AddAvatarUsers(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddAvatarUsers adds the given related objects to the existing relationships
@@ -1646,6 +1787,17 @@ func (o *Medium) AddAvatarUsers(ctx context.Context, exec boil.ContextExecutor, 
 	return nil
 }
 
+// SetAvatarUsersG removes all previously related items of the
+// medium replacing them completely with the passed
+// in related items, optionally inserting them as new records.
+// Sets o.R.Avatar's AvatarUsers accordingly.
+// Replaces o.R.AvatarUsers with related.
+// Sets related.R.Avatar's AvatarUsers accordingly.
+// Uses the global database handle.
+func (o *Medium) SetAvatarUsersG(ctx context.Context, insert bool, related ...*User) error {
+	return o.SetAvatarUsers(ctx, boil.GetContextDB(), insert, related...)
+}
+
 // SetAvatarUsers removes all previously related items of the
 // medium replacing them completely with the passed
 // in related items, optionally inserting them as new records.
@@ -1678,6 +1830,14 @@ func (o *Medium) SetAvatarUsers(ctx context.Context, exec boil.ContextExecutor, 
 	}
 
 	return o.AddAvatarUsers(ctx, exec, insert, related...)
+}
+
+// RemoveAvatarUsersG relationships from objects passed in.
+// Removes related items from R.AvatarUsers (uses pointer comparison, removal does not keep order)
+// Sets related.R.Avatar.
+// Uses the global database handle.
+func (o *Medium) RemoveAvatarUsersG(ctx context.Context, related ...*User) error {
+	return o.RemoveAvatarUsers(ctx, boil.GetContextDB(), related...)
 }
 
 // RemoveAvatarUsers relationships from objects passed in.
@@ -1731,6 +1891,11 @@ func Media(mods ...qm.QueryMod) mediumQuery {
 	return mediumQuery{q}
 }
 
+// FindMediumG retrieves a single record by ID.
+func FindMediumG(ctx context.Context, iD int, selectCols ...string) (*Medium, error) {
+	return FindMedium(ctx, boil.GetContextDB(), iD, selectCols...)
+}
+
 // FindMedium retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindMedium(ctx context.Context, exec boil.ContextExecutor, iD int, selectCols ...string) (*Medium, error) {
@@ -1759,6 +1924,11 @@ func FindMedium(ctx context.Context, exec boil.ContextExecutor, iD int, selectCo
 	}
 
 	return mediumObj, nil
+}
+
+// InsertG a single record. See Insert for whitelist behavior description.
+func (o *Medium) InsertG(ctx context.Context, columns boil.Columns) error {
+	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -1847,6 +2017,12 @@ func (o *Medium) Insert(ctx context.Context, exec boil.ContextExecutor, columns 
 	return o.doAfterInsertHooks(ctx, exec)
 }
 
+// UpdateG a single Medium record using the global executor.
+// See Update for more documentation.
+func (o *Medium) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
+	return o.Update(ctx, boil.GetContextDB(), columns)
+}
+
 // Update uses an executor to update the Medium.
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
@@ -1910,6 +2086,11 @@ func (o *Medium) Update(ctx context.Context, exec boil.ContextExecutor, columns 
 	return rowsAff, o.doAfterUpdateHooks(ctx, exec)
 }
 
+// UpdateAllG updates all rows with the specified column values.
+func (q mediumQuery) UpdateAllG(ctx context.Context, cols M) (int64, error) {
+	return q.UpdateAll(ctx, boil.GetContextDB(), cols)
+}
+
 // UpdateAll updates all rows with the specified column values.
 func (q mediumQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	queries.SetUpdate(q.Query, cols)
@@ -1925,6 +2106,11 @@ func (q mediumQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, c
 	}
 
 	return rowsAff, nil
+}
+
+// UpdateAllG updates all rows with the specified column values.
+func (o MediumSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
+	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
 }
 
 // UpdateAll updates all rows with the specified column values, using an executor.
@@ -1973,6 +2159,11 @@ func (o MediumSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, c
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all medium")
 	}
 	return rowsAff, nil
+}
+
+// UpsertG attempts an insert, and does an update or ignore on conflict.
+func (o *Medium) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
+	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -2098,6 +2289,12 @@ func (o *Medium) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOn
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
+// DeleteG deletes a single Medium record.
+// DeleteG will match against the primary key column to find the record to delete.
+func (o *Medium) DeleteG(ctx context.Context) (int64, error) {
+	return o.Delete(ctx, boil.GetContextDB())
+}
+
 // Delete deletes a single Medium record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *Medium) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -2134,6 +2331,10 @@ func (o *Medium) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, 
 	return rowsAff, nil
 }
 
+func (q mediumQuery) DeleteAllG(ctx context.Context) (int64, error) {
+	return q.DeleteAll(ctx, boil.GetContextDB())
+}
+
 // DeleteAll deletes all matching rows.
 func (q mediumQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if q.Query == nil {
@@ -2153,6 +2354,11 @@ func (q mediumQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (
 	}
 
 	return rowsAff, nil
+}
+
+// DeleteAllG deletes all rows in the slice.
+func (o MediumSlice) DeleteAllG(ctx context.Context) (int64, error) {
+	return o.DeleteAll(ctx, boil.GetContextDB())
 }
 
 // DeleteAll deletes all rows in the slice, using an executor.
@@ -2204,6 +2410,15 @@ func (o MediumSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (
 	return rowsAff, nil
 }
 
+// ReloadG refetches the object from the database using the primary keys.
+func (o *Medium) ReloadG(ctx context.Context) error {
+	if o == nil {
+		return errors.New("models: no Medium provided for reload")
+	}
+
+	return o.Reload(ctx, boil.GetContextDB())
+}
+
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *Medium) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -2214,6 +2429,16 @@ func (o *Medium) Reload(ctx context.Context, exec boil.ContextExecutor) error {
 
 	*o = *ret
 	return nil
+}
+
+// ReloadAllG refetches every row with matching primary key column values
+// and overwrites the original object slice with the newly updated slice.
+func (o *MediumSlice) ReloadAllG(ctx context.Context) error {
+	if o == nil {
+		return errors.New("models: empty MediumSlice provided for reload all")
+	}
+
+	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -2243,6 +2468,11 @@ func (o *MediumSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) 
 	*o = slice
 
 	return nil
+}
+
+// MediumExistsG checks if the Medium row exists.
+func MediumExistsG(ctx context.Context, iD int) (bool, error) {
+	return MediumExists(ctx, boil.GetContextDB(), iD)
 }
 
 // MediumExists checks if the Medium row exists.

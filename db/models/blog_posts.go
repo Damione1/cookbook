@@ -448,6 +448,11 @@ func AddBlogPostHook(hookPoint boil.HookPoint, blogPostHook BlogPostHook) {
 	}
 }
 
+// OneG returns a single blogPost record from the query using the global executor.
+func (q blogPostQuery) OneG(ctx context.Context) (*BlogPost, error) {
+	return q.One(ctx, boil.GetContextDB())
+}
+
 // One returns a single blogPost record from the query.
 func (q blogPostQuery) One(ctx context.Context, exec boil.ContextExecutor) (*BlogPost, error) {
 	o := &BlogPost{}
@@ -467,6 +472,11 @@ func (q blogPostQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Blo
 	}
 
 	return o, nil
+}
+
+// AllG returns all BlogPost records from the query using the global executor.
+func (q blogPostQuery) AllG(ctx context.Context) (BlogPostSlice, error) {
+	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all BlogPost records from the query.
@@ -489,6 +499,11 @@ func (q blogPostQuery) All(ctx context.Context, exec boil.ContextExecutor) (Blog
 	return o, nil
 }
 
+// CountG returns the count of all BlogPost records in the query using the global executor
+func (q blogPostQuery) CountG(ctx context.Context) (int64, error) {
+	return q.Count(ctx, boil.GetContextDB())
+}
+
 // Count returns the count of all BlogPost records in the query.
 func (q blogPostQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -502,6 +517,11 @@ func (q blogPostQuery) Count(ctx context.Context, exec boil.ContextExecutor) (in
 	}
 
 	return count, nil
+}
+
+// ExistsG checks if the row exists in the table using the global executor.
+func (q blogPostQuery) ExistsG(ctx context.Context) (bool, error) {
+	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -655,6 +675,14 @@ func (blogPostL) LoadImage(ctx context.Context, e boil.ContextExecutor, singular
 	return nil
 }
 
+// SetImageG of the blogPost to the related item.
+// Sets o.R.Image to related.
+// Adds o to related.R.ImageBlogPosts.
+// Uses the global database handle.
+func (o *BlogPost) SetImageG(ctx context.Context, insert bool, related *Medium) error {
+	return o.SetImage(ctx, boil.GetContextDB(), insert, related)
+}
+
 // SetImage of the blogPost to the related item.
 // Sets o.R.Image to related.
 // Adds o to related.R.ImageBlogPosts.
@@ -702,6 +730,14 @@ func (o *BlogPost) SetImage(ctx context.Context, exec boil.ContextExecutor, inse
 	return nil
 }
 
+// RemoveImageG relationship.
+// Sets o.R.Image to nil.
+// Removes o from all passed in related items' relationships struct.
+// Uses the global database handle.
+func (o *BlogPost) RemoveImageG(ctx context.Context, related *Medium) error {
+	return o.RemoveImage(ctx, boil.GetContextDB(), related)
+}
+
 // RemoveImage relationship.
 // Sets o.R.Image to nil.
 // Removes o from all passed in related items' relationships struct.
@@ -746,6 +782,11 @@ func BlogPosts(mods ...qm.QueryMod) blogPostQuery {
 	return blogPostQuery{q}
 }
 
+// FindBlogPostG retrieves a single record by ID.
+func FindBlogPostG(ctx context.Context, iD int, selectCols ...string) (*BlogPost, error) {
+	return FindBlogPost(ctx, boil.GetContextDB(), iD, selectCols...)
+}
+
 // FindBlogPost retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindBlogPost(ctx context.Context, exec boil.ContextExecutor, iD int, selectCols ...string) (*BlogPost, error) {
@@ -774,6 +815,11 @@ func FindBlogPost(ctx context.Context, exec boil.ContextExecutor, iD int, select
 	}
 
 	return blogPostObj, nil
+}
+
+// InsertG a single record. See Insert for whitelist behavior description.
+func (o *BlogPost) InsertG(ctx context.Context, columns boil.Columns) error {
+	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -865,6 +911,12 @@ func (o *BlogPost) Insert(ctx context.Context, exec boil.ContextExecutor, column
 	return o.doAfterInsertHooks(ctx, exec)
 }
 
+// UpdateG a single BlogPost record using the global executor.
+// See Update for more documentation.
+func (o *BlogPost) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
+	return o.Update(ctx, boil.GetContextDB(), columns)
+}
+
 // Update uses an executor to update the BlogPost.
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
@@ -934,6 +986,11 @@ func (o *BlogPost) Update(ctx context.Context, exec boil.ContextExecutor, column
 	return rowsAff, o.doAfterUpdateHooks(ctx, exec)
 }
 
+// UpdateAllG updates all rows with the specified column values.
+func (q blogPostQuery) UpdateAllG(ctx context.Context, cols M) (int64, error) {
+	return q.UpdateAll(ctx, boil.GetContextDB(), cols)
+}
+
 // UpdateAll updates all rows with the specified column values.
 func (q blogPostQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	queries.SetUpdate(q.Query, cols)
@@ -949,6 +1006,11 @@ func (q blogPostQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor,
 	}
 
 	return rowsAff, nil
+}
+
+// UpdateAllG updates all rows with the specified column values.
+func (o BlogPostSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
+	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
 }
 
 // UpdateAll updates all rows with the specified column values, using an executor.
@@ -997,6 +1059,11 @@ func (o BlogPostSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor,
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all blogPost")
 	}
 	return rowsAff, nil
+}
+
+// UpsertG attempts an insert, and does an update or ignore on conflict.
+func (o *BlogPost) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
+	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1123,6 +1190,12 @@ func (o *BlogPost) Upsert(ctx context.Context, exec boil.ContextExecutor, update
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
+// DeleteG deletes a single BlogPost record.
+// DeleteG will match against the primary key column to find the record to delete.
+func (o *BlogPost) DeleteG(ctx context.Context) (int64, error) {
+	return o.Delete(ctx, boil.GetContextDB())
+}
+
 // Delete deletes a single BlogPost record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *BlogPost) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1159,6 +1232,10 @@ func (o *BlogPost) Delete(ctx context.Context, exec boil.ContextExecutor) (int64
 	return rowsAff, nil
 }
 
+func (q blogPostQuery) DeleteAllG(ctx context.Context) (int64, error) {
+	return q.DeleteAll(ctx, boil.GetContextDB())
+}
+
 // DeleteAll deletes all matching rows.
 func (q blogPostQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if q.Query == nil {
@@ -1178,6 +1255,11 @@ func (q blogPostQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor)
 	}
 
 	return rowsAff, nil
+}
+
+// DeleteAllG deletes all rows in the slice.
+func (o BlogPostSlice) DeleteAllG(ctx context.Context) (int64, error) {
+	return o.DeleteAll(ctx, boil.GetContextDB())
 }
 
 // DeleteAll deletes all rows in the slice, using an executor.
@@ -1229,6 +1311,15 @@ func (o BlogPostSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor)
 	return rowsAff, nil
 }
 
+// ReloadG refetches the object from the database using the primary keys.
+func (o *BlogPost) ReloadG(ctx context.Context) error {
+	if o == nil {
+		return errors.New("models: no BlogPost provided for reload")
+	}
+
+	return o.Reload(ctx, boil.GetContextDB())
+}
+
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *BlogPost) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1239,6 +1330,16 @@ func (o *BlogPost) Reload(ctx context.Context, exec boil.ContextExecutor) error 
 
 	*o = *ret
 	return nil
+}
+
+// ReloadAllG refetches every row with matching primary key column values
+// and overwrites the original object slice with the newly updated slice.
+func (o *BlogPostSlice) ReloadAllG(ctx context.Context) error {
+	if o == nil {
+		return errors.New("models: empty BlogPostSlice provided for reload all")
+	}
+
+	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1268,6 +1369,11 @@ func (o *BlogPostSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor
 	*o = slice
 
 	return nil
+}
+
+// BlogPostExistsG checks if the BlogPost row exists.
+func BlogPostExistsG(ctx context.Context, iD int) (bool, error) {
+	return BlogPostExists(ctx, boil.GetContextDB(), iD)
 }
 
 // BlogPostExists checks if the BlogPost row exists.

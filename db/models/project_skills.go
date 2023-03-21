@@ -322,6 +322,11 @@ func AddProjectSkillHook(hookPoint boil.HookPoint, projectSkillHook ProjectSkill
 	}
 }
 
+// OneG returns a single projectSkill record from the query using the global executor.
+func (q projectSkillQuery) OneG(ctx context.Context) (*ProjectSkill, error) {
+	return q.One(ctx, boil.GetContextDB())
+}
+
 // One returns a single projectSkill record from the query.
 func (q projectSkillQuery) One(ctx context.Context, exec boil.ContextExecutor) (*ProjectSkill, error) {
 	o := &ProjectSkill{}
@@ -341,6 +346,11 @@ func (q projectSkillQuery) One(ctx context.Context, exec boil.ContextExecutor) (
 	}
 
 	return o, nil
+}
+
+// AllG returns all ProjectSkill records from the query using the global executor.
+func (q projectSkillQuery) AllG(ctx context.Context) (ProjectSkillSlice, error) {
+	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all ProjectSkill records from the query.
@@ -363,6 +373,11 @@ func (q projectSkillQuery) All(ctx context.Context, exec boil.ContextExecutor) (
 	return o, nil
 }
 
+// CountG returns the count of all ProjectSkill records in the query using the global executor
+func (q projectSkillQuery) CountG(ctx context.Context) (int64, error) {
+	return q.Count(ctx, boil.GetContextDB())
+}
+
 // Count returns the count of all ProjectSkill records in the query.
 func (q projectSkillQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -376,6 +391,11 @@ func (q projectSkillQuery) Count(ctx context.Context, exec boil.ContextExecutor)
 	}
 
 	return count, nil
+}
+
+// ExistsG checks if the row exists in the table using the global executor.
+func (q projectSkillQuery) ExistsG(ctx context.Context) (bool, error) {
+	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -656,6 +676,14 @@ func (projectSkillL) LoadSkill(ctx context.Context, e boil.ContextExecutor, sing
 	return nil
 }
 
+// SetProjectG of the projectSkill to the related item.
+// Sets o.R.Project to related.
+// Adds o to related.R.ProjectSkills.
+// Uses the global database handle.
+func (o *ProjectSkill) SetProjectG(ctx context.Context, insert bool, related *Project) error {
+	return o.SetProject(ctx, boil.GetContextDB(), insert, related)
+}
+
 // SetProject of the projectSkill to the related item.
 // Sets o.R.Project to related.
 // Adds o to related.R.ProjectSkills.
@@ -701,6 +729,14 @@ func (o *ProjectSkill) SetProject(ctx context.Context, exec boil.ContextExecutor
 	}
 
 	return nil
+}
+
+// SetSkillG of the projectSkill to the related item.
+// Sets o.R.Skill to related.
+// Adds o to related.R.ProjectSkills.
+// Uses the global database handle.
+func (o *ProjectSkill) SetSkillG(ctx context.Context, insert bool, related *Skill) error {
+	return o.SetSkill(ctx, boil.GetContextDB(), insert, related)
 }
 
 // SetSkill of the projectSkill to the related item.
@@ -761,6 +797,11 @@ func ProjectSkills(mods ...qm.QueryMod) projectSkillQuery {
 	return projectSkillQuery{q}
 }
 
+// FindProjectSkillG retrieves a single record by ID.
+func FindProjectSkillG(ctx context.Context, iD int, selectCols ...string) (*ProjectSkill, error) {
+	return FindProjectSkill(ctx, boil.GetContextDB(), iD, selectCols...)
+}
+
 // FindProjectSkill retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindProjectSkill(ctx context.Context, exec boil.ContextExecutor, iD int, selectCols ...string) (*ProjectSkill, error) {
@@ -789,6 +830,11 @@ func FindProjectSkill(ctx context.Context, exec boil.ContextExecutor, iD int, se
 	}
 
 	return projectSkillObj, nil
+}
+
+// InsertG a single record. See Insert for whitelist behavior description.
+func (o *ProjectSkill) InsertG(ctx context.Context, columns boil.Columns) error {
+	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -877,6 +923,12 @@ func (o *ProjectSkill) Insert(ctx context.Context, exec boil.ContextExecutor, co
 	return o.doAfterInsertHooks(ctx, exec)
 }
 
+// UpdateG a single ProjectSkill record using the global executor.
+// See Update for more documentation.
+func (o *ProjectSkill) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
+	return o.Update(ctx, boil.GetContextDB(), columns)
+}
+
 // Update uses an executor to update the ProjectSkill.
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
@@ -940,6 +992,11 @@ func (o *ProjectSkill) Update(ctx context.Context, exec boil.ContextExecutor, co
 	return rowsAff, o.doAfterUpdateHooks(ctx, exec)
 }
 
+// UpdateAllG updates all rows with the specified column values.
+func (q projectSkillQuery) UpdateAllG(ctx context.Context, cols M) (int64, error) {
+	return q.UpdateAll(ctx, boil.GetContextDB(), cols)
+}
+
 // UpdateAll updates all rows with the specified column values.
 func (q projectSkillQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	queries.SetUpdate(q.Query, cols)
@@ -955,6 +1012,11 @@ func (q projectSkillQuery) UpdateAll(ctx context.Context, exec boil.ContextExecu
 	}
 
 	return rowsAff, nil
+}
+
+// UpdateAllG updates all rows with the specified column values.
+func (o ProjectSkillSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
+	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
 }
 
 // UpdateAll updates all rows with the specified column values, using an executor.
@@ -1003,6 +1065,11 @@ func (o ProjectSkillSlice) UpdateAll(ctx context.Context, exec boil.ContextExecu
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all projectSkill")
 	}
 	return rowsAff, nil
+}
+
+// UpsertG attempts an insert, and does an update or ignore on conflict.
+func (o *ProjectSkill) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
+	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1128,6 +1195,12 @@ func (o *ProjectSkill) Upsert(ctx context.Context, exec boil.ContextExecutor, up
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
+// DeleteG deletes a single ProjectSkill record.
+// DeleteG will match against the primary key column to find the record to delete.
+func (o *ProjectSkill) DeleteG(ctx context.Context) (int64, error) {
+	return o.Delete(ctx, boil.GetContextDB())
+}
+
 // Delete deletes a single ProjectSkill record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *ProjectSkill) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1164,6 +1237,10 @@ func (o *ProjectSkill) Delete(ctx context.Context, exec boil.ContextExecutor) (i
 	return rowsAff, nil
 }
 
+func (q projectSkillQuery) DeleteAllG(ctx context.Context) (int64, error) {
+	return q.DeleteAll(ctx, boil.GetContextDB())
+}
+
 // DeleteAll deletes all matching rows.
 func (q projectSkillQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if q.Query == nil {
@@ -1183,6 +1260,11 @@ func (q projectSkillQuery) DeleteAll(ctx context.Context, exec boil.ContextExecu
 	}
 
 	return rowsAff, nil
+}
+
+// DeleteAllG deletes all rows in the slice.
+func (o ProjectSkillSlice) DeleteAllG(ctx context.Context) (int64, error) {
+	return o.DeleteAll(ctx, boil.GetContextDB())
 }
 
 // DeleteAll deletes all rows in the slice, using an executor.
@@ -1234,6 +1316,15 @@ func (o ProjectSkillSlice) DeleteAll(ctx context.Context, exec boil.ContextExecu
 	return rowsAff, nil
 }
 
+// ReloadG refetches the object from the database using the primary keys.
+func (o *ProjectSkill) ReloadG(ctx context.Context) error {
+	if o == nil {
+		return errors.New("models: no ProjectSkill provided for reload")
+	}
+
+	return o.Reload(ctx, boil.GetContextDB())
+}
+
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *ProjectSkill) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1244,6 +1335,16 @@ func (o *ProjectSkill) Reload(ctx context.Context, exec boil.ContextExecutor) er
 
 	*o = *ret
 	return nil
+}
+
+// ReloadAllG refetches every row with matching primary key column values
+// and overwrites the original object slice with the newly updated slice.
+func (o *ProjectSkillSlice) ReloadAllG(ctx context.Context) error {
+	if o == nil {
+		return errors.New("models: empty ProjectSkillSlice provided for reload all")
+	}
+
+	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1273,6 +1374,11 @@ func (o *ProjectSkillSlice) ReloadAll(ctx context.Context, exec boil.ContextExec
 	*o = slice
 
 	return nil
+}
+
+// ProjectSkillExistsG checks if the ProjectSkill row exists.
+func ProjectSkillExistsG(ctx context.Context, iD int) (bool, error) {
+	return ProjectSkillExists(ctx, boil.GetContextDB(), iD)
 }
 
 // ProjectSkillExists checks if the ProjectSkill row exists.

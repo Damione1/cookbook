@@ -10,7 +10,7 @@ import (
 
 type Server struct {
 	pb.UnimplementedPortfolioServiceServer
-	//config     util.Config
+	config     util.Config
 	tokenMaker token.Maker
 }
 
@@ -21,7 +21,7 @@ func NewServer(config util.Config) (*Server, error) {
 	}
 
 	server := &Server{
-		//config:     config,
+		config:     config,
 		tokenMaker: tokenMaker,
 	}
 

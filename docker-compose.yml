@@ -7,11 +7,6 @@ services:
     working_dir: /app
     ports:
       - 3000:3000
-   # environment:
-   #   - POSTGRES_USER=${POSTGRES_USER}
-   #   - POSTGRES_DB=${POSTGRES_DB}
-   #   - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-   #   - MIGRATION_PATH=${MIGRATION_PATH}
     volumes:
       - ./:/app
     container_name: web-with-air
@@ -49,7 +44,7 @@ services:
     depends_on:
       - "db"
       - "web"
-    command: sqlboiler psql
+    command: sqlboiler psql --add-global-variants
     volumes:
       - ./:/app
     container_name: "generate-models"

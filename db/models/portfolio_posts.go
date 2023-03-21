@@ -340,6 +340,11 @@ func AddPortfolioPostHook(hookPoint boil.HookPoint, portfolioPostHook PortfolioP
 	}
 }
 
+// OneG returns a single portfolioPost record from the query using the global executor.
+func (q portfolioPostQuery) OneG(ctx context.Context) (*PortfolioPost, error) {
+	return q.One(ctx, boil.GetContextDB())
+}
+
 // One returns a single portfolioPost record from the query.
 func (q portfolioPostQuery) One(ctx context.Context, exec boil.ContextExecutor) (*PortfolioPost, error) {
 	o := &PortfolioPost{}
@@ -359,6 +364,11 @@ func (q portfolioPostQuery) One(ctx context.Context, exec boil.ContextExecutor) 
 	}
 
 	return o, nil
+}
+
+// AllG returns all PortfolioPost records from the query using the global executor.
+func (q portfolioPostQuery) AllG(ctx context.Context) (PortfolioPostSlice, error) {
+	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all PortfolioPost records from the query.
@@ -381,6 +391,11 @@ func (q portfolioPostQuery) All(ctx context.Context, exec boil.ContextExecutor) 
 	return o, nil
 }
 
+// CountG returns the count of all PortfolioPost records in the query using the global executor
+func (q portfolioPostQuery) CountG(ctx context.Context) (int64, error) {
+	return q.Count(ctx, boil.GetContextDB())
+}
+
 // Count returns the count of all PortfolioPost records in the query.
 func (q portfolioPostQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -394,6 +409,11 @@ func (q portfolioPostQuery) Count(ctx context.Context, exec boil.ContextExecutor
 	}
 
 	return count, nil
+}
+
+// ExistsG checks if the row exists in the table using the global executor.
+func (q portfolioPostQuery) ExistsG(ctx context.Context) (bool, error) {
+	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -547,6 +567,14 @@ func (portfolioPostL) LoadImage(ctx context.Context, e boil.ContextExecutor, sin
 	return nil
 }
 
+// SetImageG of the portfolioPost to the related item.
+// Sets o.R.Image to related.
+// Adds o to related.R.ImagePortfolioPosts.
+// Uses the global database handle.
+func (o *PortfolioPost) SetImageG(ctx context.Context, insert bool, related *Medium) error {
+	return o.SetImage(ctx, boil.GetContextDB(), insert, related)
+}
+
 // SetImage of the portfolioPost to the related item.
 // Sets o.R.Image to related.
 // Adds o to related.R.ImagePortfolioPosts.
@@ -594,6 +622,14 @@ func (o *PortfolioPost) SetImage(ctx context.Context, exec boil.ContextExecutor,
 	return nil
 }
 
+// RemoveImageG relationship.
+// Sets o.R.Image to nil.
+// Removes o from all passed in related items' relationships struct.
+// Uses the global database handle.
+func (o *PortfolioPost) RemoveImageG(ctx context.Context, related *Medium) error {
+	return o.RemoveImage(ctx, boil.GetContextDB(), related)
+}
+
 // RemoveImage relationship.
 // Sets o.R.Image to nil.
 // Removes o from all passed in related items' relationships struct.
@@ -638,6 +674,11 @@ func PortfolioPosts(mods ...qm.QueryMod) portfolioPostQuery {
 	return portfolioPostQuery{q}
 }
 
+// FindPortfolioPostG retrieves a single record by ID.
+func FindPortfolioPostG(ctx context.Context, iD int, selectCols ...string) (*PortfolioPost, error) {
+	return FindPortfolioPost(ctx, boil.GetContextDB(), iD, selectCols...)
+}
+
 // FindPortfolioPost retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindPortfolioPost(ctx context.Context, exec boil.ContextExecutor, iD int, selectCols ...string) (*PortfolioPost, error) {
@@ -666,6 +707,11 @@ func FindPortfolioPost(ctx context.Context, exec boil.ContextExecutor, iD int, s
 	}
 
 	return portfolioPostObj, nil
+}
+
+// InsertG a single record. See Insert for whitelist behavior description.
+func (o *PortfolioPost) InsertG(ctx context.Context, columns boil.Columns) error {
+	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -757,6 +803,12 @@ func (o *PortfolioPost) Insert(ctx context.Context, exec boil.ContextExecutor, c
 	return o.doAfterInsertHooks(ctx, exec)
 }
 
+// UpdateG a single PortfolioPost record using the global executor.
+// See Update for more documentation.
+func (o *PortfolioPost) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
+	return o.Update(ctx, boil.GetContextDB(), columns)
+}
+
 // Update uses an executor to update the PortfolioPost.
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
@@ -826,6 +878,11 @@ func (o *PortfolioPost) Update(ctx context.Context, exec boil.ContextExecutor, c
 	return rowsAff, o.doAfterUpdateHooks(ctx, exec)
 }
 
+// UpdateAllG updates all rows with the specified column values.
+func (q portfolioPostQuery) UpdateAllG(ctx context.Context, cols M) (int64, error) {
+	return q.UpdateAll(ctx, boil.GetContextDB(), cols)
+}
+
 // UpdateAll updates all rows with the specified column values.
 func (q portfolioPostQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	queries.SetUpdate(q.Query, cols)
@@ -841,6 +898,11 @@ func (q portfolioPostQuery) UpdateAll(ctx context.Context, exec boil.ContextExec
 	}
 
 	return rowsAff, nil
+}
+
+// UpdateAllG updates all rows with the specified column values.
+func (o PortfolioPostSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
+	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
 }
 
 // UpdateAll updates all rows with the specified column values, using an executor.
@@ -889,6 +951,11 @@ func (o PortfolioPostSlice) UpdateAll(ctx context.Context, exec boil.ContextExec
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all portfolioPost")
 	}
 	return rowsAff, nil
+}
+
+// UpsertG attempts an insert, and does an update or ignore on conflict.
+func (o *PortfolioPost) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
+	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1015,6 +1082,12 @@ func (o *PortfolioPost) Upsert(ctx context.Context, exec boil.ContextExecutor, u
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
+// DeleteG deletes a single PortfolioPost record.
+// DeleteG will match against the primary key column to find the record to delete.
+func (o *PortfolioPost) DeleteG(ctx context.Context) (int64, error) {
+	return o.Delete(ctx, boil.GetContextDB())
+}
+
 // Delete deletes a single PortfolioPost record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *PortfolioPost) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1051,6 +1124,10 @@ func (o *PortfolioPost) Delete(ctx context.Context, exec boil.ContextExecutor) (
 	return rowsAff, nil
 }
 
+func (q portfolioPostQuery) DeleteAllG(ctx context.Context) (int64, error) {
+	return q.DeleteAll(ctx, boil.GetContextDB())
+}
+
 // DeleteAll deletes all matching rows.
 func (q portfolioPostQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if q.Query == nil {
@@ -1070,6 +1147,11 @@ func (q portfolioPostQuery) DeleteAll(ctx context.Context, exec boil.ContextExec
 	}
 
 	return rowsAff, nil
+}
+
+// DeleteAllG deletes all rows in the slice.
+func (o PortfolioPostSlice) DeleteAllG(ctx context.Context) (int64, error) {
+	return o.DeleteAll(ctx, boil.GetContextDB())
 }
 
 // DeleteAll deletes all rows in the slice, using an executor.
@@ -1121,6 +1203,15 @@ func (o PortfolioPostSlice) DeleteAll(ctx context.Context, exec boil.ContextExec
 	return rowsAff, nil
 }
 
+// ReloadG refetches the object from the database using the primary keys.
+func (o *PortfolioPost) ReloadG(ctx context.Context) error {
+	if o == nil {
+		return errors.New("models: no PortfolioPost provided for reload")
+	}
+
+	return o.Reload(ctx, boil.GetContextDB())
+}
+
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *PortfolioPost) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1131,6 +1222,16 @@ func (o *PortfolioPost) Reload(ctx context.Context, exec boil.ContextExecutor) e
 
 	*o = *ret
 	return nil
+}
+
+// ReloadAllG refetches every row with matching primary key column values
+// and overwrites the original object slice with the newly updated slice.
+func (o *PortfolioPostSlice) ReloadAllG(ctx context.Context) error {
+	if o == nil {
+		return errors.New("models: empty PortfolioPostSlice provided for reload all")
+	}
+
+	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1160,6 +1261,11 @@ func (o *PortfolioPostSlice) ReloadAll(ctx context.Context, exec boil.ContextExe
 	*o = slice
 
 	return nil
+}
+
+// PortfolioPostExistsG checks if the PortfolioPost row exists.
+func PortfolioPostExistsG(ctx context.Context, iD int) (bool, error) {
+	return PortfolioPostExists(ctx, boil.GetContextDB(), iD)
 }
 
 // PortfolioPostExists checks if the PortfolioPost row exists.

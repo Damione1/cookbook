@@ -322,6 +322,11 @@ func AddCurriculumVitaeSkillHook(hookPoint boil.HookPoint, curriculumVitaeSkillH
 	}
 }
 
+// OneG returns a single curriculumVitaeSkill record from the query using the global executor.
+func (q curriculumVitaeSkillQuery) OneG(ctx context.Context) (*CurriculumVitaeSkill, error) {
+	return q.One(ctx, boil.GetContextDB())
+}
+
 // One returns a single curriculumVitaeSkill record from the query.
 func (q curriculumVitaeSkillQuery) One(ctx context.Context, exec boil.ContextExecutor) (*CurriculumVitaeSkill, error) {
 	o := &CurriculumVitaeSkill{}
@@ -341,6 +346,11 @@ func (q curriculumVitaeSkillQuery) One(ctx context.Context, exec boil.ContextExe
 	}
 
 	return o, nil
+}
+
+// AllG returns all CurriculumVitaeSkill records from the query using the global executor.
+func (q curriculumVitaeSkillQuery) AllG(ctx context.Context) (CurriculumVitaeSkillSlice, error) {
+	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all CurriculumVitaeSkill records from the query.
@@ -363,6 +373,11 @@ func (q curriculumVitaeSkillQuery) All(ctx context.Context, exec boil.ContextExe
 	return o, nil
 }
 
+// CountG returns the count of all CurriculumVitaeSkill records in the query using the global executor
+func (q curriculumVitaeSkillQuery) CountG(ctx context.Context) (int64, error) {
+	return q.Count(ctx, boil.GetContextDB())
+}
+
 // Count returns the count of all CurriculumVitaeSkill records in the query.
 func (q curriculumVitaeSkillQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -376,6 +391,11 @@ func (q curriculumVitaeSkillQuery) Count(ctx context.Context, exec boil.ContextE
 	}
 
 	return count, nil
+}
+
+// ExistsG checks if the row exists in the table using the global executor.
+func (q curriculumVitaeSkillQuery) ExistsG(ctx context.Context) (bool, error) {
+	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -656,6 +676,14 @@ func (curriculumVitaeSkillL) LoadSkill(ctx context.Context, e boil.ContextExecut
 	return nil
 }
 
+// SetCurriculumVitaeG of the curriculumVitaeSkill to the related item.
+// Sets o.R.CurriculumVitae to related.
+// Adds o to related.R.CurriculumVitaeSkills.
+// Uses the global database handle.
+func (o *CurriculumVitaeSkill) SetCurriculumVitaeG(ctx context.Context, insert bool, related *CurriculumVitae) error {
+	return o.SetCurriculumVitae(ctx, boil.GetContextDB(), insert, related)
+}
+
 // SetCurriculumVitae of the curriculumVitaeSkill to the related item.
 // Sets o.R.CurriculumVitae to related.
 // Adds o to related.R.CurriculumVitaeSkills.
@@ -701,6 +729,14 @@ func (o *CurriculumVitaeSkill) SetCurriculumVitae(ctx context.Context, exec boil
 	}
 
 	return nil
+}
+
+// SetSkillG of the curriculumVitaeSkill to the related item.
+// Sets o.R.Skill to related.
+// Adds o to related.R.CurriculumVitaeSkills.
+// Uses the global database handle.
+func (o *CurriculumVitaeSkill) SetSkillG(ctx context.Context, insert bool, related *Skill) error {
+	return o.SetSkill(ctx, boil.GetContextDB(), insert, related)
 }
 
 // SetSkill of the curriculumVitaeSkill to the related item.
@@ -761,6 +797,11 @@ func CurriculumVitaeSkills(mods ...qm.QueryMod) curriculumVitaeSkillQuery {
 	return curriculumVitaeSkillQuery{q}
 }
 
+// FindCurriculumVitaeSkillG retrieves a single record by ID.
+func FindCurriculumVitaeSkillG(ctx context.Context, iD int, selectCols ...string) (*CurriculumVitaeSkill, error) {
+	return FindCurriculumVitaeSkill(ctx, boil.GetContextDB(), iD, selectCols...)
+}
+
 // FindCurriculumVitaeSkill retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindCurriculumVitaeSkill(ctx context.Context, exec boil.ContextExecutor, iD int, selectCols ...string) (*CurriculumVitaeSkill, error) {
@@ -789,6 +830,11 @@ func FindCurriculumVitaeSkill(ctx context.Context, exec boil.ContextExecutor, iD
 	}
 
 	return curriculumVitaeSkillObj, nil
+}
+
+// InsertG a single record. See Insert for whitelist behavior description.
+func (o *CurriculumVitaeSkill) InsertG(ctx context.Context, columns boil.Columns) error {
+	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -877,6 +923,12 @@ func (o *CurriculumVitaeSkill) Insert(ctx context.Context, exec boil.ContextExec
 	return o.doAfterInsertHooks(ctx, exec)
 }
 
+// UpdateG a single CurriculumVitaeSkill record using the global executor.
+// See Update for more documentation.
+func (o *CurriculumVitaeSkill) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
+	return o.Update(ctx, boil.GetContextDB(), columns)
+}
+
 // Update uses an executor to update the CurriculumVitaeSkill.
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
@@ -940,6 +992,11 @@ func (o *CurriculumVitaeSkill) Update(ctx context.Context, exec boil.ContextExec
 	return rowsAff, o.doAfterUpdateHooks(ctx, exec)
 }
 
+// UpdateAllG updates all rows with the specified column values.
+func (q curriculumVitaeSkillQuery) UpdateAllG(ctx context.Context, cols M) (int64, error) {
+	return q.UpdateAll(ctx, boil.GetContextDB(), cols)
+}
+
 // UpdateAll updates all rows with the specified column values.
 func (q curriculumVitaeSkillQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	queries.SetUpdate(q.Query, cols)
@@ -955,6 +1012,11 @@ func (q curriculumVitaeSkillQuery) UpdateAll(ctx context.Context, exec boil.Cont
 	}
 
 	return rowsAff, nil
+}
+
+// UpdateAllG updates all rows with the specified column values.
+func (o CurriculumVitaeSkillSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
+	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
 }
 
 // UpdateAll updates all rows with the specified column values, using an executor.
@@ -1003,6 +1065,11 @@ func (o CurriculumVitaeSkillSlice) UpdateAll(ctx context.Context, exec boil.Cont
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all curriculumVitaeSkill")
 	}
 	return rowsAff, nil
+}
+
+// UpsertG attempts an insert, and does an update or ignore on conflict.
+func (o *CurriculumVitaeSkill) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
+	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1128,6 +1195,12 @@ func (o *CurriculumVitaeSkill) Upsert(ctx context.Context, exec boil.ContextExec
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
+// DeleteG deletes a single CurriculumVitaeSkill record.
+// DeleteG will match against the primary key column to find the record to delete.
+func (o *CurriculumVitaeSkill) DeleteG(ctx context.Context) (int64, error) {
+	return o.Delete(ctx, boil.GetContextDB())
+}
+
 // Delete deletes a single CurriculumVitaeSkill record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *CurriculumVitaeSkill) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1164,6 +1237,10 @@ func (o *CurriculumVitaeSkill) Delete(ctx context.Context, exec boil.ContextExec
 	return rowsAff, nil
 }
 
+func (q curriculumVitaeSkillQuery) DeleteAllG(ctx context.Context) (int64, error) {
+	return q.DeleteAll(ctx, boil.GetContextDB())
+}
+
 // DeleteAll deletes all matching rows.
 func (q curriculumVitaeSkillQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if q.Query == nil {
@@ -1183,6 +1260,11 @@ func (q curriculumVitaeSkillQuery) DeleteAll(ctx context.Context, exec boil.Cont
 	}
 
 	return rowsAff, nil
+}
+
+// DeleteAllG deletes all rows in the slice.
+func (o CurriculumVitaeSkillSlice) DeleteAllG(ctx context.Context) (int64, error) {
+	return o.DeleteAll(ctx, boil.GetContextDB())
 }
 
 // DeleteAll deletes all rows in the slice, using an executor.
@@ -1234,6 +1316,15 @@ func (o CurriculumVitaeSkillSlice) DeleteAll(ctx context.Context, exec boil.Cont
 	return rowsAff, nil
 }
 
+// ReloadG refetches the object from the database using the primary keys.
+func (o *CurriculumVitaeSkill) ReloadG(ctx context.Context) error {
+	if o == nil {
+		return errors.New("models: no CurriculumVitaeSkill provided for reload")
+	}
+
+	return o.Reload(ctx, boil.GetContextDB())
+}
+
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *CurriculumVitaeSkill) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1244,6 +1335,16 @@ func (o *CurriculumVitaeSkill) Reload(ctx context.Context, exec boil.ContextExec
 
 	*o = *ret
 	return nil
+}
+
+// ReloadAllG refetches every row with matching primary key column values
+// and overwrites the original object slice with the newly updated slice.
+func (o *CurriculumVitaeSkillSlice) ReloadAllG(ctx context.Context) error {
+	if o == nil {
+		return errors.New("models: empty CurriculumVitaeSkillSlice provided for reload all")
+	}
+
+	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1273,6 +1374,11 @@ func (o *CurriculumVitaeSkillSlice) ReloadAll(ctx context.Context, exec boil.Con
 	*o = slice
 
 	return nil
+}
+
+// CurriculumVitaeSkillExistsG checks if the CurriculumVitaeSkill row exists.
+func CurriculumVitaeSkillExistsG(ctx context.Context, iD int) (bool, error) {
+	return CurriculumVitaeSkillExists(ctx, boil.GetContextDB(), iD)
 }
 
 // CurriculumVitaeSkillExists checks if the CurriculumVitaeSkill row exists.
