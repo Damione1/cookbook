@@ -6,7 +6,8 @@ services:
     # working_dir value has to be the same of mapped volume
     working_dir: /app
     ports:
-      - 3000:3000
+      - 8080:8080
+      - 9090:9090
     volumes:
       - ./:/app
     container_name: web-with-air

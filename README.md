@@ -30,3 +30,10 @@ To connect to the postgres database, you can use the following command:
 ```bash
 docker-compose exec db psql -U postgres
 ```
+
+To test the gRPC server, you can use the following command:
+
+```bash
+evans --host localhost --port 9090 -r repl
+```
+Then, you can list the available services with the `service list` command and call the `GetUser` method with the `call GetUser` command.
