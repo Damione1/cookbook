@@ -13,7 +13,7 @@ import (
 	"github.com/volatiletech/sqlboiler/boil"
 )
 
-func ConnectDb(config util.Config) (*sql.DB, error) {
+func ConnectDb(config *util.Config) (*sql.DB, error) {
 	db, err := sql.Open("postgres", fmt.Sprintf(
 		"host=db user=%s password=%s dbname=%s TimeZone=America/New_York sslmode=disable",
 		config.PostgresUser,
@@ -25,13 +25,11 @@ func ConnectDb(config util.Config) (*sql.DB, error) {
 		os.Exit(2)
 	}
 
-	fmt.Println("Running DB migration...")
 	runDBMigration(config.MigrationPath, db)
-	fmt.Println("DB migration completed.")
 
-	fmt.Println("Connected to database.")
 	boil.SetDB(db)
-	fmt.Println("Set database for sqlboiler.")
+
+	config.DB = db
 
 	return db, nil
 }

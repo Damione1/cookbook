@@ -28,7 +28,7 @@ rm -f ./pkg/pb/*.go && protoc --go-grpc_out=pkg/pb --go_out=pkg/pb --proto_path=
 To connect to the postgres database, you can use the following command:
 
 ```bash
-docker-compose exec db psql -U postgres
+docker-compose exec db psql -U postgres -d portfolio_playground
 ```
 
 To test the gRPC server, you can use the following command:

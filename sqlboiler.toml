@@ -5,7 +5,7 @@ add-enum-types = true
 
 [psql]
   host   = "db"
-  dbname = "portfolio-playground"
+  dbname = "portfolio_playground"
   user   = "postgres"
   pass   = "password"
   schema = "public"

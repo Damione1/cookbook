@@ -21,7 +21,7 @@ func main() {
 		log.Println(fmt.Printf("Failed to load config. %v", err))
 	}
 
-	db, err := database.ConnectDb(config)
+	db, err := database.ConnectDb(&config)
 	if err != nil {
 		log.Println(fmt.Printf("Failed to connect to database. %v", err))
 	}

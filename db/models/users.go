@@ -24,13 +24,14 @@ import (
 
 // User is an object representing the database table.
 type User struct {
-	ID        int         `boil:"id" json:"id" toml:"id" yaml:"id"`
-	Email     string      `boil:"email" json:"email" toml:"email" yaml:"email"`
-	Password  string      `boil:"password" json:"password" toml:"password" yaml:"password"`
-	Name      null.String `boil:"name" json:"name,omitempty" toml:"name" yaml:"name,omitempty"`
-	AvatarID  null.Int    `boil:"avatar_id" json:"avatar_id,omitempty" toml:"avatar_id" yaml:"avatar_id,omitempty"`
-	CreatedAt null.Time   `boil:"created_at" json:"created_at,omitempty" toml:"created_at" yaml:"created_at,omitempty"`
-	UpdatedAt null.Time   `boil:"updated_at" json:"updated_at,omitempty" toml:"updated_at" yaml:"updated_at,omitempty"`
+	ID        int       `boil:"id" json:"id" toml:"id" yaml:"id"`
+	Email     string    `boil:"email" json:"email" toml:"email" yaml:"email"`
+	Password  string    `boil:"password" json:"password" toml:"password" yaml:"password"`
+	Name      string    `boil:"name" json:"name" toml:"name" yaml:"name"`
+	AvatarID  null.Int  `boil:"avatar_id" json:"avatar_id,omitempty" toml:"avatar_id" yaml:"avatar_id,omitempty"`
+	CreatedAt null.Time `boil:"created_at" json:"created_at,omitempty" toml:"created_at" yaml:"created_at,omitempty"`
+	UpdatedAt null.Time `boil:"updated_at" json:"updated_at,omitempty" toml:"updated_at" yaml:"updated_at,omitempty"`
+	Active    null.Bool `boil:"active" json:"active,omitempty" toml:"active" yaml:"active,omitempty"`
 
 	R *userR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L userL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -44,6 +45,7 @@ var UserColumns = struct {
 	AvatarID  string
 	CreatedAt string
 	UpdatedAt string
+	Active    string
 }{
 	ID:        "id",
 	Email:     "email",
@@ -52,6 +54,7 @@ var UserColumns = struct {
 	AvatarID:  "avatar_id",
 	CreatedAt: "created_at",
 	UpdatedAt: "updated_at",
+	Active:    "active",
 }
 
 var UserTableColumns = struct {
@@ -62,6 +65,7 @@ var UserTableColumns = struct {
 	AvatarID  string
 	CreatedAt string
 	UpdatedAt string
+	Active    string
 }{
 	ID:        "users.id",
 	Email:     "users.email",
@@ -70,26 +74,53 @@ var UserTableColumns = struct {
 	AvatarID:  "users.avatar_id",
 	CreatedAt: "users.created_at",
 	UpdatedAt: "users.updated_at",
+	Active:    "users.active",
 }
 
 // Generated where
+
+type whereHelpernull_Bool struct{ field string }
+
+func (w whereHelpernull_Bool) EQ(x null.Bool) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, false, x)
+}
+func (w whereHelpernull_Bool) NEQ(x null.Bool) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, true, x)
+}
+func (w whereHelpernull_Bool) LT(x null.Bool) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LT, x)
+}
+func (w whereHelpernull_Bool) LTE(x null.Bool) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LTE, x)
+}
+func (w whereHelpernull_Bool) GT(x null.Bool) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GT, x)
+}
+func (w whereHelpernull_Bool) GTE(x null.Bool) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GTE, x)
+}
+
+func (w whereHelpernull_Bool) IsNull() qm.QueryMod    { return qmhelper.WhereIsNull(w.field) }
+func (w whereHelpernull_Bool) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
 
 var UserWhere = struct {
 	ID        whereHelperint
 	Email     whereHelperstring
 	Password  whereHelperstring
-	Name      whereHelpernull_String
+	Name      whereHelperstring
 	AvatarID  whereHelpernull_Int
 	CreatedAt whereHelpernull_Time
 	UpdatedAt whereHelpernull_Time
+	Active    whereHelpernull_Bool
 }{
 	ID:        whereHelperint{field: "\"users\".\"id\""},
 	Email:     whereHelperstring{field: "\"users\".\"email\""},
 	Password:  whereHelperstring{field: "\"users\".\"password\""},
-	Name:      whereHelpernull_String{field: "\"users\".\"name\""},
+	Name:      whereHelperstring{field: "\"users\".\"name\""},
 	AvatarID:  whereHelpernull_Int{field: "\"users\".\"avatar_id\""},
 	CreatedAt: whereHelpernull_Time{field: "\"users\".\"created_at\""},
 	UpdatedAt: whereHelpernull_Time{field: "\"users\".\"updated_at\""},
+	Active:    whereHelpernull_Bool{field: "\"users\".\"active\""},
 }
 
 // UserRels is where relationship names are stored.
@@ -120,9 +151,9 @@ func (r *userR) GetAvatar() *Medium {
 type userL struct{}
 
 var (
-	userAllColumns            = []string{"id", "email", "password", "name", "avatar_id", "created_at", "updated_at"}
-	userColumnsWithoutDefault = []string{"email", "password"}
-	userColumnsWithDefault    = []string{"id", "name", "avatar_id", "created_at", "updated_at"}
+	userAllColumns            = []string{"id", "email", "password", "name", "avatar_id", "created_at", "updated_at", "active"}
+	userColumnsWithoutDefault = []string{"email", "password", "name"}
+	userColumnsWithDefault    = []string{"id", "avatar_id", "created_at", "updated_at", "active"}
 	userPrimaryKeyColumns     = []string{"id"}
 	userGeneratedColumns      = []string{}
 )

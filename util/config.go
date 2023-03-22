@@ -1,6 +1,7 @@
 package util
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/spf13/viper"
@@ -22,6 +23,7 @@ type Config struct {
 	PostgresUser         string        `mapstructure:"POSTGRES_USER"`
 	PostgresPassword     string        `mapstructure:"POSTGRES_PASSWORD"`
 	PostgresDb           string        `mapstructure:"POSTGRES_DB"`
+	DB                   *sql.DB       `mapstructure:"-"`
 }
 
 // LoadConfig reads configuration from file or environment variables.
