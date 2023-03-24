@@ -2,6 +2,8 @@ package grpcApi
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 
 	"github.com/Damione1/portfolio-playground/db/models"
 	"github.com/Damione1/portfolio-playground/pkg/pb"
@@ -10,6 +12,7 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
@@ -29,16 +32,11 @@ func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 		Name:     req.GetName(),
 	}
 
-	ok, err := user.Exists(ctx, boil.GetContextDB())
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to check if user exists: %s", err)
-	}
-	if ok {
-		return nil, status.Errorf(codes.AlreadyExists, "user with email %s already exists", req.GetEmail())
-	}
-
 	err = user.Insert(ctx, server.config.DB, boil.Infer())
 	if err != nil {
+		if err.Error() == "pq: duplicate key value violates unique constraint \"users_email_key\"" {
+			return nil, status.Errorf(codes.AlreadyExists, "email already exists")
+		}
 		return nil, status.Errorf(codes.Internal, "failed to insert user: %s", err)
 	}
 
@@ -49,7 +47,69 @@ func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 	}, nil
 }
 
+// login user
+func (server *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
+
+	err := validateLoginUserRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := models.Users(models.UserWhere.Email.EQ(req.GetEmail())).One(ctx, server.config.DB)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, status.Errorf(codes.NotFound, "user not found")
+		}
+		return nil, status.Error(codes.Internal, "failed to get user")
+	}
+
+	err = util.CheckPassword(req.GetPassword(), user.Password)
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "incorrect password")
+	}
+
+	accessToken, accessPayload, err := server.tokenMaker.CreateToken(
+		user.Email,
+		server.config.AccessTokenDuration,
+	)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to create access token: %s", err)
+	}
+
+	refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(
+		user.Email,
+		server.config.RefreshTokenDuration,
+	)
+
+	session := &models.Session{
+		ID:           refreshPayload.ID.String(),
+		Email:        user.Email,
+		RefreshToken: refreshToken,
+		UserAgent:    "",
+		ClientIP:     "",
+		IsBlocked:    false,
+		ExpiresAt:    refreshPayload.ExpireTime,
+	}
+	err = session.Insert(ctx, server.config.DB, boil.Infer())
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to insert session: %s", err)
+	}
+
+	return &pb.LoginResponse{
+		User:                   pbx.DbUserToProto(user),
+		SessionId:              session.ID,
+		AccessToken:            accessToken,
+		RefreshToken:           refreshToken,
+		AccessTokenExpireTime:  timestamppb.New(accessPayload.ExpireTime),
+		RefreshTokenExpireTime: timestamppb.New(refreshPayload.ExpireTime),
+	}, nil
+
+}
+
 func validateCreateUserRequest(req *pb.CreateUserRequest) error {
-	//validate request
+	return nil
+}
+
+func validateLoginUserRequest(req *pb.LoginRequest) error {
 	return nil
 }

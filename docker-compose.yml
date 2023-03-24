@@ -1,20 +1,6 @@
 version: '3.9'
 
 services:
-  web-with-air:
-    image: cosmtrek/air
-    # working_dir value has to be the same of mapped volume
-    working_dir: /app
-    ports:
-      - 8080:8080
-      - 9090:9090
-    volumes:
-      - ./:/app
-    container_name: web-with-air
-    depends_on:
-      - "db"
-    profiles:
-      - air
   web:
     build:
       context: .
@@ -23,6 +9,7 @@ services:
       - app.env
     ports:
       - "3000:3000"
+      - "9090:9090"
     volumes:
       - ./:/app:delegated
     depends_on:

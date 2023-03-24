@@ -36,16 +36,19 @@ func runGrpcServer(config util.Config, store *sql.DB) {
 	if err != nil {
 		log.Println(fmt.Printf("Failed to create gRPC server. %v", err))
 	}
+	log.Println("gRPC server created")
 	grpcServer := grpc.NewServer()
 	pb.RegisterPortfolioServiceServer(grpcServer, server)
 	reflection.Register(grpcServer)
+
+	log.Println("Starting to listen on port " + config.GRPCServerAddress)
 
 	listener, err := net.Listen("tcp", config.GRPCServerAddress)
 	if err != nil {
 		log.Println(fmt.Printf("Failed to listen. %v", err))
 	}
 
-	log.Println(fmt.Printf("Starting gRPC server on port %s", listener.Addr().String()))
+	log.Println(fmt.Printf("Starting gRPC server on port %s.", listener.Addr().String()))
 	err = grpcServer.Serve(listener)
 	if err != nil {
 		log.Println(fmt.Printf("Failed to serve gRPC server over port %s. %v", listener.Addr().String(), err))

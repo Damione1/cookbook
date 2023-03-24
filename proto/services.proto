@@ -14,4 +14,5 @@ service PortfolioService {
   rpc CreatePost (CreatePostRequest) returns (CreatePostResponse) {}
   rpc GetPost (GetPostRequest) returns (GetPostResponse) {}
   rpc ListPosts (ListPostsRequest) returns (ListPostsResponse) {}
+  rpc Login (LoginRequest) returns (LoginResponse) {}
 }
