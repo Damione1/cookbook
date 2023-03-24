@@ -9,6 +9,7 @@ services:
       - app.env
     ports:
       - "3000:3000"
+      - "8080:8080"
       - "9090:9090"
     volumes:
       - ./:/app:delegated

@@ -21,7 +21,7 @@ docker-compose up generate-models
 ## To generate the protobuf files, run the following command:
 
 ```bash
-rm -f ./pkg/pb/*.go && protoc --go-grpc_out=pkg/pb --go_out=pkg/pb --proto_path=proto --go-grpc_opt=paths=source_relative --go_opt=paths=source_relative ./proto/*.proto
+protoc --go-grpc_out=pkg/pb --go_out=pkg/pb --proto_path=proto --go-grpc_opt=paths=source_relative --go_opt=paths=source_relative --grpc-gateway_out=pkg/pb --grpc-gateway_opt=paths=source_relative ./proto/*.proto
 ```
 **Note: You need to have the `protoc` binary installed on your machine. You can download it from [here](https://github.com/protocolbuffers/protobuf/releases/), copy it in a folder and put the path of his `bin` folder in your `PATH` environment variable.**
 
