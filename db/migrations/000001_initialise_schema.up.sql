@@ -39,13 +39,15 @@ CREATE TABLE sessions (
 );
 
 ALTER TABLE "sessions" ADD FOREIGN KEY ("email") REFERENCES "users" ("email");
+CREATE INDEX sessions_refresh_token_idx ON sessions (refresh_token);
 
 -- Blog post table
 CREATE TABLE blog_posts (
   id SERIAL PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
   slug VARCHAR(255) NOT NULL UNIQUE,
-  content TEXT NOT NULL,
+  content TEXT,
+  excerpt TEXT,
   image_id INTEGER REFERENCES media(id),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),

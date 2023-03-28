@@ -85,3 +85,28 @@ message LoginResponse {
     google.protobuf.Timestamp refresh_token_expire_time = 6;
 
 }
+
+message RefreshTokenRequest {
+    // RefreshToken is the refresh token.
+    string refresh_token = 1;
+}
+
+message RefreshTokenResponse {
+    // AccessToken is the access token.
+    string access_token = 1;
+    // RefreshToken is the refresh token.
+    string refresh_token = 2;
+    // AccessTokenExpiresTime is the access token expiration time.
+    google.protobuf.Timestamp access_token_expire_time = 3;
+    // RefreshTokenExpiresTime is the refresh token expiration time.
+    google.protobuf.Timestamp refresh_token_expire_time = 4;
+}
+
+message LogoutRequest {
+    // RefreshToken is the refresh token.
+    string refresh_token = 1;
+}
+
+message LogoutResponse {
+   bool success = 1;
+}

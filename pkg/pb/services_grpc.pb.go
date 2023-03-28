@@ -26,6 +26,8 @@ type PortfolioServiceClient interface {
 	GetPost(ctx context.Context, in *GetPostRequest, opts ...grpc.CallOption) (*GetPostResponse, error)
 	ListPosts(ctx context.Context, in *ListPostsRequest, opts ...grpc.CallOption) (*ListPostsResponse, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
+	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
+	RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
 }
 
 type portfolioServiceClient struct {
@@ -108,6 +110,24 @@ func (c *portfolioServiceClient) Login(ctx context.Context, in *LoginRequest, op
 	return out, nil
 }
 
+func (c *portfolioServiceClient) Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error) {
+	out := new(LogoutResponse)
+	err := c.cc.Invoke(ctx, "/pb.PortfolioService/Logout", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *portfolioServiceClient) RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error) {
+	out := new(RefreshTokenResponse)
+	err := c.cc.Invoke(ctx, "/pb.PortfolioService/RefreshToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PortfolioServiceServer is the server API for PortfolioService service.
 // All implementations must embed UnimplementedPortfolioServiceServer
 // for forward compatibility
@@ -120,6 +140,8 @@ type PortfolioServiceServer interface {
 	GetPost(context.Context, *GetPostRequest) (*GetPostResponse, error)
 	ListPosts(context.Context, *ListPostsRequest) (*ListPostsResponse, error)
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
+	Logout(context.Context, *LogoutRequest) (*LogoutResponse, error)
+	RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error)
 	mustEmbedUnimplementedPortfolioServiceServer()
 }
 
@@ -150,6 +172,12 @@ func (UnimplementedPortfolioServiceServer) ListPosts(context.Context, *ListPosts
 }
 func (UnimplementedPortfolioServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
+}
+func (UnimplementedPortfolioServiceServer) Logout(context.Context, *LogoutRequest) (*LogoutResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
+}
+func (UnimplementedPortfolioServiceServer) RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RefreshToken not implemented")
 }
 func (UnimplementedPortfolioServiceServer) mustEmbedUnimplementedPortfolioServiceServer() {}
 
@@ -308,6 +336,42 @@ func _PortfolioService_Login_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PortfolioService_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LogoutRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PortfolioServiceServer).Logout(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.PortfolioService/Logout",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PortfolioServiceServer).Logout(ctx, req.(*LogoutRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PortfolioService_RefreshToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RefreshTokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PortfolioServiceServer).RefreshToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.PortfolioService/RefreshToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PortfolioServiceServer).RefreshToken(ctx, req.(*RefreshTokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PortfolioService_ServiceDesc is the grpc.ServiceDesc for PortfolioService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -346,6 +410,14 @@ var PortfolioService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Login",
 			Handler:    _PortfolioService_Login_Handler,
+		},
+		{
+			MethodName: "Logout",
+			Handler:    _PortfolioService_Logout_Handler,
+		},
+		{
+			MethodName: "RefreshToken",
+			Handler:    _PortfolioService_RefreshToken_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

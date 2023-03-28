@@ -8,21 +8,42 @@ import "google/api/annotations.proto";
 option go_package = "portfolio-playground/pkg/proto;pb";
 
 service PortfolioService {
-  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {
-    option (google.api.http) = {
-      post: "/v1/user/create"
-      body: "*"
-    };
-  }
+  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {}
   rpc GetUser (GetUserRequest) returns (GetUserResponse) {}
   rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {}
   rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse) {}
-  rpc CreatePost (CreatePostRequest) returns (CreatePostResponse) {}
-  rpc GetPost (GetPostRequest) returns (GetPostResponse) {}
-  rpc ListPosts (ListPostsRequest) returns (ListPostsResponse) {}
+  rpc CreatePost (CreatePostRequest) returns (CreatePostResponse) {
+    option (google.api.http) = {
+      post: "/v1/post/create"
+      body: "*"
+    };
+  }
+  rpc GetPost (GetPostRequest) returns (GetPostResponse) {
+    option (google.api.http) = {
+      get: "/v1/post/get/{id}"
+    };
+  }
+  rpc ListPosts (ListPostsRequest) returns (ListPostsResponse) {
+    option (google.api.http) = {
+      post: "/v1/post/list"
+      body: "*"
+    };
+  }
   rpc Login (LoginRequest) returns (LoginResponse) {
     option (google.api.http) = {
       post: "/v1/user/login"
+      body: "*"
+    };
+  }
+  rpc Logout (LogoutRequest) returns (LogoutResponse) {
+    option (google.api.http) = {
+      post: "/v1/user/logout"
+      body: "*"
+    };
+  }
+  rpc RefreshToken (RefreshTokenRequest) returns (RefreshTokenResponse) {
+    option (google.api.http) = {
+      post: "/v1/user/refresh"
       body: "*"
     };
   }
