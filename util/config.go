@@ -24,6 +24,7 @@ type Config struct {
 	PostgresPassword     string        `mapstructure:"POSTGRES_PASSWORD"`
 	PostgresDb           string        `mapstructure:"POSTGRES_DB"`
 	DB                   *sql.DB       `mapstructure:"-"`
+	AdminEmail           string        `mapstructure:"ADMIN_EMAIL"`
 }
 
 // LoadConfig reads configuration from file or environment variables.

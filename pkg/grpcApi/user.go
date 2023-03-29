@@ -29,9 +29,17 @@ const (
 )
 
 func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
-	err := validateCreateUserRequest(req)
+	authPayload, err := server.authorizeUser(ctx)
 	if err != nil {
+		return nil, unauthenticatedError(err)
+	}
+
+	if err = validateCreateUserRequest(req); err != nil {
 		return nil, err
+	}
+
+	if authPayload.Email != server.config.AdminEmail {
+		return nil, status.Errorf(codes.PermissionDenied, "cannot update other user's info")
 	}
 
 	hashedPassword, err := util.HashPassword(req.GetPassword())

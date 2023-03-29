@@ -11,8 +11,12 @@ import (
 )
 
 func (server *Server) CreatePost(ctx context.Context, req *pb.CreatePostRequest) (*pb.CreatePostResponse, error) {
-	err := validateCreatePostRequest(req)
+	_, err := server.authorizeUser(ctx)
 	if err != nil {
+		return nil, unauthenticatedError(err)
+	}
+
+	if err := validateCreatePostRequest(req); err != nil {
 		return nil, err
 	}
 
