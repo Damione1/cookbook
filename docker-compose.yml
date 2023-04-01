@@ -4,7 +4,7 @@ services:
   web:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-web
     env_file:
       - app.env
     ports:
@@ -30,9 +30,9 @@ services:
   generate-models:
     build:
       context: .
+      dockerfile: Dockerfile-models
     depends_on:
       - "db"
-      - "web"
     command: sqlboiler psql --add-global-variants
     volumes:
       - ./:/app

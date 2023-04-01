@@ -4,11 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"regexp"
 
 	"github.com/Damione1/portfolio-playground/db/models"
 	"github.com/Damione1/portfolio-playground/pkg/pb"
 	"github.com/Damione1/portfolio-playground/pkg/pbx"
 	"github.com/Damione1/portfolio-playground/util"
+	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation/is"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -224,9 +227,21 @@ func (server *Server) extractMetadata(ctx context.Context) *Metadata {
 }
 
 func validateCreateUserRequest(req *pb.CreateUserRequest) error {
-	return nil
+	return validation.ValidateStruct(&req,
+		// Street cannot be empty, and the length must between 5 and 20
+		validation.Field(&req.Name, validation.Required, validation.Length(5, 20)),
+		// Email cannot be empty and should be in a valid email format
+		validation.Field(&req.Email, validation.Required, is.Email),
+		// Password cannot be empty, and the length must between 8 and 100 characters and must contain number, uppercase and lowercase letters, and special characters
+		validation.Field(&req.Password, validation.Required, validation.Length(8, 100), validation.Match(regexp.MustCompile(`^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8}$`))),
+	)
 }
 
 func validateLoginUserRequest(req *pb.LoginRequest) error {
-	return nil
+	return validation.ValidateStruct(&req,
+		// Email cannot be empty and should be in a valid email format
+		validation.Field(&req.Email, validation.Required, is.Email),
+		// Password cannot be empty
+		validation.Field(&req.Password, validation.Required, validation.Length(8, 100), validation.Match(regexp.MustCompile(`^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8}$`))),
+	)
 }

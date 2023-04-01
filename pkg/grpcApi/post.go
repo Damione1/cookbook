@@ -2,10 +2,13 @@ package grpcApi
 
 import (
 	"context"
+	"regexp"
 
 	"github.com/Damione1/portfolio-playground/db/models"
 	"github.com/Damione1/portfolio-playground/pkg/pb"
 	"github.com/Damione1/portfolio-playground/pkg/pbx"
+	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation/is"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 )
@@ -33,7 +36,44 @@ func (server *Server) CreatePost(ctx context.Context, req *pb.CreatePostRequest)
 }
 
 func validateCreatePostRequest(req *pb.CreatePostRequest) error {
-	return nil
+	return validation.ValidateStruct(&req,
+		validation.Field(&req.Post,
+			validation.Required,
+			validation.By(
+				func(value interface{}) error {
+					return validatePost(value.(*pb.Post))
+				},
+			),
+		),
+	)
+}
+
+func validateUpdatePostRequest(req *pb.CreatePostRequest) error {
+	return validation.ValidateStruct(&req,
+		validation.Field(&req.Post,
+			validation.Required,
+			validation.By(
+				func(value interface{}) error {
+					post := value.(*pb.Post)
+					return validation.ValidateStruct(post, validation.Field(&post.Id, validation.Required))
+				},
+			),
+			validation.By(
+				func(value interface{}) error {
+					return validatePost(value.(*pb.Post))
+				},
+			),
+		),
+	)
+}
+
+func validatePost(post *pb.Post) error {
+	return validation.ValidateStruct(post,
+		validation.Field(&post.Title, validation.Required, validation.Length(1, 255)),
+		validation.Field(&post.Content, validation.Required),
+		validation.Field(&post.Slug, validation.Length(1, 255), validation.Match(regexp.MustCompile(`^[a-zA-Z0-9_-]+$`))),
+		validation.Field(&post.Excerpt, validation.Length(1, 255)),
+	)
 }
 
 func (server *Server) ListPosts(ctx context.Context, req *pb.ListPostsRequest) (*pb.ListPostsResponse, error) {
@@ -79,7 +119,10 @@ func (server *Server) ListPosts(ctx context.Context, req *pb.ListPostsRequest) (
 }
 
 func validateListPostsRequest(req *pb.ListPostsRequest) error {
-	return nil
+	return validation.ValidateStruct(&req,
+		validation.Field(&req.PageSize, validation.Required, is.Int),
+		validation.Field(&req.PageToken, validation.Required, is.Int),
+	)
 }
 
 // get post
@@ -100,5 +143,7 @@ func (server *Server) GetPost(ctx context.Context, req *pb.GetPostRequest) (*pb.
 }
 
 func validateGetPostRequest(req *pb.GetPostRequest) error {
-	return nil
+	return validation.ValidateStruct(&req,
+		validation.Field(&req.Id, validation.Required, is.Int),
+	)
 }
