@@ -29,9 +29,9 @@ type User struct {
 	Password  string    `boil:"password" json:"password" toml:"password" yaml:"password"`
 	Name      string    `boil:"name" json:"name" toml:"name" yaml:"name"`
 	AvatarID  null.Int  `boil:"avatar_id" json:"avatar_id,omitempty" toml:"avatar_id" yaml:"avatar_id,omitempty"`
+	Active    null.Bool `boil:"active" json:"active,omitempty" toml:"active" yaml:"active,omitempty"`
 	CreatedAt null.Time `boil:"created_at" json:"created_at,omitempty" toml:"created_at" yaml:"created_at,omitempty"`
 	UpdatedAt null.Time `boil:"updated_at" json:"updated_at,omitempty" toml:"updated_at" yaml:"updated_at,omitempty"`
-	Active    null.Bool `boil:"active" json:"active,omitempty" toml:"active" yaml:"active,omitempty"`
 
 	R *userR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L userL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -43,18 +43,18 @@ var UserColumns = struct {
 	Password  string
 	Name      string
 	AvatarID  string
+	Active    string
 	CreatedAt string
 	UpdatedAt string
-	Active    string
 }{
 	ID:        "id",
 	Email:     "email",
 	Password:  "password",
 	Name:      "name",
 	AvatarID:  "avatar_id",
+	Active:    "active",
 	CreatedAt: "created_at",
 	UpdatedAt: "updated_at",
-	Active:    "active",
 }
 
 var UserTableColumns = struct {
@@ -63,18 +63,18 @@ var UserTableColumns = struct {
 	Password  string
 	Name      string
 	AvatarID  string
+	Active    string
 	CreatedAt string
 	UpdatedAt string
-	Active    string
 }{
 	ID:        "users.id",
 	Email:     "users.email",
 	Password:  "users.password",
 	Name:      "users.name",
 	AvatarID:  "users.avatar_id",
+	Active:    "users.active",
 	CreatedAt: "users.created_at",
 	UpdatedAt: "users.updated_at",
-	Active:    "users.active",
 }
 
 // Generated where
@@ -109,18 +109,18 @@ var UserWhere = struct {
 	Password  whereHelperstring
 	Name      whereHelperstring
 	AvatarID  whereHelpernull_Int
+	Active    whereHelpernull_Bool
 	CreatedAt whereHelpernull_Time
 	UpdatedAt whereHelpernull_Time
-	Active    whereHelpernull_Bool
 }{
 	ID:        whereHelperint{field: "\"users\".\"id\""},
 	Email:     whereHelperstring{field: "\"users\".\"email\""},
 	Password:  whereHelperstring{field: "\"users\".\"password\""},
 	Name:      whereHelperstring{field: "\"users\".\"name\""},
 	AvatarID:  whereHelpernull_Int{field: "\"users\".\"avatar_id\""},
+	Active:    whereHelpernull_Bool{field: "\"users\".\"active\""},
 	CreatedAt: whereHelpernull_Time{field: "\"users\".\"created_at\""},
 	UpdatedAt: whereHelpernull_Time{field: "\"users\".\"updated_at\""},
-	Active:    whereHelpernull_Bool{field: "\"users\".\"active\""},
 }
 
 // UserRels is where relationship names are stored.
@@ -161,9 +161,9 @@ func (r *userR) GetEmailSessions() SessionSlice {
 type userL struct{}
 
 var (
-	userAllColumns            = []string{"id", "email", "password", "name", "avatar_id", "created_at", "updated_at", "active"}
+	userAllColumns            = []string{"id", "email", "password", "name", "avatar_id", "active", "created_at", "updated_at"}
 	userColumnsWithoutDefault = []string{"email", "password", "name"}
-	userColumnsWithDefault    = []string{"id", "avatar_id", "created_at", "updated_at", "active"}
+	userColumnsWithDefault    = []string{"id", "avatar_id", "active", "created_at", "updated_at"}
 	userPrimaryKeyColumns     = []string{"id"}
 	userGeneratedColumns      = []string{}
 )

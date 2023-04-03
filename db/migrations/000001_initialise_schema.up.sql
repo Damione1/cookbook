@@ -41,31 +41,21 @@ CREATE TABLE sessions (
 ALTER TABLE "sessions" ADD FOREIGN KEY ("email") REFERENCES "users" ("email");
 CREATE INDEX sessions_refresh_token_idx ON sessions (refresh_token);
 
+CREATE TYPE post_kind AS ENUM ('blog', 'cookbook', 'diy', 'portfolio', 'project');
+
 -- Blog post table
-CREATE TABLE blog_posts (
+CREATE TABLE posts (
   id SERIAL PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
   slug VARCHAR(255) NOT NULL UNIQUE,
   content TEXT,
   excerpt TEXT,
+  kind post_kind NOT NULL,
   image_id INTEGER REFERENCES media(id),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   deleted_at TIMESTAMP WITH TIME ZONE
 );
-
--- Portfolio post table
-CREATE TABLE portfolio_posts (
-  id SERIAL PRIMARY KEY,
-  title VARCHAR(255) NOT NULL,
-  slug VARCHAR(255) NOT NULL UNIQUE,
-  content TEXT NOT NULL,
-  image_id INTEGER REFERENCES media(id),
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  deleted_at TIMESTAMP WITH TIME ZONE
-);
-
 
 
 -- Curriculum Vitae table
@@ -77,15 +67,6 @@ CREATE TABLE curriculum_vitae (
   end_date DATE,
   description TEXT,
   type cv_type NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Projects table
-CREATE TABLE projects (
-  id SERIAL PRIMARY KEY,
-  title VARCHAR(255) NOT NULL,
-  description TEXT,
-  image_id INTEGER REFERENCES media(id),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -102,21 +83,5 @@ CREATE TABLE curriculum_vitae_skills (
   id SERIAL PRIMARY KEY,
   curriculum_vitae_id INTEGER NOT NULL REFERENCES curriculum_vitae(id) ON DELETE CASCADE,
   skill_id INTEGER NOT NULL REFERENCES skills(id) ON DELETE CASCADE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Projects Skills table
-CREATE TABLE project_skills (
-  id SERIAL PRIMARY KEY,
-  project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
-  skill_id INTEGER NOT NULL REFERENCES skills(id) ON DELETE CASCADE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Curriculum Vitae Projects table
-CREATE TABLE curriculum_vitae_projects (
-  id SERIAL PRIMARY KEY,
-  curriculum_vitae_id INTEGER NOT NULL REFERENCES curriculum_vitae(id) ON DELETE CASCADE,
-  project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

@@ -93,7 +93,7 @@ func (server *Server) ListPosts(ctx context.Context, req *pb.ListPostsRequest) (
 
 	offset := pageSize * pageToken
 
-	dbPosts, err := models.BlogPosts(
+	dbPosts, err := models.Posts(
 		qm.OrderBy("created_at desc"),
 		qm.Limit(pageSize),
 		qm.Offset(offset),
@@ -125,14 +125,16 @@ func validateListPostsRequest(req *pb.ListPostsRequest) error {
 	)
 }
 
-// get post
 func (server *Server) GetPost(ctx context.Context, req *pb.GetPostRequest) (*pb.GetPostResponse, error) {
 	err := validateGetPostRequest(req)
 	if err != nil {
 		return nil, err
 	}
 
-	dbPost, err := models.FindBlogPost(ctx, server.config.DB, int(req.GetId()))
+	dbPost, err := models.Posts(
+		models.PostWhere.ID.EQ(int(req.GetId())),
+		models.PostWhere.Kind.EQ(models.PostKindBlog),
+	).One(ctx, server.config.DB)
 	if err != nil {
 		return nil, err
 	}

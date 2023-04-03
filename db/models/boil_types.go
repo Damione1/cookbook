@@ -78,3 +78,37 @@ func (e CVType) IsValid() error {
 func (e CVType) String() string {
 	return string(e)
 }
+
+type PostKind string
+
+// Enum values for PostKind
+const (
+	PostKindBlog      PostKind = "blog"
+	PostKindCookbook  PostKind = "cookbook"
+	PostKindDiy       PostKind = "diy"
+	PostKindPortfolio PostKind = "portfolio"
+	PostKindProject   PostKind = "project"
+)
+
+func AllPostKind() []PostKind {
+	return []PostKind{
+		PostKindBlog,
+		PostKindCookbook,
+		PostKindDiy,
+		PostKindPortfolio,
+		PostKindProject,
+	}
+}
+
+func (e PostKind) IsValid() error {
+	switch e {
+	case PostKindBlog, PostKindCookbook, PostKindDiy, PostKindPortfolio, PostKindProject:
+		return nil
+	default:
+		return errors.New("enum is not valid")
+	}
+}
+
+func (e PostKind) String() string {
+	return string(e)
+}

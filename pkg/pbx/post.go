@@ -8,12 +8,12 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func DbPostToProto(post *models.BlogPost) *pb.Post {
+func DbPostToProto(post *models.Post) *pb.Post {
 	postPb := &pb.Post{
 		Id:         int32(post.ID),
 		Title:      post.Title,
 		Slug:       post.Slug,
-		Content:    post.Content,
+		Content:    post.Content.String,
 		Excerpt:    post.Excerpt.String,
 		CreateTime: timestamppb.New(post.CreatedAt.Time),
 		UpdateTime: timestamppb.New(post.UpdatedAt.Time),
@@ -21,10 +21,10 @@ func DbPostToProto(post *models.BlogPost) *pb.Post {
 	return postPb
 }
 
-func ProtoPostToDb(post *pb.Post) *models.BlogPost {
-	postDb := &models.BlogPost{
+func ProtoPostToDb(post *pb.Post) *models.Post {
+	postDb := &models.Post{
 		Title:   post.GetTitle(),
-		Content: post.GetContent(),
+		Content: null.NewString(post.GetContent(), post.GetContent() != ""),
 	}
 	if post.GetId() != 0 {
 		postDb.ID = int(post.GetId())

@@ -75,18 +75,15 @@ var SkillWhere = struct {
 var SkillRels = struct {
 	Image                 string
 	CurriculumVitaeSkills string
-	ProjectSkills         string
 }{
 	Image:                 "Image",
 	CurriculumVitaeSkills: "CurriculumVitaeSkills",
-	ProjectSkills:         "ProjectSkills",
 }
 
 // skillR is where relationships are stored.
 type skillR struct {
 	Image                 *Medium                   `boil:"Image" json:"Image" toml:"Image" yaml:"Image"`
 	CurriculumVitaeSkills CurriculumVitaeSkillSlice `boil:"CurriculumVitaeSkills" json:"CurriculumVitaeSkills" toml:"CurriculumVitaeSkills" yaml:"CurriculumVitaeSkills"`
-	ProjectSkills         ProjectSkillSlice         `boil:"ProjectSkills" json:"ProjectSkills" toml:"ProjectSkills" yaml:"ProjectSkills"`
 }
 
 // NewStruct creates a new relationship struct
@@ -106,13 +103,6 @@ func (r *skillR) GetCurriculumVitaeSkills() CurriculumVitaeSkillSlice {
 		return nil
 	}
 	return r.CurriculumVitaeSkills
-}
-
-func (r *skillR) GetProjectSkills() ProjectSkillSlice {
-	if r == nil {
-		return nil
-	}
-	return r.ProjectSkills
 }
 
 // skillL is where Load methods for each relationship are stored.
@@ -449,20 +439,6 @@ func (o *Skill) CurriculumVitaeSkills(mods ...qm.QueryMod) curriculumVitaeSkillQ
 	return CurriculumVitaeSkills(queryMods...)
 }
 
-// ProjectSkills retrieves all the project_skill's ProjectSkills with an executor.
-func (o *Skill) ProjectSkills(mods ...qm.QueryMod) projectSkillQuery {
-	var queryMods []qm.QueryMod
-	if len(mods) != 0 {
-		queryMods = append(queryMods, mods...)
-	}
-
-	queryMods = append(queryMods,
-		qm.Where("\"project_skills\".\"skill_id\"=?", o.ID),
-	)
-
-	return ProjectSkills(queryMods...)
-}
-
 // LoadImage allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for an N-1 relationship.
 func (skillL) LoadImage(ctx context.Context, e boil.ContextExecutor, singular bool, maybeSkill interface{}, mods queries.Applicator) error {
@@ -701,120 +677,6 @@ func (skillL) LoadCurriculumVitaeSkills(ctx context.Context, e boil.ContextExecu
 	return nil
 }
 
-// LoadProjectSkills allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (skillL) LoadProjectSkills(ctx context.Context, e boil.ContextExecutor, singular bool, maybeSkill interface{}, mods queries.Applicator) error {
-	var slice []*Skill
-	var object *Skill
-
-	if singular {
-		var ok bool
-		object, ok = maybeSkill.(*Skill)
-		if !ok {
-			object = new(Skill)
-			ok = queries.SetFromEmbeddedStruct(&object, &maybeSkill)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeSkill))
-			}
-		}
-	} else {
-		s, ok := maybeSkill.(*[]*Skill)
-		if ok {
-			slice = *s
-		} else {
-			ok = queries.SetFromEmbeddedStruct(&slice, maybeSkill)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeSkill))
-			}
-		}
-	}
-
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &skillR{}
-		}
-		args = append(args, object.ID)
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &skillR{}
-			}
-
-			for _, a := range args {
-				if a == obj.ID {
-					continue Outer
-				}
-			}
-
-			args = append(args, obj.ID)
-		}
-	}
-
-	if len(args) == 0 {
-		return nil
-	}
-
-	query := NewQuery(
-		qm.From(`project_skills`),
-		qm.WhereIn(`project_skills.skill_id in ?`, args...),
-	)
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load project_skills")
-	}
-
-	var resultSlice []*ProjectSkill
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice project_skills")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results in eager load on project_skills")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for project_skills")
-	}
-
-	if len(projectSkillAfterSelectHooks) != 0 {
-		for _, obj := range resultSlice {
-			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
-				return err
-			}
-		}
-	}
-	if singular {
-		object.R.ProjectSkills = resultSlice
-		for _, foreign := range resultSlice {
-			if foreign.R == nil {
-				foreign.R = &projectSkillR{}
-			}
-			foreign.R.Skill = object
-		}
-		return nil
-	}
-
-	for _, foreign := range resultSlice {
-		for _, local := range slice {
-			if local.ID == foreign.SkillID {
-				local.R.ProjectSkills = append(local.R.ProjectSkills, foreign)
-				if foreign.R == nil {
-					foreign.R = &projectSkillR{}
-				}
-				foreign.R.Skill = local
-				break
-			}
-		}
-	}
-
-	return nil
-}
-
 // SetImageG of the skill to the related item.
 // Sets o.R.Image to related.
 // Adds o to related.R.ImageSkills.
@@ -964,68 +826,6 @@ func (o *Skill) AddCurriculumVitaeSkills(ctx context.Context, exec boil.ContextE
 	for _, rel := range related {
 		if rel.R == nil {
 			rel.R = &curriculumVitaeSkillR{
-				Skill: o,
-			}
-		} else {
-			rel.R.Skill = o
-		}
-	}
-	return nil
-}
-
-// AddProjectSkillsG adds the given related objects to the existing relationships
-// of the skill, optionally inserting them as new records.
-// Appends related to o.R.ProjectSkills.
-// Sets related.R.Skill appropriately.
-// Uses the global database handle.
-func (o *Skill) AddProjectSkillsG(ctx context.Context, insert bool, related ...*ProjectSkill) error {
-	return o.AddProjectSkills(ctx, boil.GetContextDB(), insert, related...)
-}
-
-// AddProjectSkills adds the given related objects to the existing relationships
-// of the skill, optionally inserting them as new records.
-// Appends related to o.R.ProjectSkills.
-// Sets related.R.Skill appropriately.
-func (o *Skill) AddProjectSkills(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*ProjectSkill) error {
-	var err error
-	for _, rel := range related {
-		if insert {
-			rel.SkillID = o.ID
-			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
-				return errors.Wrap(err, "failed to insert into foreign table")
-			}
-		} else {
-			updateQuery := fmt.Sprintf(
-				"UPDATE \"project_skills\" SET %s WHERE %s",
-				strmangle.SetParamNames("\"", "\"", 1, []string{"skill_id"}),
-				strmangle.WhereClause("\"", "\"", 2, projectSkillPrimaryKeyColumns),
-			)
-			values := []interface{}{o.ID, rel.ID}
-
-			if boil.IsDebug(ctx) {
-				writer := boil.DebugWriterFrom(ctx)
-				fmt.Fprintln(writer, updateQuery)
-				fmt.Fprintln(writer, values)
-			}
-			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-				return errors.Wrap(err, "failed to update foreign table")
-			}
-
-			rel.SkillID = o.ID
-		}
-	}
-
-	if o.R == nil {
-		o.R = &skillR{
-			ProjectSkills: related,
-		}
-	} else {
-		o.R.ProjectSkills = append(o.R.ProjectSkills, related...)
-	}
-
-	for _, rel := range related {
-		if rel.R == nil {
-			rel.R = &projectSkillR{
 				Skill: o,
 			}
 		} else {

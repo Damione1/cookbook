@@ -13,6 +13,8 @@ message User {
     string name = 2;
     // Email is the user's email.
     string email = 3;
+    // Password is the user's password.
+    string password = 4;
 }
 
 message CreateUserRequest {
@@ -40,12 +42,7 @@ message GetUserResponse {
 }
 
 message UpdateUserRequest {
-    // ID is the unique identifier for the user.
-    int32 id = 1;
-    // Name is the user's name.
-    string name = 2;
-    // Email is the user's email.
-    string email = 3;
+    User user = 1;
 }
 
 message UpdateUserResponse {

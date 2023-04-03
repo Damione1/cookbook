@@ -94,26 +94,20 @@ var MediumWhere = struct {
 
 // MediumRels is where relationship names are stored.
 var MediumRels = struct {
-	ImageBlogPosts      string
-	ImagePortfolioPosts string
-	ImageProjects       string
-	ImageSkills         string
-	AvatarUsers         string
+	ImagePosts  string
+	ImageSkills string
+	AvatarUsers string
 }{
-	ImageBlogPosts:      "ImageBlogPosts",
-	ImagePortfolioPosts: "ImagePortfolioPosts",
-	ImageProjects:       "ImageProjects",
-	ImageSkills:         "ImageSkills",
-	AvatarUsers:         "AvatarUsers",
+	ImagePosts:  "ImagePosts",
+	ImageSkills: "ImageSkills",
+	AvatarUsers: "AvatarUsers",
 }
 
 // mediumR is where relationships are stored.
 type mediumR struct {
-	ImageBlogPosts      BlogPostSlice      `boil:"ImageBlogPosts" json:"ImageBlogPosts" toml:"ImageBlogPosts" yaml:"ImageBlogPosts"`
-	ImagePortfolioPosts PortfolioPostSlice `boil:"ImagePortfolioPosts" json:"ImagePortfolioPosts" toml:"ImagePortfolioPosts" yaml:"ImagePortfolioPosts"`
-	ImageProjects       ProjectSlice       `boil:"ImageProjects" json:"ImageProjects" toml:"ImageProjects" yaml:"ImageProjects"`
-	ImageSkills         SkillSlice         `boil:"ImageSkills" json:"ImageSkills" toml:"ImageSkills" yaml:"ImageSkills"`
-	AvatarUsers         UserSlice          `boil:"AvatarUsers" json:"AvatarUsers" toml:"AvatarUsers" yaml:"AvatarUsers"`
+	ImagePosts  PostSlice  `boil:"ImagePosts" json:"ImagePosts" toml:"ImagePosts" yaml:"ImagePosts"`
+	ImageSkills SkillSlice `boil:"ImageSkills" json:"ImageSkills" toml:"ImageSkills" yaml:"ImageSkills"`
+	AvatarUsers UserSlice  `boil:"AvatarUsers" json:"AvatarUsers" toml:"AvatarUsers" yaml:"AvatarUsers"`
 }
 
 // NewStruct creates a new relationship struct
@@ -121,25 +115,11 @@ func (*mediumR) NewStruct() *mediumR {
 	return &mediumR{}
 }
 
-func (r *mediumR) GetImageBlogPosts() BlogPostSlice {
+func (r *mediumR) GetImagePosts() PostSlice {
 	if r == nil {
 		return nil
 	}
-	return r.ImageBlogPosts
-}
-
-func (r *mediumR) GetImagePortfolioPosts() PortfolioPostSlice {
-	if r == nil {
-		return nil
-	}
-	return r.ImagePortfolioPosts
-}
-
-func (r *mediumR) GetImageProjects() ProjectSlice {
-	if r == nil {
-		return nil
-	}
-	return r.ImageProjects
+	return r.ImagePosts
 }
 
 func (r *mediumR) GetImageSkills() SkillSlice {
@@ -465,46 +445,18 @@ func (q mediumQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (boo
 	return count > 0, nil
 }
 
-// ImageBlogPosts retrieves all the blog_post's BlogPosts with an executor via image_id column.
-func (o *Medium) ImageBlogPosts(mods ...qm.QueryMod) blogPostQuery {
+// ImagePosts retrieves all the post's Posts with an executor via image_id column.
+func (o *Medium) ImagePosts(mods ...qm.QueryMod) postQuery {
 	var queryMods []qm.QueryMod
 	if len(mods) != 0 {
 		queryMods = append(queryMods, mods...)
 	}
 
 	queryMods = append(queryMods,
-		qm.Where("\"blog_posts\".\"image_id\"=?", o.ID),
+		qm.Where("\"posts\".\"image_id\"=?", o.ID),
 	)
 
-	return BlogPosts(queryMods...)
-}
-
-// ImagePortfolioPosts retrieves all the portfolio_post's PortfolioPosts with an executor via image_id column.
-func (o *Medium) ImagePortfolioPosts(mods ...qm.QueryMod) portfolioPostQuery {
-	var queryMods []qm.QueryMod
-	if len(mods) != 0 {
-		queryMods = append(queryMods, mods...)
-	}
-
-	queryMods = append(queryMods,
-		qm.Where("\"portfolio_posts\".\"image_id\"=?", o.ID),
-	)
-
-	return PortfolioPosts(queryMods...)
-}
-
-// ImageProjects retrieves all the project's Projects with an executor via image_id column.
-func (o *Medium) ImageProjects(mods ...qm.QueryMod) projectQuery {
-	var queryMods []qm.QueryMod
-	if len(mods) != 0 {
-		queryMods = append(queryMods, mods...)
-	}
-
-	queryMods = append(queryMods,
-		qm.Where("\"projects\".\"image_id\"=?", o.ID),
-	)
-
-	return Projects(queryMods...)
+	return Posts(queryMods...)
 }
 
 // ImageSkills retrieves all the skill's Skills with an executor via image_id column.
@@ -535,9 +487,9 @@ func (o *Medium) AvatarUsers(mods ...qm.QueryMod) userQuery {
 	return Users(queryMods...)
 }
 
-// LoadImageBlogPosts allows an eager lookup of values, cached into the
+// LoadImagePosts allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (mediumL) LoadImageBlogPosts(ctx context.Context, e boil.ContextExecutor, singular bool, maybeMedium interface{}, mods queries.Applicator) error {
+func (mediumL) LoadImagePosts(ctx context.Context, e boil.ContextExecutor, singular bool, maybeMedium interface{}, mods queries.Applicator) error {
 	var slice []*Medium
 	var object *Medium
 
@@ -591,8 +543,8 @@ func (mediumL) LoadImageBlogPosts(ctx context.Context, e boil.ContextExecutor, s
 	}
 
 	query := NewQuery(
-		qm.From(`blog_posts`),
-		qm.WhereIn(`blog_posts.image_id in ?`, args...),
+		qm.From(`posts`),
+		qm.WhereIn(`posts.image_id in ?`, args...),
 	)
 	if mods != nil {
 		mods.Apply(query)
@@ -600,22 +552,22 @@ func (mediumL) LoadImageBlogPosts(ctx context.Context, e boil.ContextExecutor, s
 
 	results, err := query.QueryContext(ctx, e)
 	if err != nil {
-		return errors.Wrap(err, "failed to eager load blog_posts")
+		return errors.Wrap(err, "failed to eager load posts")
 	}
 
-	var resultSlice []*BlogPost
+	var resultSlice []*Post
 	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice blog_posts")
+		return errors.Wrap(err, "failed to bind eager loaded slice posts")
 	}
 
 	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results in eager load on blog_posts")
+		return errors.Wrap(err, "failed to close results in eager load on posts")
 	}
 	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for blog_posts")
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for posts")
 	}
 
-	if len(blogPostAfterSelectHooks) != 0 {
+	if len(postAfterSelectHooks) != 0 {
 		for _, obj := range resultSlice {
 			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
 				return err
@@ -623,10 +575,10 @@ func (mediumL) LoadImageBlogPosts(ctx context.Context, e boil.ContextExecutor, s
 		}
 	}
 	if singular {
-		object.R.ImageBlogPosts = resultSlice
+		object.R.ImagePosts = resultSlice
 		for _, foreign := range resultSlice {
 			if foreign.R == nil {
-				foreign.R = &blogPostR{}
+				foreign.R = &postR{}
 			}
 			foreign.R.Image = object
 		}
@@ -636,237 +588,9 @@ func (mediumL) LoadImageBlogPosts(ctx context.Context, e boil.ContextExecutor, s
 	for _, foreign := range resultSlice {
 		for _, local := range slice {
 			if queries.Equal(local.ID, foreign.ImageID) {
-				local.R.ImageBlogPosts = append(local.R.ImageBlogPosts, foreign)
+				local.R.ImagePosts = append(local.R.ImagePosts, foreign)
 				if foreign.R == nil {
-					foreign.R = &blogPostR{}
-				}
-				foreign.R.Image = local
-				break
-			}
-		}
-	}
-
-	return nil
-}
-
-// LoadImagePortfolioPosts allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (mediumL) LoadImagePortfolioPosts(ctx context.Context, e boil.ContextExecutor, singular bool, maybeMedium interface{}, mods queries.Applicator) error {
-	var slice []*Medium
-	var object *Medium
-
-	if singular {
-		var ok bool
-		object, ok = maybeMedium.(*Medium)
-		if !ok {
-			object = new(Medium)
-			ok = queries.SetFromEmbeddedStruct(&object, &maybeMedium)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeMedium))
-			}
-		}
-	} else {
-		s, ok := maybeMedium.(*[]*Medium)
-		if ok {
-			slice = *s
-		} else {
-			ok = queries.SetFromEmbeddedStruct(&slice, maybeMedium)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeMedium))
-			}
-		}
-	}
-
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &mediumR{}
-		}
-		args = append(args, object.ID)
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &mediumR{}
-			}
-
-			for _, a := range args {
-				if queries.Equal(a, obj.ID) {
-					continue Outer
-				}
-			}
-
-			args = append(args, obj.ID)
-		}
-	}
-
-	if len(args) == 0 {
-		return nil
-	}
-
-	query := NewQuery(
-		qm.From(`portfolio_posts`),
-		qm.WhereIn(`portfolio_posts.image_id in ?`, args...),
-	)
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load portfolio_posts")
-	}
-
-	var resultSlice []*PortfolioPost
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice portfolio_posts")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results in eager load on portfolio_posts")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for portfolio_posts")
-	}
-
-	if len(portfolioPostAfterSelectHooks) != 0 {
-		for _, obj := range resultSlice {
-			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
-				return err
-			}
-		}
-	}
-	if singular {
-		object.R.ImagePortfolioPosts = resultSlice
-		for _, foreign := range resultSlice {
-			if foreign.R == nil {
-				foreign.R = &portfolioPostR{}
-			}
-			foreign.R.Image = object
-		}
-		return nil
-	}
-
-	for _, foreign := range resultSlice {
-		for _, local := range slice {
-			if queries.Equal(local.ID, foreign.ImageID) {
-				local.R.ImagePortfolioPosts = append(local.R.ImagePortfolioPosts, foreign)
-				if foreign.R == nil {
-					foreign.R = &portfolioPostR{}
-				}
-				foreign.R.Image = local
-				break
-			}
-		}
-	}
-
-	return nil
-}
-
-// LoadImageProjects allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (mediumL) LoadImageProjects(ctx context.Context, e boil.ContextExecutor, singular bool, maybeMedium interface{}, mods queries.Applicator) error {
-	var slice []*Medium
-	var object *Medium
-
-	if singular {
-		var ok bool
-		object, ok = maybeMedium.(*Medium)
-		if !ok {
-			object = new(Medium)
-			ok = queries.SetFromEmbeddedStruct(&object, &maybeMedium)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeMedium))
-			}
-		}
-	} else {
-		s, ok := maybeMedium.(*[]*Medium)
-		if ok {
-			slice = *s
-		} else {
-			ok = queries.SetFromEmbeddedStruct(&slice, maybeMedium)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeMedium))
-			}
-		}
-	}
-
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &mediumR{}
-		}
-		args = append(args, object.ID)
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &mediumR{}
-			}
-
-			for _, a := range args {
-				if queries.Equal(a, obj.ID) {
-					continue Outer
-				}
-			}
-
-			args = append(args, obj.ID)
-		}
-	}
-
-	if len(args) == 0 {
-		return nil
-	}
-
-	query := NewQuery(
-		qm.From(`projects`),
-		qm.WhereIn(`projects.image_id in ?`, args...),
-	)
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load projects")
-	}
-
-	var resultSlice []*Project
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice projects")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results in eager load on projects")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for projects")
-	}
-
-	if len(projectAfterSelectHooks) != 0 {
-		for _, obj := range resultSlice {
-			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
-				return err
-			}
-		}
-	}
-	if singular {
-		object.R.ImageProjects = resultSlice
-		for _, foreign := range resultSlice {
-			if foreign.R == nil {
-				foreign.R = &projectR{}
-			}
-			foreign.R.Image = object
-		}
-		return nil
-	}
-
-	for _, foreign := range resultSlice {
-		for _, local := range slice {
-			if queries.Equal(local.ID, foreign.ImageID) {
-				local.R.ImageProjects = append(local.R.ImageProjects, foreign)
-				if foreign.R == nil {
-					foreign.R = &projectR{}
+					foreign.R = &postR{}
 				}
 				foreign.R.Image = local
 				break
@@ -1105,20 +829,20 @@ func (mediumL) LoadAvatarUsers(ctx context.Context, e boil.ContextExecutor, sing
 	return nil
 }
 
-// AddImageBlogPostsG adds the given related objects to the existing relationships
+// AddImagePostsG adds the given related objects to the existing relationships
 // of the medium, optionally inserting them as new records.
-// Appends related to o.R.ImageBlogPosts.
+// Appends related to o.R.ImagePosts.
 // Sets related.R.Image appropriately.
 // Uses the global database handle.
-func (o *Medium) AddImageBlogPostsG(ctx context.Context, insert bool, related ...*BlogPost) error {
-	return o.AddImageBlogPosts(ctx, boil.GetContextDB(), insert, related...)
+func (o *Medium) AddImagePostsG(ctx context.Context, insert bool, related ...*Post) error {
+	return o.AddImagePosts(ctx, boil.GetContextDB(), insert, related...)
 }
 
-// AddImageBlogPosts adds the given related objects to the existing relationships
+// AddImagePosts adds the given related objects to the existing relationships
 // of the medium, optionally inserting them as new records.
-// Appends related to o.R.ImageBlogPosts.
+// Appends related to o.R.ImagePosts.
 // Sets related.R.Image appropriately.
-func (o *Medium) AddImageBlogPosts(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*BlogPost) error {
+func (o *Medium) AddImagePosts(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Post) error {
 	var err error
 	for _, rel := range related {
 		if insert {
@@ -1128,9 +852,9 @@ func (o *Medium) AddImageBlogPosts(ctx context.Context, exec boil.ContextExecuto
 			}
 		} else {
 			updateQuery := fmt.Sprintf(
-				"UPDATE \"blog_posts\" SET %s WHERE %s",
+				"UPDATE \"posts\" SET %s WHERE %s",
 				strmangle.SetParamNames("\"", "\"", 1, []string{"image_id"}),
-				strmangle.WhereClause("\"", "\"", 2, blogPostPrimaryKeyColumns),
+				strmangle.WhereClause("\"", "\"", 2, postPrimaryKeyColumns),
 			)
 			values := []interface{}{o.ID, rel.ID}
 
@@ -1149,15 +873,15 @@ func (o *Medium) AddImageBlogPosts(ctx context.Context, exec boil.ContextExecuto
 
 	if o.R == nil {
 		o.R = &mediumR{
-			ImageBlogPosts: related,
+			ImagePosts: related,
 		}
 	} else {
-		o.R.ImageBlogPosts = append(o.R.ImageBlogPosts, related...)
+		o.R.ImagePosts = append(o.R.ImagePosts, related...)
 	}
 
 	for _, rel := range related {
 		if rel.R == nil {
-			rel.R = &blogPostR{
+			rel.R = &postR{
 				Image: o,
 			}
 		} else {
@@ -1167,25 +891,25 @@ func (o *Medium) AddImageBlogPosts(ctx context.Context, exec boil.ContextExecuto
 	return nil
 }
 
-// SetImageBlogPostsG removes all previously related items of the
+// SetImagePostsG removes all previously related items of the
 // medium replacing them completely with the passed
 // in related items, optionally inserting them as new records.
-// Sets o.R.Image's ImageBlogPosts accordingly.
-// Replaces o.R.ImageBlogPosts with related.
-// Sets related.R.Image's ImageBlogPosts accordingly.
+// Sets o.R.Image's ImagePosts accordingly.
+// Replaces o.R.ImagePosts with related.
+// Sets related.R.Image's ImagePosts accordingly.
 // Uses the global database handle.
-func (o *Medium) SetImageBlogPostsG(ctx context.Context, insert bool, related ...*BlogPost) error {
-	return o.SetImageBlogPosts(ctx, boil.GetContextDB(), insert, related...)
+func (o *Medium) SetImagePostsG(ctx context.Context, insert bool, related ...*Post) error {
+	return o.SetImagePosts(ctx, boil.GetContextDB(), insert, related...)
 }
 
-// SetImageBlogPosts removes all previously related items of the
+// SetImagePosts removes all previously related items of the
 // medium replacing them completely with the passed
 // in related items, optionally inserting them as new records.
-// Sets o.R.Image's ImageBlogPosts accordingly.
-// Replaces o.R.ImageBlogPosts with related.
-// Sets related.R.Image's ImageBlogPosts accordingly.
-func (o *Medium) SetImageBlogPosts(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*BlogPost) error {
-	query := "update \"blog_posts\" set \"image_id\" = null where \"image_id\" = $1"
+// Sets o.R.Image's ImagePosts accordingly.
+// Replaces o.R.ImagePosts with related.
+// Sets related.R.Image's ImagePosts accordingly.
+func (o *Medium) SetImagePosts(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Post) error {
+	query := "update \"posts\" set \"image_id\" = null where \"image_id\" = $1"
 	values := []interface{}{o.ID}
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)
@@ -1198,7 +922,7 @@ func (o *Medium) SetImageBlogPosts(ctx context.Context, exec boil.ContextExecuto
 	}
 
 	if o.R != nil {
-		for _, rel := range o.R.ImageBlogPosts {
+		for _, rel := range o.R.ImagePosts {
 			queries.SetScanner(&rel.ImageID, nil)
 			if rel.R == nil {
 				continue
@@ -1206,24 +930,24 @@ func (o *Medium) SetImageBlogPosts(ctx context.Context, exec boil.ContextExecuto
 
 			rel.R.Image = nil
 		}
-		o.R.ImageBlogPosts = nil
+		o.R.ImagePosts = nil
 	}
 
-	return o.AddImageBlogPosts(ctx, exec, insert, related...)
+	return o.AddImagePosts(ctx, exec, insert, related...)
 }
 
-// RemoveImageBlogPostsG relationships from objects passed in.
-// Removes related items from R.ImageBlogPosts (uses pointer comparison, removal does not keep order)
+// RemoveImagePostsG relationships from objects passed in.
+// Removes related items from R.ImagePosts (uses pointer comparison, removal does not keep order)
 // Sets related.R.Image.
 // Uses the global database handle.
-func (o *Medium) RemoveImageBlogPostsG(ctx context.Context, related ...*BlogPost) error {
-	return o.RemoveImageBlogPosts(ctx, boil.GetContextDB(), related...)
+func (o *Medium) RemoveImagePostsG(ctx context.Context, related ...*Post) error {
+	return o.RemoveImagePosts(ctx, boil.GetContextDB(), related...)
 }
 
-// RemoveImageBlogPosts relationships from objects passed in.
-// Removes related items from R.ImageBlogPosts (uses pointer comparison, removal does not keep order)
+// RemoveImagePosts relationships from objects passed in.
+// Removes related items from R.ImagePosts (uses pointer comparison, removal does not keep order)
 // Sets related.R.Image.
-func (o *Medium) RemoveImageBlogPosts(ctx context.Context, exec boil.ContextExecutor, related ...*BlogPost) error {
+func (o *Medium) RemoveImagePosts(ctx context.Context, exec boil.ContextExecutor, related ...*Post) error {
 	if len(related) == 0 {
 		return nil
 	}
@@ -1243,326 +967,16 @@ func (o *Medium) RemoveImageBlogPosts(ctx context.Context, exec boil.ContextExec
 	}
 
 	for _, rel := range related {
-		for i, ri := range o.R.ImageBlogPosts {
+		for i, ri := range o.R.ImagePosts {
 			if rel != ri {
 				continue
 			}
 
-			ln := len(o.R.ImageBlogPosts)
+			ln := len(o.R.ImagePosts)
 			if ln > 1 && i < ln-1 {
-				o.R.ImageBlogPosts[i] = o.R.ImageBlogPosts[ln-1]
+				o.R.ImagePosts[i] = o.R.ImagePosts[ln-1]
 			}
-			o.R.ImageBlogPosts = o.R.ImageBlogPosts[:ln-1]
-			break
-		}
-	}
-
-	return nil
-}
-
-// AddImagePortfolioPostsG adds the given related objects to the existing relationships
-// of the medium, optionally inserting them as new records.
-// Appends related to o.R.ImagePortfolioPosts.
-// Sets related.R.Image appropriately.
-// Uses the global database handle.
-func (o *Medium) AddImagePortfolioPostsG(ctx context.Context, insert bool, related ...*PortfolioPost) error {
-	return o.AddImagePortfolioPosts(ctx, boil.GetContextDB(), insert, related...)
-}
-
-// AddImagePortfolioPosts adds the given related objects to the existing relationships
-// of the medium, optionally inserting them as new records.
-// Appends related to o.R.ImagePortfolioPosts.
-// Sets related.R.Image appropriately.
-func (o *Medium) AddImagePortfolioPosts(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*PortfolioPost) error {
-	var err error
-	for _, rel := range related {
-		if insert {
-			queries.Assign(&rel.ImageID, o.ID)
-			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
-				return errors.Wrap(err, "failed to insert into foreign table")
-			}
-		} else {
-			updateQuery := fmt.Sprintf(
-				"UPDATE \"portfolio_posts\" SET %s WHERE %s",
-				strmangle.SetParamNames("\"", "\"", 1, []string{"image_id"}),
-				strmangle.WhereClause("\"", "\"", 2, portfolioPostPrimaryKeyColumns),
-			)
-			values := []interface{}{o.ID, rel.ID}
-
-			if boil.IsDebug(ctx) {
-				writer := boil.DebugWriterFrom(ctx)
-				fmt.Fprintln(writer, updateQuery)
-				fmt.Fprintln(writer, values)
-			}
-			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-				return errors.Wrap(err, "failed to update foreign table")
-			}
-
-			queries.Assign(&rel.ImageID, o.ID)
-		}
-	}
-
-	if o.R == nil {
-		o.R = &mediumR{
-			ImagePortfolioPosts: related,
-		}
-	} else {
-		o.R.ImagePortfolioPosts = append(o.R.ImagePortfolioPosts, related...)
-	}
-
-	for _, rel := range related {
-		if rel.R == nil {
-			rel.R = &portfolioPostR{
-				Image: o,
-			}
-		} else {
-			rel.R.Image = o
-		}
-	}
-	return nil
-}
-
-// SetImagePortfolioPostsG removes all previously related items of the
-// medium replacing them completely with the passed
-// in related items, optionally inserting them as new records.
-// Sets o.R.Image's ImagePortfolioPosts accordingly.
-// Replaces o.R.ImagePortfolioPosts with related.
-// Sets related.R.Image's ImagePortfolioPosts accordingly.
-// Uses the global database handle.
-func (o *Medium) SetImagePortfolioPostsG(ctx context.Context, insert bool, related ...*PortfolioPost) error {
-	return o.SetImagePortfolioPosts(ctx, boil.GetContextDB(), insert, related...)
-}
-
-// SetImagePortfolioPosts removes all previously related items of the
-// medium replacing them completely with the passed
-// in related items, optionally inserting them as new records.
-// Sets o.R.Image's ImagePortfolioPosts accordingly.
-// Replaces o.R.ImagePortfolioPosts with related.
-// Sets related.R.Image's ImagePortfolioPosts accordingly.
-func (o *Medium) SetImagePortfolioPosts(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*PortfolioPost) error {
-	query := "update \"portfolio_posts\" set \"image_id\" = null where \"image_id\" = $1"
-	values := []interface{}{o.ID}
-	if boil.IsDebug(ctx) {
-		writer := boil.DebugWriterFrom(ctx)
-		fmt.Fprintln(writer, query)
-		fmt.Fprintln(writer, values)
-	}
-	_, err := exec.ExecContext(ctx, query, values...)
-	if err != nil {
-		return errors.Wrap(err, "failed to remove relationships before set")
-	}
-
-	if o.R != nil {
-		for _, rel := range o.R.ImagePortfolioPosts {
-			queries.SetScanner(&rel.ImageID, nil)
-			if rel.R == nil {
-				continue
-			}
-
-			rel.R.Image = nil
-		}
-		o.R.ImagePortfolioPosts = nil
-	}
-
-	return o.AddImagePortfolioPosts(ctx, exec, insert, related...)
-}
-
-// RemoveImagePortfolioPostsG relationships from objects passed in.
-// Removes related items from R.ImagePortfolioPosts (uses pointer comparison, removal does not keep order)
-// Sets related.R.Image.
-// Uses the global database handle.
-func (o *Medium) RemoveImagePortfolioPostsG(ctx context.Context, related ...*PortfolioPost) error {
-	return o.RemoveImagePortfolioPosts(ctx, boil.GetContextDB(), related...)
-}
-
-// RemoveImagePortfolioPosts relationships from objects passed in.
-// Removes related items from R.ImagePortfolioPosts (uses pointer comparison, removal does not keep order)
-// Sets related.R.Image.
-func (o *Medium) RemoveImagePortfolioPosts(ctx context.Context, exec boil.ContextExecutor, related ...*PortfolioPost) error {
-	if len(related) == 0 {
-		return nil
-	}
-
-	var err error
-	for _, rel := range related {
-		queries.SetScanner(&rel.ImageID, nil)
-		if rel.R != nil {
-			rel.R.Image = nil
-		}
-		if _, err = rel.Update(ctx, exec, boil.Whitelist("image_id")); err != nil {
-			return err
-		}
-	}
-	if o.R == nil {
-		return nil
-	}
-
-	for _, rel := range related {
-		for i, ri := range o.R.ImagePortfolioPosts {
-			if rel != ri {
-				continue
-			}
-
-			ln := len(o.R.ImagePortfolioPosts)
-			if ln > 1 && i < ln-1 {
-				o.R.ImagePortfolioPosts[i] = o.R.ImagePortfolioPosts[ln-1]
-			}
-			o.R.ImagePortfolioPosts = o.R.ImagePortfolioPosts[:ln-1]
-			break
-		}
-	}
-
-	return nil
-}
-
-// AddImageProjectsG adds the given related objects to the existing relationships
-// of the medium, optionally inserting them as new records.
-// Appends related to o.R.ImageProjects.
-// Sets related.R.Image appropriately.
-// Uses the global database handle.
-func (o *Medium) AddImageProjectsG(ctx context.Context, insert bool, related ...*Project) error {
-	return o.AddImageProjects(ctx, boil.GetContextDB(), insert, related...)
-}
-
-// AddImageProjects adds the given related objects to the existing relationships
-// of the medium, optionally inserting them as new records.
-// Appends related to o.R.ImageProjects.
-// Sets related.R.Image appropriately.
-func (o *Medium) AddImageProjects(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Project) error {
-	var err error
-	for _, rel := range related {
-		if insert {
-			queries.Assign(&rel.ImageID, o.ID)
-			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
-				return errors.Wrap(err, "failed to insert into foreign table")
-			}
-		} else {
-			updateQuery := fmt.Sprintf(
-				"UPDATE \"projects\" SET %s WHERE %s",
-				strmangle.SetParamNames("\"", "\"", 1, []string{"image_id"}),
-				strmangle.WhereClause("\"", "\"", 2, projectPrimaryKeyColumns),
-			)
-			values := []interface{}{o.ID, rel.ID}
-
-			if boil.IsDebug(ctx) {
-				writer := boil.DebugWriterFrom(ctx)
-				fmt.Fprintln(writer, updateQuery)
-				fmt.Fprintln(writer, values)
-			}
-			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-				return errors.Wrap(err, "failed to update foreign table")
-			}
-
-			queries.Assign(&rel.ImageID, o.ID)
-		}
-	}
-
-	if o.R == nil {
-		o.R = &mediumR{
-			ImageProjects: related,
-		}
-	} else {
-		o.R.ImageProjects = append(o.R.ImageProjects, related...)
-	}
-
-	for _, rel := range related {
-		if rel.R == nil {
-			rel.R = &projectR{
-				Image: o,
-			}
-		} else {
-			rel.R.Image = o
-		}
-	}
-	return nil
-}
-
-// SetImageProjectsG removes all previously related items of the
-// medium replacing them completely with the passed
-// in related items, optionally inserting them as new records.
-// Sets o.R.Image's ImageProjects accordingly.
-// Replaces o.R.ImageProjects with related.
-// Sets related.R.Image's ImageProjects accordingly.
-// Uses the global database handle.
-func (o *Medium) SetImageProjectsG(ctx context.Context, insert bool, related ...*Project) error {
-	return o.SetImageProjects(ctx, boil.GetContextDB(), insert, related...)
-}
-
-// SetImageProjects removes all previously related items of the
-// medium replacing them completely with the passed
-// in related items, optionally inserting them as new records.
-// Sets o.R.Image's ImageProjects accordingly.
-// Replaces o.R.ImageProjects with related.
-// Sets related.R.Image's ImageProjects accordingly.
-func (o *Medium) SetImageProjects(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Project) error {
-	query := "update \"projects\" set \"image_id\" = null where \"image_id\" = $1"
-	values := []interface{}{o.ID}
-	if boil.IsDebug(ctx) {
-		writer := boil.DebugWriterFrom(ctx)
-		fmt.Fprintln(writer, query)
-		fmt.Fprintln(writer, values)
-	}
-	_, err := exec.ExecContext(ctx, query, values...)
-	if err != nil {
-		return errors.Wrap(err, "failed to remove relationships before set")
-	}
-
-	if o.R != nil {
-		for _, rel := range o.R.ImageProjects {
-			queries.SetScanner(&rel.ImageID, nil)
-			if rel.R == nil {
-				continue
-			}
-
-			rel.R.Image = nil
-		}
-		o.R.ImageProjects = nil
-	}
-
-	return o.AddImageProjects(ctx, exec, insert, related...)
-}
-
-// RemoveImageProjectsG relationships from objects passed in.
-// Removes related items from R.ImageProjects (uses pointer comparison, removal does not keep order)
-// Sets related.R.Image.
-// Uses the global database handle.
-func (o *Medium) RemoveImageProjectsG(ctx context.Context, related ...*Project) error {
-	return o.RemoveImageProjects(ctx, boil.GetContextDB(), related...)
-}
-
-// RemoveImageProjects relationships from objects passed in.
-// Removes related items from R.ImageProjects (uses pointer comparison, removal does not keep order)
-// Sets related.R.Image.
-func (o *Medium) RemoveImageProjects(ctx context.Context, exec boil.ContextExecutor, related ...*Project) error {
-	if len(related) == 0 {
-		return nil
-	}
-
-	var err error
-	for _, rel := range related {
-		queries.SetScanner(&rel.ImageID, nil)
-		if rel.R != nil {
-			rel.R.Image = nil
-		}
-		if _, err = rel.Update(ctx, exec, boil.Whitelist("image_id")); err != nil {
-			return err
-		}
-	}
-	if o.R == nil {
-		return nil
-	}
-
-	for _, rel := range related {
-		for i, ri := range o.R.ImageProjects {
-			if rel != ri {
-				continue
-			}
-
-			ln := len(o.R.ImageProjects)
-			if ln > 1 && i < ln-1 {
-				o.R.ImageProjects[i] = o.R.ImageProjects[ln-1]
-			}
-			o.R.ImageProjects = o.R.ImageProjects[:ln-1]
+			o.R.ImagePosts = o.R.ImagePosts[:ln-1]
 			break
 		}
 	}

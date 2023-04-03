@@ -71,6 +71,74 @@ func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 	}, nil
 }
 
+// update user
+func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
+
+	authPayload, err := server.authorizeUser(ctx)
+	if err != nil {
+		return nil, unauthenticatedError(err)
+	}
+
+	if err = validateUpdateUserRequest(req); err != nil {
+		return nil, err
+	}
+
+	pbUser := req.GetUser()
+
+	if authPayload.Email != pbUser.GetEmail() {
+		return nil, status.Errorf(codes.PermissionDenied, "cannot update other user's info")
+	}
+
+	user, err := models.Users(models.UserWhere.Email.EQ(pbUser.GetEmail())).One(ctx, server.config.DB)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, status.Errorf(codes.NotFound, "user not found")
+		}
+		return nil, status.Error(codes.Internal, "failed to get user")
+	}
+
+	if pbUser.GetPassword() == "" {
+		hashedPassword, err := util.HashPassword(pbUser.GetPassword())
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "failed to hash password: %s", err)
+		}
+		user.Password = hashedPassword
+	}
+
+	if pbUser.GetName() != "" {
+		user.Name = pbUser.GetName()
+	}
+
+	if pbUser.GetEmail() != "" {
+		user.Email = pbUser.GetEmail()
+	}
+
+	_, err = user.Update(ctx, server.config.DB, boil.Infer())
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to update user: %s", err)
+	}
+
+	return &pb.UpdateUserResponse{
+		User: pbx.DbUserToProto(user),
+	}, nil
+
+}
+
+func validateUpdateUserRequest(req *pb.UpdateUserRequest) error {
+	return validation.ValidateStruct(req,
+		validation.Field(&req.User, validation.Required, validation.By(
+			func(value interface{}) error {
+				user := value.(*pb.User)
+				return validation.ValidateStruct(user,
+					validation.Field(&user.Email, validation.Required, is.Email),
+					validation.Field(&user.Name, validation.Required),
+					validation.Field(&user.Password, validation.Length(8, 100), validation.Match(regexp.MustCompile(`^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8}$`))),
+				)
+			},
+		)),
+	)
+}
+
 // login user
 func (server *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
 
@@ -135,6 +203,11 @@ func (server *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Logi
 // refresh token service
 func (server *Server) RefreshToken(ctx context.Context, req *pb.RefreshTokenRequest) (*pb.RefreshTokenResponse, error) {
 
+	err := validation.ValidateStruct(&req, validation.Field(&req.RefreshToken, validation.Required))
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid request: %s", err)
+	}
+
 	session, err := models.Sessions(models.SessionWhere.RefreshToken.EQ(req.GetRefreshToken())).One(ctx, server.config.DB)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -181,6 +254,12 @@ func (server *Server) RefreshToken(ctx context.Context, req *pb.RefreshTokenRequ
 
 // logout
 func (server *Server) Logout(ctx context.Context, req *pb.LogoutRequest) (*pb.LogoutResponse, error) {
+
+	err := validation.ValidateStruct(&req, validation.Field(&req.RefreshToken, validation.Required))
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid request: %s", err)
+	}
+
 	if req.GetRefreshToken() == "" {
 		return nil, status.Errorf(codes.InvalidArgument, "refresh token is required")
 	}
@@ -232,7 +311,6 @@ func validateCreateUserRequest(req *pb.CreateUserRequest) error {
 		validation.Field(&req.Name, validation.Required, validation.Length(5, 20)),
 		// Email cannot be empty and should be in a valid email format
 		validation.Field(&req.Email, validation.Required, is.Email),
-		// Password cannot be empty, and the length must between 8 and 100 characters and must contain number, uppercase and lowercase letters, and special characters
 		validation.Field(&req.Password, validation.Required, validation.Length(8, 100), validation.Match(regexp.MustCompile(`^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8}$`))),
 	)
 }
@@ -241,7 +319,6 @@ func validateLoginUserRequest(req *pb.LoginRequest) error {
 	return validation.ValidateStruct(&req,
 		// Email cannot be empty and should be in a valid email format
 		validation.Field(&req.Email, validation.Required, is.Email),
-		// Password cannot be empty
-		validation.Field(&req.Password, validation.Required, validation.Length(8, 100), validation.Match(regexp.MustCompile(`^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8}$`))),
+		validation.Field(&req.Password, validation.Required),
 	)
 }
