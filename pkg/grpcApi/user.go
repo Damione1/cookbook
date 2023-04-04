@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
+	"log"
 	"regexp"
 
 	"github.com/Damione1/portfolio-playground/db/models"
@@ -150,14 +152,16 @@ func (server *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Logi
 	user, err := models.Users(models.UserWhere.Email.EQ(req.GetEmail())).One(ctx, server.config.DB)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, status.Errorf(codes.NotFound, "user not found")
+			log.Print(fmt.Sprintf("User %s not found", req.GetEmail()))
+			return nil, status.Errorf(codes.Unauthenticated, "incorrect email or password")
 		}
 		return nil, status.Error(codes.Internal, "failed to get user")
 	}
 
 	err = util.CheckPassword(req.GetPassword(), user.Password)
 	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "incorrect password")
+		log.Print(fmt.Sprintf("User %s password incorrect", req.GetEmail()))
+		return nil, status.Errorf(codes.Unauthenticated, "incorrect email or password")
 	}
 
 	accessToken, accessPayload, err := server.tokenMaker.CreateToken(
@@ -306,7 +310,7 @@ func (server *Server) extractMetadata(ctx context.Context) *Metadata {
 }
 
 func validateCreateUserRequest(req *pb.CreateUserRequest) error {
-	return validation.ValidateStruct(&req,
+	return validation.ValidateStruct(req,
 		// Street cannot be empty, and the length must between 5 and 20
 		validation.Field(&req.Name, validation.Required, validation.Length(5, 20)),
 		// Email cannot be empty and should be in a valid email format
@@ -316,7 +320,7 @@ func validateCreateUserRequest(req *pb.CreateUserRequest) error {
 }
 
 func validateLoginUserRequest(req *pb.LoginRequest) error {
-	return validation.ValidateStruct(&req,
+	return validation.ValidateStruct(req,
 		// Email cannot be empty and should be in a valid email format
 		validation.Field(&req.Email, validation.Required, is.Email),
 		validation.Field(&req.Password, validation.Required),
