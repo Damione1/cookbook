@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package pb;
+import "google/protobuf/field_mask.proto";
+
+option go_package = "portfolio-playground/pkg/proto;pb";
+
+//enum unit
+enum Unit {
+  UNIT_UNSPECIFIED = 0;
+  GRAM = 1;
+  KILOGRAM = 2;
+  MILLILITER = 3;
+  LITER = 4;
+  TEASPOON = 5;
+  TABLESPOON = 6;
+  CUP = 7;
+  PINCH = 8;
+  PIECE = 9;
+}
+
+message Ingredient {
+    int64 id = 1;
+    string name = 2;
+    string quantity = 3;
+    Unit unit = 4;
+}
+
+message Recipe {
+  int64 id = 1;
+  string title = 2;
+  string description = 3;
+  string instructions = 4;
+  repeated Ingredient ingredients = 5;
+}
+
+message CreateRecipeRequest {
+  Recipe recipe = 1;
+}
+message CreateRecipeResponse {
+  Recipe recipe = 1;
+}
+
+message GetRecipeRequest {
+  int64 id = 1;
+}
+message GetRecipeResponse {
+  Recipe recipe = 1;
+}
+
+message UpdateRecipeRequest {
+  int64 id = 1;
+  Recipe recipe = 2;
+  google.protobuf.FieldMask update_mask = 3;
+}
+message UpdateRecipeResponse {
+  Recipe recipe = 1;
+}
+
+message DeleteRecipeRequest {
+  int64 id = 1;
+}
+message DeleteRecipeResponse {}
+
+message ListRecipesRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+message ListRecipesResponse {
+  repeated Recipe recipes = 1;
+  string next_page_token = 2;
+}

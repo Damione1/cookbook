@@ -7,7 +7,7 @@ import (
 
 func DbUserToProto(user *models.User) *pb.User {
 	userPb := &pb.User{
-		Id:    int32(user.ID),
+		Id:    user.ID,
 		Email: user.Email,
 		Name:  user.Name,
 	}
@@ -16,7 +16,7 @@ func DbUserToProto(user *models.User) *pb.User {
 
 func ProtoUserToDb(user *pb.User) *models.User {
 	return &models.User{
-		ID:    int(user.GetId()),
+		ID:    user.GetId(),
 		Email: user.GetEmail(),
 		Name:  user.GetName(),
 	}

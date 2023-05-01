@@ -3,6 +3,7 @@ syntax = "proto3";
 package pb;
 import "user.proto";
 import "post.proto";
+import "recipe.proto";
 import "google/api/annotations.proto";
 
 option go_package = "portfolio-playground/pkg/proto;pb";
@@ -12,6 +13,36 @@ service PortfolioService {
   rpc GetUser (GetUserRequest) returns (GetUserResponse) {}
   rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {}
   rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse) {}
+  rpc Login (LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+      post: "/v1/user/login"
+      body: "*"
+    };
+  }
+  rpc Logout (LogoutRequest) returns (LogoutResponse) {
+    option (google.api.http) = {
+      post: "/v1/user/logout"
+      body: "*"
+    };
+  }
+  rpc RefreshToken (RefreshTokenRequest) returns (RefreshTokenResponse) {
+    option (google.api.http) = {
+      post: "/v1/user/refresh"
+      body: "*"
+    };
+  }
+  rpc ResetPassword (ResetPasswordRequest) returns (ResetPasswordResponse) {
+    option (google.api.http) = {
+      post: "/v1/user/reset"
+      body: "*"
+    };
+  }
+  rpc ChangePassword (ChangePasswordRequest) returns (ChangePasswordResponse) {
+    option (google.api.http) = {
+      post: "/v1/user/change"
+      body: "*"
+    };
+  }
   rpc CreatePost (CreatePostRequest) returns (CreatePostResponse) {
     option (google.api.http) = {
       post: "/v1/post/create"
@@ -29,21 +60,31 @@ service PortfolioService {
       body: "*"
     };
   }
-  rpc Login (LoginRequest) returns (LoginResponse) {
+  rpc CreateRecipe (CreateRecipeRequest) returns (CreateRecipeResponse) {
     option (google.api.http) = {
-      post: "/v1/user/login"
+      post: "/v1/recipe/create"
       body: "*"
     };
   }
-  rpc Logout (LogoutRequest) returns (LogoutResponse) {
+  rpc GetRecipe (GetRecipeRequest) returns (GetRecipeResponse) {
     option (google.api.http) = {
-      post: "/v1/user/logout"
+      get: "/v1/recipe/get/{id}"
+    };
+  }
+  rpc UpdateRecipe (UpdateRecipeRequest) returns (UpdateRecipeResponse) {
+    option (google.api.http) = {
+      put: "/v1/recipe/update/{id}"
       body: "*"
     };
   }
-  rpc RefreshToken (RefreshTokenRequest) returns (RefreshTokenResponse) {
+  rpc DeleteRecipe (DeleteRecipeRequest) returns (DeleteRecipeResponse) {
     option (google.api.http) = {
-      post: "/v1/user/refresh"
+      delete: "/v1/recipe/delete/{id}"
+    };
+  }
+  rpc ListRecipes (ListRecipesRequest) returns (ListRecipesResponse) {
+    option (google.api.http) = {
+      post: "/v1/recipe/list"
       body: "*"
     };
   }

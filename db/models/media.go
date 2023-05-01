@@ -24,7 +24,7 @@ import (
 
 // Medium is an object representing the database table.
 type Medium struct {
-	ID               int       `boil:"id" json:"id" toml:"id" yaml:"id"`
+	ID               string    `boil:"id" json:"id" toml:"id" yaml:"id"`
 	OriginalFilename string    `boil:"original_filename" json:"original_filename" toml:"original_filename" yaml:"original_filename"`
 	OriginalURL      string    `boil:"original_url" json:"original_url" toml:"original_url" yaml:"original_url"`
 	ThumbnailURL     string    `boil:"thumbnail_url" json:"thumbnail_url" toml:"thumbnail_url" yaml:"thumbnail_url"`
@@ -75,7 +75,7 @@ var MediumTableColumns = struct {
 // Generated where
 
 var MediumWhere = struct {
-	ID               whereHelperint
+	ID               whereHelperstring
 	OriginalFilename whereHelperstring
 	OriginalURL      whereHelperstring
 	ThumbnailURL     whereHelperstring
@@ -83,7 +83,7 @@ var MediumWhere = struct {
 	WideURL          whereHelperstring
 	CreatedAt        whereHelpernull_Time
 }{
-	ID:               whereHelperint{field: "\"media\".\"id\""},
+	ID:               whereHelperstring{field: "\"media\".\"id\""},
 	OriginalFilename: whereHelperstring{field: "\"media\".\"original_filename\""},
 	OriginalURL:      whereHelperstring{field: "\"media\".\"original_url\""},
 	ThumbnailURL:     whereHelperstring{field: "\"media\".\"thumbnail_url\""},
@@ -95,19 +95,19 @@ var MediumWhere = struct {
 // MediumRels is where relationship names are stored.
 var MediumRels = struct {
 	ImagePosts  string
-	ImageSkills string
+	Recipes     string
 	AvatarUsers string
 }{
 	ImagePosts:  "ImagePosts",
-	ImageSkills: "ImageSkills",
+	Recipes:     "Recipes",
 	AvatarUsers: "AvatarUsers",
 }
 
 // mediumR is where relationships are stored.
 type mediumR struct {
-	ImagePosts  PostSlice  `boil:"ImagePosts" json:"ImagePosts" toml:"ImagePosts" yaml:"ImagePosts"`
-	ImageSkills SkillSlice `boil:"ImageSkills" json:"ImageSkills" toml:"ImageSkills" yaml:"ImageSkills"`
-	AvatarUsers UserSlice  `boil:"AvatarUsers" json:"AvatarUsers" toml:"AvatarUsers" yaml:"AvatarUsers"`
+	ImagePosts  PostSlice   `boil:"ImagePosts" json:"ImagePosts" toml:"ImagePosts" yaml:"ImagePosts"`
+	Recipes     RecipeSlice `boil:"Recipes" json:"Recipes" toml:"Recipes" yaml:"Recipes"`
+	AvatarUsers UserSlice   `boil:"AvatarUsers" json:"AvatarUsers" toml:"AvatarUsers" yaml:"AvatarUsers"`
 }
 
 // NewStruct creates a new relationship struct
@@ -122,11 +122,11 @@ func (r *mediumR) GetImagePosts() PostSlice {
 	return r.ImagePosts
 }
 
-func (r *mediumR) GetImageSkills() SkillSlice {
+func (r *mediumR) GetRecipes() RecipeSlice {
 	if r == nil {
 		return nil
 	}
-	return r.ImageSkills
+	return r.Recipes
 }
 
 func (r *mediumR) GetAvatarUsers() UserSlice {
@@ -459,18 +459,19 @@ func (o *Medium) ImagePosts(mods ...qm.QueryMod) postQuery {
 	return Posts(queryMods...)
 }
 
-// ImageSkills retrieves all the skill's Skills with an executor via image_id column.
-func (o *Medium) ImageSkills(mods ...qm.QueryMod) skillQuery {
+// Recipes retrieves all the recipe's Recipes with an executor.
+func (o *Medium) Recipes(mods ...qm.QueryMod) recipeQuery {
 	var queryMods []qm.QueryMod
 	if len(mods) != 0 {
 		queryMods = append(queryMods, mods...)
 	}
 
 	queryMods = append(queryMods,
-		qm.Where("\"skills\".\"image_id\"=?", o.ID),
+		qm.InnerJoin("\"recipe_media\" on \"recipes\".\"id\" = \"recipe_media\".\"recipe_id\""),
+		qm.Where("\"recipe_media\".\"media_id\"=?", o.ID),
 	)
 
-	return Skills(queryMods...)
+	return Recipes(queryMods...)
 }
 
 // AvatarUsers retrieves all the user's Users with an executor via avatar_id column.
@@ -601,9 +602,9 @@ func (mediumL) LoadImagePosts(ctx context.Context, e boil.ContextExecutor, singu
 	return nil
 }
 
-// LoadImageSkills allows an eager lookup of values, cached into the
+// LoadRecipes allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (mediumL) LoadImageSkills(ctx context.Context, e boil.ContextExecutor, singular bool, maybeMedium interface{}, mods queries.Applicator) error {
+func (mediumL) LoadRecipes(ctx context.Context, e boil.ContextExecutor, singular bool, maybeMedium interface{}, mods queries.Applicator) error {
 	var slice []*Medium
 	var object *Medium
 
@@ -643,7 +644,7 @@ func (mediumL) LoadImageSkills(ctx context.Context, e boil.ContextExecutor, sing
 			}
 
 			for _, a := range args {
-				if queries.Equal(a, obj.ID) {
+				if a == obj.ID {
 					continue Outer
 				}
 			}
@@ -657,8 +658,10 @@ func (mediumL) LoadImageSkills(ctx context.Context, e boil.ContextExecutor, sing
 	}
 
 	query := NewQuery(
-		qm.From(`skills`),
-		qm.WhereIn(`skills.image_id in ?`, args...),
+		qm.Select("\"recipes\".\"id\", \"recipes\".\"title\", \"recipes\".\"slug\", \"recipes\".\"description\", \"recipes\".\"directions\", \"recipes\".\"author_id\", \"recipes\".\"created_at\", \"recipes\".\"updated_at\", \"recipes\".\"deleted_at\", \"a\".\"media_id\""),
+		qm.From("\"recipes\""),
+		qm.InnerJoin("\"recipe_media\" as \"a\" on \"recipes\".\"id\" = \"a\".\"recipe_id\""),
+		qm.WhereIn("\"a\".\"media_id\" in ?", args...),
 	)
 	if mods != nil {
 		mods.Apply(query)
@@ -666,22 +669,36 @@ func (mediumL) LoadImageSkills(ctx context.Context, e boil.ContextExecutor, sing
 
 	results, err := query.QueryContext(ctx, e)
 	if err != nil {
-		return errors.Wrap(err, "failed to eager load skills")
+		return errors.Wrap(err, "failed to eager load recipes")
 	}
 
-	var resultSlice []*Skill
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice skills")
+	var resultSlice []*Recipe
+
+	var localJoinCols []string
+	for results.Next() {
+		one := new(Recipe)
+		var localJoinCol string
+
+		err = results.Scan(&one.ID, &one.Title, &one.Slug, &one.Description, &one.Directions, &one.AuthorID, &one.CreatedAt, &one.UpdatedAt, &one.DeletedAt, &localJoinCol)
+		if err != nil {
+			return errors.Wrap(err, "failed to scan eager loaded results for recipes")
+		}
+		if err = results.Err(); err != nil {
+			return errors.Wrap(err, "failed to plebian-bind eager loaded slice recipes")
+		}
+
+		resultSlice = append(resultSlice, one)
+		localJoinCols = append(localJoinCols, localJoinCol)
 	}
 
 	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results in eager load on skills")
+		return errors.Wrap(err, "failed to close results in eager load on recipes")
 	}
 	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for skills")
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for recipes")
 	}
 
-	if len(skillAfterSelectHooks) != 0 {
+	if len(recipeAfterSelectHooks) != 0 {
 		for _, obj := range resultSlice {
 			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
 				return err
@@ -689,24 +706,25 @@ func (mediumL) LoadImageSkills(ctx context.Context, e boil.ContextExecutor, sing
 		}
 	}
 	if singular {
-		object.R.ImageSkills = resultSlice
+		object.R.Recipes = resultSlice
 		for _, foreign := range resultSlice {
 			if foreign.R == nil {
-				foreign.R = &skillR{}
+				foreign.R = &recipeR{}
 			}
-			foreign.R.Image = object
+			foreign.R.Media = append(foreign.R.Media, object)
 		}
 		return nil
 	}
 
-	for _, foreign := range resultSlice {
+	for i, foreign := range resultSlice {
+		localJoinCol := localJoinCols[i]
 		for _, local := range slice {
-			if queries.Equal(local.ID, foreign.ImageID) {
-				local.R.ImageSkills = append(local.R.ImageSkills, foreign)
+			if local.ID == localJoinCol {
+				local.R.Recipes = append(local.R.Recipes, foreign)
 				if foreign.R == nil {
-					foreign.R = &skillR{}
+					foreign.R = &recipeR{}
 				}
-				foreign.R.Image = local
+				foreign.R.Media = append(foreign.R.Media, local)
 				break
 			}
 		}
@@ -984,87 +1002,82 @@ func (o *Medium) RemoveImagePosts(ctx context.Context, exec boil.ContextExecutor
 	return nil
 }
 
-// AddImageSkillsG adds the given related objects to the existing relationships
+// AddRecipesG adds the given related objects to the existing relationships
 // of the medium, optionally inserting them as new records.
-// Appends related to o.R.ImageSkills.
-// Sets related.R.Image appropriately.
+// Appends related to o.R.Recipes.
+// Sets related.R.Media appropriately.
 // Uses the global database handle.
-func (o *Medium) AddImageSkillsG(ctx context.Context, insert bool, related ...*Skill) error {
-	return o.AddImageSkills(ctx, boil.GetContextDB(), insert, related...)
+func (o *Medium) AddRecipesG(ctx context.Context, insert bool, related ...*Recipe) error {
+	return o.AddRecipes(ctx, boil.GetContextDB(), insert, related...)
 }
 
-// AddImageSkills adds the given related objects to the existing relationships
+// AddRecipes adds the given related objects to the existing relationships
 // of the medium, optionally inserting them as new records.
-// Appends related to o.R.ImageSkills.
-// Sets related.R.Image appropriately.
-func (o *Medium) AddImageSkills(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Skill) error {
+// Appends related to o.R.Recipes.
+// Sets related.R.Media appropriately.
+func (o *Medium) AddRecipes(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Recipe) error {
 	var err error
 	for _, rel := range related {
 		if insert {
-			queries.Assign(&rel.ImageID, o.ID)
 			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
 				return errors.Wrap(err, "failed to insert into foreign table")
 			}
-		} else {
-			updateQuery := fmt.Sprintf(
-				"UPDATE \"skills\" SET %s WHERE %s",
-				strmangle.SetParamNames("\"", "\"", 1, []string{"image_id"}),
-				strmangle.WhereClause("\"", "\"", 2, skillPrimaryKeyColumns),
-			)
-			values := []interface{}{o.ID, rel.ID}
-
-			if boil.IsDebug(ctx) {
-				writer := boil.DebugWriterFrom(ctx)
-				fmt.Fprintln(writer, updateQuery)
-				fmt.Fprintln(writer, values)
-			}
-			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-				return errors.Wrap(err, "failed to update foreign table")
-			}
-
-			queries.Assign(&rel.ImageID, o.ID)
 		}
 	}
 
+	for _, rel := range related {
+		query := "insert into \"recipe_media\" (\"media_id\", \"recipe_id\") values ($1, $2)"
+		values := []interface{}{o.ID, rel.ID}
+
+		if boil.IsDebug(ctx) {
+			writer := boil.DebugWriterFrom(ctx)
+			fmt.Fprintln(writer, query)
+			fmt.Fprintln(writer, values)
+		}
+		_, err = exec.ExecContext(ctx, query, values...)
+		if err != nil {
+			return errors.Wrap(err, "failed to insert into join table")
+		}
+	}
 	if o.R == nil {
 		o.R = &mediumR{
-			ImageSkills: related,
+			Recipes: related,
 		}
 	} else {
-		o.R.ImageSkills = append(o.R.ImageSkills, related...)
+		o.R.Recipes = append(o.R.Recipes, related...)
 	}
 
 	for _, rel := range related {
 		if rel.R == nil {
-			rel.R = &skillR{
-				Image: o,
+			rel.R = &recipeR{
+				Media: MediumSlice{o},
 			}
 		} else {
-			rel.R.Image = o
+			rel.R.Media = append(rel.R.Media, o)
 		}
 	}
 	return nil
 }
 
-// SetImageSkillsG removes all previously related items of the
+// SetRecipesG removes all previously related items of the
 // medium replacing them completely with the passed
 // in related items, optionally inserting them as new records.
-// Sets o.R.Image's ImageSkills accordingly.
-// Replaces o.R.ImageSkills with related.
-// Sets related.R.Image's ImageSkills accordingly.
+// Sets o.R.Media's Recipes accordingly.
+// Replaces o.R.Recipes with related.
+// Sets related.R.Media's Recipes accordingly.
 // Uses the global database handle.
-func (o *Medium) SetImageSkillsG(ctx context.Context, insert bool, related ...*Skill) error {
-	return o.SetImageSkills(ctx, boil.GetContextDB(), insert, related...)
+func (o *Medium) SetRecipesG(ctx context.Context, insert bool, related ...*Recipe) error {
+	return o.SetRecipes(ctx, boil.GetContextDB(), insert, related...)
 }
 
-// SetImageSkills removes all previously related items of the
+// SetRecipes removes all previously related items of the
 // medium replacing them completely with the passed
 // in related items, optionally inserting them as new records.
-// Sets o.R.Image's ImageSkills accordingly.
-// Replaces o.R.ImageSkills with related.
-// Sets related.R.Image's ImageSkills accordingly.
-func (o *Medium) SetImageSkills(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Skill) error {
-	query := "update \"skills\" set \"image_id\" = null where \"image_id\" = $1"
+// Sets o.R.Media's Recipes accordingly.
+// Replaces o.R.Recipes with related.
+// Sets related.R.Media's Recipes accordingly.
+func (o *Medium) SetRecipes(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Recipe) error {
+	query := "delete from \"recipe_media\" where \"media_id\" = $1"
 	values := []interface{}{o.ID}
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)
@@ -1076,67 +1089,90 @@ func (o *Medium) SetImageSkills(ctx context.Context, exec boil.ContextExecutor, 
 		return errors.Wrap(err, "failed to remove relationships before set")
 	}
 
+	removeRecipesFromMediaSlice(o, related)
 	if o.R != nil {
-		for _, rel := range o.R.ImageSkills {
-			queries.SetScanner(&rel.ImageID, nil)
-			if rel.R == nil {
-				continue
-			}
-
-			rel.R.Image = nil
-		}
-		o.R.ImageSkills = nil
+		o.R.Recipes = nil
 	}
 
-	return o.AddImageSkills(ctx, exec, insert, related...)
+	return o.AddRecipes(ctx, exec, insert, related...)
 }
 
-// RemoveImageSkillsG relationships from objects passed in.
-// Removes related items from R.ImageSkills (uses pointer comparison, removal does not keep order)
-// Sets related.R.Image.
+// RemoveRecipesG relationships from objects passed in.
+// Removes related items from R.Recipes (uses pointer comparison, removal does not keep order)
+// Sets related.R.Media.
 // Uses the global database handle.
-func (o *Medium) RemoveImageSkillsG(ctx context.Context, related ...*Skill) error {
-	return o.RemoveImageSkills(ctx, boil.GetContextDB(), related...)
+func (o *Medium) RemoveRecipesG(ctx context.Context, related ...*Recipe) error {
+	return o.RemoveRecipes(ctx, boil.GetContextDB(), related...)
 }
 
-// RemoveImageSkills relationships from objects passed in.
-// Removes related items from R.ImageSkills (uses pointer comparison, removal does not keep order)
-// Sets related.R.Image.
-func (o *Medium) RemoveImageSkills(ctx context.Context, exec boil.ContextExecutor, related ...*Skill) error {
+// RemoveRecipes relationships from objects passed in.
+// Removes related items from R.Recipes (uses pointer comparison, removal does not keep order)
+// Sets related.R.Media.
+func (o *Medium) RemoveRecipes(ctx context.Context, exec boil.ContextExecutor, related ...*Recipe) error {
 	if len(related) == 0 {
 		return nil
 	}
 
 	var err error
+	query := fmt.Sprintf(
+		"delete from \"recipe_media\" where \"media_id\" = $1 and \"recipe_id\" in (%s)",
+		strmangle.Placeholders(dialect.UseIndexPlaceholders, len(related), 2, 1),
+	)
+	values := []interface{}{o.ID}
 	for _, rel := range related {
-		queries.SetScanner(&rel.ImageID, nil)
-		if rel.R != nil {
-			rel.R.Image = nil
-		}
-		if _, err = rel.Update(ctx, exec, boil.Whitelist("image_id")); err != nil {
-			return err
-		}
+		values = append(values, rel.ID)
 	}
+
+	if boil.IsDebug(ctx) {
+		writer := boil.DebugWriterFrom(ctx)
+		fmt.Fprintln(writer, query)
+		fmt.Fprintln(writer, values)
+	}
+	_, err = exec.ExecContext(ctx, query, values...)
+	if err != nil {
+		return errors.Wrap(err, "failed to remove relationships before set")
+	}
+	removeRecipesFromMediaSlice(o, related)
 	if o.R == nil {
 		return nil
 	}
 
 	for _, rel := range related {
-		for i, ri := range o.R.ImageSkills {
+		for i, ri := range o.R.Recipes {
 			if rel != ri {
 				continue
 			}
 
-			ln := len(o.R.ImageSkills)
+			ln := len(o.R.Recipes)
 			if ln > 1 && i < ln-1 {
-				o.R.ImageSkills[i] = o.R.ImageSkills[ln-1]
+				o.R.Recipes[i] = o.R.Recipes[ln-1]
 			}
-			o.R.ImageSkills = o.R.ImageSkills[:ln-1]
+			o.R.Recipes = o.R.Recipes[:ln-1]
 			break
 		}
 	}
 
 	return nil
+}
+
+func removeRecipesFromMediaSlice(o *Medium, related []*Recipe) {
+	for _, rel := range related {
+		if rel.R == nil {
+			continue
+		}
+		for i, ri := range rel.R.Media {
+			if o.ID != ri.ID {
+				continue
+			}
+
+			ln := len(rel.R.Media)
+			if ln > 1 && i < ln-1 {
+				rel.R.Media[i] = rel.R.Media[ln-1]
+			}
+			rel.R.Media = rel.R.Media[:ln-1]
+			break
+		}
+	}
 }
 
 // AddAvatarUsersG adds the given related objects to the existing relationships
@@ -1306,13 +1342,13 @@ func Media(mods ...qm.QueryMod) mediumQuery {
 }
 
 // FindMediumG retrieves a single record by ID.
-func FindMediumG(ctx context.Context, iD int, selectCols ...string) (*Medium, error) {
+func FindMediumG(ctx context.Context, iD string, selectCols ...string) (*Medium, error) {
 	return FindMedium(ctx, boil.GetContextDB(), iD, selectCols...)
 }
 
 // FindMedium retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
-func FindMedium(ctx context.Context, exec boil.ContextExecutor, iD int, selectCols ...string) (*Medium, error) {
+func FindMedium(ctx context.Context, exec boil.ContextExecutor, iD string, selectCols ...string) (*Medium, error) {
 	mediumObj := &Medium{}
 
 	sel := "*"
@@ -1885,12 +1921,12 @@ func (o *MediumSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) 
 }
 
 // MediumExistsG checks if the Medium row exists.
-func MediumExistsG(ctx context.Context, iD int) (bool, error) {
+func MediumExistsG(ctx context.Context, iD string) (bool, error) {
 	return MediumExists(ctx, boil.GetContextDB(), iD)
 }
 
 // MediumExists checks if the Medium row exists.
-func MediumExists(ctx context.Context, exec boil.ContextExecutor, iD int) (bool, error) {
+func MediumExists(ctx context.Context, exec boil.ContextExecutor, iD string) (bool, error) {
 	var exists bool
 	sql := "select exists(select 1 from \"media\" where \"id\"=$1 limit 1)"
 

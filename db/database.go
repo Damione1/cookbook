@@ -21,7 +21,7 @@ func ConnectDb(config *util.Config) (*sql.DB, error) {
 		config.PostgresDb,
 	))
 	if err != nil {
-		fmt.Printf("Failed to connect to database. \n", err)
+		fmt.Println("Failed to connect to database. \n", err)
 		os.Exit(2)
 	}
 
@@ -52,7 +52,7 @@ func runDBMigration(migrationURL string, db *sql.DB) {
 		if err == migrate.ErrNoChange {
 			fmt.Printf("No migration to run. \n")
 		} else {
-			fmt.Printf("Failed to run migration. \n", err)
+			fmt.Println("Failed to run migration. \n", err)
 			os.Exit(2)
 		}
 	}

@@ -8,7 +8,7 @@ option go_package = "portfolio-playground/pkg/proto;pb";
 
 message User {
     // ID is the unique identifier for the user.
-    int32 id = 1;
+    string id = 1;
     // Name is the user's name.
     string name = 2;
     // Email is the user's email.
@@ -33,7 +33,7 @@ message CreateUserResponse {
 
 message GetUserRequest {
     // ID is the unique identifier for the user.
-    int32 id = 1;
+    string id = 1;
 }
 
 message GetUserResponse {
@@ -52,7 +52,7 @@ message UpdateUserResponse {
 
 message DeleteUserRequest {
     // ID is the unique identifier for the user.
-    int32 id = 1;
+    string id = 1;
 }
 
 message DeleteUserResponse {
@@ -106,4 +106,27 @@ message LogoutRequest {
 
 message LogoutResponse {
    bool success = 1;
+}
+
+//reset password
+message ResetPasswordRequest {
+    // Email is the user's email.
+    string email = 1;
+}
+
+message ResetPasswordResponse {
+    bool success = 1;
+}
+
+message ChangePasswordRequest {
+    // Email is the user's email.
+    string email = 1;
+    // Password is the user's password.
+    string password = 2;
+    // Token is the token.
+    string token = 3;
+}
+
+message ChangePasswordResponse {
+    bool success = 1;
 }

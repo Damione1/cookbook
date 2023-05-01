@@ -1,5 +1,11 @@
 # portfolio-playground
 
+## To start the project with tilt, run the following command:
+
+```bash
+tilt up
+```
+
 ## To start the project, run the following command:
 
 ```bash

@@ -127,8 +127,8 @@ type sessionL struct{}
 
 var (
 	sessionAllColumns            = []string{"id", "email", "refresh_token", "user_agent", "client_ip", "is_blocked", "expires_at", "created_at"}
-	sessionColumnsWithoutDefault = []string{"id", "email", "refresh_token", "user_agent", "client_ip", "expires_at"}
-	sessionColumnsWithDefault    = []string{"is_blocked", "created_at"}
+	sessionColumnsWithoutDefault = []string{"email", "refresh_token", "user_agent", "client_ip", "expires_at"}
+	sessionColumnsWithDefault    = []string{"id", "is_blocked", "created_at"}
 	sessionPrimaryKeyColumns     = []string{"id"}
 	sessionGeneratedColumns      = []string{}
 )

@@ -24,14 +24,15 @@ import (
 
 // User is an object representing the database table.
 type User struct {
-	ID        int       `boil:"id" json:"id" toml:"id" yaml:"id"`
-	Email     string    `boil:"email" json:"email" toml:"email" yaml:"email"`
-	Password  string    `boil:"password" json:"password" toml:"password" yaml:"password"`
-	Name      string    `boil:"name" json:"name" toml:"name" yaml:"name"`
-	AvatarID  null.Int  `boil:"avatar_id" json:"avatar_id,omitempty" toml:"avatar_id" yaml:"avatar_id,omitempty"`
-	Active    null.Bool `boil:"active" json:"active,omitempty" toml:"active" yaml:"active,omitempty"`
-	CreatedAt null.Time `boil:"created_at" json:"created_at,omitempty" toml:"created_at" yaml:"created_at,omitempty"`
-	UpdatedAt null.Time `boil:"updated_at" json:"updated_at,omitempty" toml:"updated_at" yaml:"updated_at,omitempty"`
+	ID        string      `boil:"id" json:"id" toml:"id" yaml:"id"`
+	Email     string      `boil:"email" json:"email" toml:"email" yaml:"email"`
+	Password  string      `boil:"password" json:"password" toml:"password" yaml:"password"`
+	Name      string      `boil:"name" json:"name" toml:"name" yaml:"name"`
+	AvatarID  null.String `boil:"avatar_id" json:"avatar_id,omitempty" toml:"avatar_id" yaml:"avatar_id,omitempty"`
+	Active    null.Bool   `boil:"active" json:"active,omitempty" toml:"active" yaml:"active,omitempty"`
+	CreatedAt null.Time   `boil:"created_at" json:"created_at,omitempty" toml:"created_at" yaml:"created_at,omitempty"`
+	UpdatedAt null.Time   `boil:"updated_at" json:"updated_at,omitempty" toml:"updated_at" yaml:"updated_at,omitempty"`
+	Role      string      `boil:"role" json:"role" toml:"role" yaml:"role"`
 
 	R *userR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L userL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -46,6 +47,7 @@ var UserColumns = struct {
 	Active    string
 	CreatedAt string
 	UpdatedAt string
+	Role      string
 }{
 	ID:        "id",
 	Email:     "email",
@@ -55,6 +57,7 @@ var UserColumns = struct {
 	Active:    "active",
 	CreatedAt: "created_at",
 	UpdatedAt: "updated_at",
+	Role:      "role",
 }
 
 var UserTableColumns = struct {
@@ -66,6 +69,7 @@ var UserTableColumns = struct {
 	Active    string
 	CreatedAt string
 	UpdatedAt string
+	Role      string
 }{
 	ID:        "users.id",
 	Email:     "users.email",
@@ -75,6 +79,7 @@ var UserTableColumns = struct {
 	Active:    "users.active",
 	CreatedAt: "users.created_at",
 	UpdatedAt: "users.updated_at",
+	Role:      "users.role",
 }
 
 // Generated where
@@ -104,38 +109,46 @@ func (w whereHelpernull_Bool) IsNull() qm.QueryMod    { return qmhelper.WhereIsN
 func (w whereHelpernull_Bool) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
 
 var UserWhere = struct {
-	ID        whereHelperint
+	ID        whereHelperstring
 	Email     whereHelperstring
 	Password  whereHelperstring
 	Name      whereHelperstring
-	AvatarID  whereHelpernull_Int
+	AvatarID  whereHelpernull_String
 	Active    whereHelpernull_Bool
 	CreatedAt whereHelpernull_Time
 	UpdatedAt whereHelpernull_Time
+	Role      whereHelperstring
 }{
-	ID:        whereHelperint{field: "\"users\".\"id\""},
+	ID:        whereHelperstring{field: "\"users\".\"id\""},
 	Email:     whereHelperstring{field: "\"users\".\"email\""},
 	Password:  whereHelperstring{field: "\"users\".\"password\""},
 	Name:      whereHelperstring{field: "\"users\".\"name\""},
-	AvatarID:  whereHelpernull_Int{field: "\"users\".\"avatar_id\""},
+	AvatarID:  whereHelpernull_String{field: "\"users\".\"avatar_id\""},
 	Active:    whereHelpernull_Bool{field: "\"users\".\"active\""},
 	CreatedAt: whereHelpernull_Time{field: "\"users\".\"created_at\""},
 	UpdatedAt: whereHelpernull_Time{field: "\"users\".\"updated_at\""},
+	Role:      whereHelperstring{field: "\"users\".\"role\""},
 }
 
 // UserRels is where relationship names are stored.
 var UserRels = struct {
-	Avatar        string
-	EmailSessions string
+	Avatar         string
+	PasswordResets string
+	AuthorRecipes  string
+	EmailSessions  string
 }{
-	Avatar:        "Avatar",
-	EmailSessions: "EmailSessions",
+	Avatar:         "Avatar",
+	PasswordResets: "PasswordResets",
+	AuthorRecipes:  "AuthorRecipes",
+	EmailSessions:  "EmailSessions",
 }
 
 // userR is where relationships are stored.
 type userR struct {
-	Avatar        *Medium      `boil:"Avatar" json:"Avatar" toml:"Avatar" yaml:"Avatar"`
-	EmailSessions SessionSlice `boil:"EmailSessions" json:"EmailSessions" toml:"EmailSessions" yaml:"EmailSessions"`
+	Avatar         *Medium            `boil:"Avatar" json:"Avatar" toml:"Avatar" yaml:"Avatar"`
+	PasswordResets PasswordResetSlice `boil:"PasswordResets" json:"PasswordResets" toml:"PasswordResets" yaml:"PasswordResets"`
+	AuthorRecipes  RecipeSlice        `boil:"AuthorRecipes" json:"AuthorRecipes" toml:"AuthorRecipes" yaml:"AuthorRecipes"`
+	EmailSessions  SessionSlice       `boil:"EmailSessions" json:"EmailSessions" toml:"EmailSessions" yaml:"EmailSessions"`
 }
 
 // NewStruct creates a new relationship struct
@@ -150,6 +163,20 @@ func (r *userR) GetAvatar() *Medium {
 	return r.Avatar
 }
 
+func (r *userR) GetPasswordResets() PasswordResetSlice {
+	if r == nil {
+		return nil
+	}
+	return r.PasswordResets
+}
+
+func (r *userR) GetAuthorRecipes() RecipeSlice {
+	if r == nil {
+		return nil
+	}
+	return r.AuthorRecipes
+}
+
 func (r *userR) GetEmailSessions() SessionSlice {
 	if r == nil {
 		return nil
@@ -161,9 +188,9 @@ func (r *userR) GetEmailSessions() SessionSlice {
 type userL struct{}
 
 var (
-	userAllColumns            = []string{"id", "email", "password", "name", "avatar_id", "active", "created_at", "updated_at"}
+	userAllColumns            = []string{"id", "email", "password", "name", "avatar_id", "active", "created_at", "updated_at", "role"}
 	userColumnsWithoutDefault = []string{"email", "password", "name"}
-	userColumnsWithDefault    = []string{"id", "avatar_id", "active", "created_at", "updated_at"}
+	userColumnsWithDefault    = []string{"id", "avatar_id", "active", "created_at", "updated_at", "role"}
 	userPrimaryKeyColumns     = []string{"id"}
 	userGeneratedColumns      = []string{}
 )
@@ -477,6 +504,34 @@ func (o *User) Avatar(mods ...qm.QueryMod) mediumQuery {
 	return Media(queryMods...)
 }
 
+// PasswordResets retrieves all the password_reset's PasswordResets with an executor.
+func (o *User) PasswordResets(mods ...qm.QueryMod) passwordResetQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("\"password_resets\".\"user_id\"=?", o.ID),
+	)
+
+	return PasswordResets(queryMods...)
+}
+
+// AuthorRecipes retrieves all the recipe's Recipes with an executor via author_id column.
+func (o *User) AuthorRecipes(mods ...qm.QueryMod) recipeQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("\"recipes\".\"author_id\"=?", o.ID),
+	)
+
+	return Recipes(queryMods...)
+}
+
 // EmailSessions retrieves all the session's Sessions with an executor via email column.
 func (o *User) EmailSessions(mods ...qm.QueryMod) sessionQuery {
 	var queryMods []qm.QueryMod
@@ -607,6 +662,234 @@ func (userL) LoadAvatar(ctx context.Context, e boil.ContextExecutor, singular bo
 					foreign.R = &mediumR{}
 				}
 				foreign.R.AvatarUsers = append(foreign.R.AvatarUsers, local)
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// LoadPasswordResets allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (userL) LoadPasswordResets(ctx context.Context, e boil.ContextExecutor, singular bool, maybeUser interface{}, mods queries.Applicator) error {
+	var slice []*User
+	var object *User
+
+	if singular {
+		var ok bool
+		object, ok = maybeUser.(*User)
+		if !ok {
+			object = new(User)
+			ok = queries.SetFromEmbeddedStruct(&object, &maybeUser)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeUser))
+			}
+		}
+	} else {
+		s, ok := maybeUser.(*[]*User)
+		if ok {
+			slice = *s
+		} else {
+			ok = queries.SetFromEmbeddedStruct(&slice, maybeUser)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeUser))
+			}
+		}
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &userR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &userR{}
+			}
+
+			for _, a := range args {
+				if a == obj.ID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`password_resets`),
+		qm.WhereIn(`password_resets.user_id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load password_resets")
+	}
+
+	var resultSlice []*PasswordReset
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice password_resets")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on password_resets")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for password_resets")
+	}
+
+	if len(passwordResetAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.PasswordResets = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &passwordResetR{}
+			}
+			foreign.R.User = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.ID == foreign.UserID {
+				local.R.PasswordResets = append(local.R.PasswordResets, foreign)
+				if foreign.R == nil {
+					foreign.R = &passwordResetR{}
+				}
+				foreign.R.User = local
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// LoadAuthorRecipes allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (userL) LoadAuthorRecipes(ctx context.Context, e boil.ContextExecutor, singular bool, maybeUser interface{}, mods queries.Applicator) error {
+	var slice []*User
+	var object *User
+
+	if singular {
+		var ok bool
+		object, ok = maybeUser.(*User)
+		if !ok {
+			object = new(User)
+			ok = queries.SetFromEmbeddedStruct(&object, &maybeUser)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeUser))
+			}
+		}
+	} else {
+		s, ok := maybeUser.(*[]*User)
+		if ok {
+			slice = *s
+		} else {
+			ok = queries.SetFromEmbeddedStruct(&slice, maybeUser)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeUser))
+			}
+		}
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &userR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &userR{}
+			}
+
+			for _, a := range args {
+				if a == obj.ID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`recipes`),
+		qm.WhereIn(`recipes.author_id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load recipes")
+	}
+
+	var resultSlice []*Recipe
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice recipes")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on recipes")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for recipes")
+	}
+
+	if len(recipeAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.AuthorRecipes = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &recipeR{}
+			}
+			foreign.R.Author = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.ID == foreign.AuthorID {
+				local.R.AuthorRecipes = append(local.R.AuthorRecipes, foreign)
+				if foreign.R == nil {
+					foreign.R = &recipeR{}
+				}
+				foreign.R.Author = local
 				break
 			}
 		}
@@ -825,6 +1108,130 @@ func (o *User) RemoveAvatar(ctx context.Context, exec boil.ContextExecutor, rela
 	return nil
 }
 
+// AddPasswordResetsG adds the given related objects to the existing relationships
+// of the user, optionally inserting them as new records.
+// Appends related to o.R.PasswordResets.
+// Sets related.R.User appropriately.
+// Uses the global database handle.
+func (o *User) AddPasswordResetsG(ctx context.Context, insert bool, related ...*PasswordReset) error {
+	return o.AddPasswordResets(ctx, boil.GetContextDB(), insert, related...)
+}
+
+// AddPasswordResets adds the given related objects to the existing relationships
+// of the user, optionally inserting them as new records.
+// Appends related to o.R.PasswordResets.
+// Sets related.R.User appropriately.
+func (o *User) AddPasswordResets(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*PasswordReset) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			rel.UserID = o.ID
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE \"password_resets\" SET %s WHERE %s",
+				strmangle.SetParamNames("\"", "\"", 1, []string{"user_id"}),
+				strmangle.WhereClause("\"", "\"", 2, passwordResetPrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.ID}
+
+			if boil.IsDebug(ctx) {
+				writer := boil.DebugWriterFrom(ctx)
+				fmt.Fprintln(writer, updateQuery)
+				fmt.Fprintln(writer, values)
+			}
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.UserID = o.ID
+		}
+	}
+
+	if o.R == nil {
+		o.R = &userR{
+			PasswordResets: related,
+		}
+	} else {
+		o.R.PasswordResets = append(o.R.PasswordResets, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &passwordResetR{
+				User: o,
+			}
+		} else {
+			rel.R.User = o
+		}
+	}
+	return nil
+}
+
+// AddAuthorRecipesG adds the given related objects to the existing relationships
+// of the user, optionally inserting them as new records.
+// Appends related to o.R.AuthorRecipes.
+// Sets related.R.Author appropriately.
+// Uses the global database handle.
+func (o *User) AddAuthorRecipesG(ctx context.Context, insert bool, related ...*Recipe) error {
+	return o.AddAuthorRecipes(ctx, boil.GetContextDB(), insert, related...)
+}
+
+// AddAuthorRecipes adds the given related objects to the existing relationships
+// of the user, optionally inserting them as new records.
+// Appends related to o.R.AuthorRecipes.
+// Sets related.R.Author appropriately.
+func (o *User) AddAuthorRecipes(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Recipe) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			rel.AuthorID = o.ID
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE \"recipes\" SET %s WHERE %s",
+				strmangle.SetParamNames("\"", "\"", 1, []string{"author_id"}),
+				strmangle.WhereClause("\"", "\"", 2, recipePrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.ID}
+
+			if boil.IsDebug(ctx) {
+				writer := boil.DebugWriterFrom(ctx)
+				fmt.Fprintln(writer, updateQuery)
+				fmt.Fprintln(writer, values)
+			}
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.AuthorID = o.ID
+		}
+	}
+
+	if o.R == nil {
+		o.R = &userR{
+			AuthorRecipes: related,
+		}
+	} else {
+		o.R.AuthorRecipes = append(o.R.AuthorRecipes, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &recipeR{
+				Author: o,
+			}
+		} else {
+			rel.R.Author = o
+		}
+	}
+	return nil
+}
+
 // AddEmailSessionsG adds the given related objects to the existing relationships
 // of the user, optionally inserting them as new records.
 // Appends related to o.R.EmailSessions.
@@ -899,13 +1306,13 @@ func Users(mods ...qm.QueryMod) userQuery {
 }
 
 // FindUserG retrieves a single record by ID.
-func FindUserG(ctx context.Context, iD int, selectCols ...string) (*User, error) {
+func FindUserG(ctx context.Context, iD string, selectCols ...string) (*User, error) {
 	return FindUser(ctx, boil.GetContextDB(), iD, selectCols...)
 }
 
 // FindUser retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
-func FindUser(ctx context.Context, exec boil.ContextExecutor, iD int, selectCols ...string) (*User, error) {
+func FindUser(ctx context.Context, exec boil.ContextExecutor, iD string, selectCols ...string) (*User, error) {
 	userObj := &User{}
 
 	sel := "*"
@@ -1488,12 +1895,12 @@ func (o *UserSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) er
 }
 
 // UserExistsG checks if the User row exists.
-func UserExistsG(ctx context.Context, iD int) (bool, error) {
+func UserExistsG(ctx context.Context, iD string) (bool, error) {
 	return UserExists(ctx, boil.GetContextDB(), iD)
 }
 
 // UserExists checks if the User row exists.
-func UserExists(ctx context.Context, exec boil.ContextExecutor, iD int) (bool, error) {
+func UserExists(ctx context.Context, exec boil.ContextExecutor, iD string) (bool, error) {
 	var exists bool
 	sql := "select exists(select 1 from \"users\" where \"id\"=$1 limit 1)"
 

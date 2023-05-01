@@ -4,21 +4,27 @@
 package models
 
 var TableNames = struct {
-	CurriculumVitae       string
-	CurriculumVitaeSkills string
-	Media                 string
-	Posts                 string
-	SchemaMigrations      string
-	Sessions              string
-	Skills                string
-	Users                 string
+	Ingredients       string
+	Media             string
+	PasswordResets    string
+	PostTags          string
+	Posts             string
+	RecipeIngredients string
+	RecipeMedia       string
+	Recipes           string
+	SchemaMigrations  string
+	Sessions          string
+	Users             string
 }{
-	CurriculumVitae:       "curriculum_vitae",
-	CurriculumVitaeSkills: "curriculum_vitae_skills",
-	Media:                 "media",
-	Posts:                 "posts",
-	SchemaMigrations:      "schema_migrations",
-	Sessions:              "sessions",
-	Skills:                "skills",
-	Users:                 "users",
+	Ingredients:       "ingredients",
+	Media:             "media",
+	PasswordResets:    "password_resets",
+	PostTags:          "post_tags",
+	Posts:             "posts",
+	RecipeIngredients: "recipe_ingredients",
+	RecipeMedia:       "recipe_media",
+	Recipes:           "recipes",
+	SchemaMigrations:  "schema_migrations",
+	Sessions:          "sessions",
+	Users:             "users",
 }
