@@ -20,6 +20,7 @@ func DbRecipeToProto(recipe *models.Recipe) *pb.Recipe {
 			recipePb.Ingredients[i] = DbIngredientToProto(ingredient)
 		}
 	}
+	return recipePb
 }
 
 func ProtoRecipeToDb(recipe *pb.Recipe) *models.Recipe {

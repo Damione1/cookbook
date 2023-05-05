@@ -45,15 +45,15 @@ docker-compose up generate-models
 To generate the protobuf files, run the following command:
 
 ```bash
-protoc --go-grpc_out=pkg/pb --go_out=pkg/pb --proto_path=proto --go-grpc_opt=paths=source_relative --go_opt=paths=source_relative --grpc-gateway_out=pkg/pb --grpc-gateway_opt=paths=source_relative ./proto/*.proto
-```
+
+```protoc --go-grpc_out=pkg/pb --go_out=pkg/pb --proto_path=proto --go-grpc_opt=paths=source_relative --go_opt=paths=source_relative --grpc-gateway_out=pkg/pb --grpc-gateway_opt=paths=source_relative ./proto/*.proto
 
 **Note: You need to have the `protoc` binary installed on your machine. You can download it from [here](https://github.com/protocolbuffers/protobuf/releases/), copy it in a folder and put the path of its `bin` folder in your `PATH` environment variable.**
 
 To connect to the PostgreSQL database, use the following command:
 
 ```bash
-docker-compose exec db psql -U postgres -d portfolio_playground
+docker-compose exec db psql -U postgres -d cookbook
 ```
 
 To test the gRPC server, use the following command:

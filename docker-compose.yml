@@ -40,5 +40,26 @@ services:
     restart: "no"
     profiles:
     - manual
+  proto-generator:
+    build:
+      context: .
+      dockerfile: Dockerfile-proto
+    command: ./scripts/generate_proto.sh
+    volumes:
+      - ./:/app
+    container_name: proto-generator
+    profiles:
+    - manual
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile-test
+    volumes:
+      - ./:/app
+    depends_on:
+      - "web"
+    container_name: test
+    profiles:
+    - manual
 volumes:
   postgres-db:

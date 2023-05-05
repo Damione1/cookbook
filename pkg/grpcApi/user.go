@@ -34,17 +34,8 @@ const (
 )
 
 func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
-	authPayload, err := server.authorizeUser(ctx)
-	if err != nil {
-		return nil, unauthenticatedError(err)
-	}
-
-	if err = validateCreateUserRequest(req); err != nil {
-		return nil, err
-	}
-
-	if authPayload.Email != server.config.AdminEmail {
-		return nil, status.Errorf(codes.PermissionDenied, "cannot update other user's info")
+	if err := validateCreateUserRequest(req); err != nil {
+		return nil, fmt.Errorf( "failed to validate request: %w", err)
 	}
 
 	hashedPassword, err := util.HashPassword(req.GetPassword())
@@ -311,13 +302,28 @@ func (server *Server) extractMetadata(ctx context.Context) *Metadata {
 
 func validateCreateUserRequest(req *pb.CreateUserRequest) error {
 	return validation.ValidateStruct(req,
-		// Street cannot be empty, and the length must between 5 and 20
+		// Name cannot be empty, and the length must be between 5 and 20
 		validation.Field(&req.Name, validation.Required, validation.Length(5, 20)),
 		// Email cannot be empty and should be in a valid email format
 		validation.Field(&req.Email, validation.Required, is.Email),
-		validation.Field(&req.Password, validation.Required, validation.Length(8, 100), validation.Match(regexp.MustCompile(`^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8}$`))),
+		validation.Field(&req.Password, validation.Required, validation.Length(8, 100), validation.By(checkPassword)),
 	)
 }
+
+func checkPassword(value interface{}) error {
+	password, _ := value.(string)
+	if !regexp.MustCompile(`[a-z]`).MatchString(password) {
+		return fmt.Errorf("password must contain at least one lowercase letter")
+	}
+	if !regexp.MustCompile(`[A-Z]`).MatchString(password) {
+		return fmt.Errorf("password must contain at least one uppercase letter")
+	}
+	if !regexp.MustCompile(`\d`).MatchString(password) {
+		return fmt.Errorf("password must contain at least one digit")
+	}
+	return nil
+}
+
 
 func validateLoginUserRequest(req *pb.LoginRequest) error {
 	return validation.ValidateStruct(req,

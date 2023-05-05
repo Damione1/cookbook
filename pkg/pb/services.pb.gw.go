@@ -31,7 +31,41 @@ var _ = runtime.String
 var _ = utilities.NewDoubleArray
 var _ = metadata.Join
 
-func request_PortfolioService_Login_0(ctx context.Context, marshaler runtime.Marshaler, client PortfolioServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_PortfolioService_CreateUser_0(ctx context.Context, marshaler runtime.Marshaler, client PortfolioServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq CreateUserRequest
+	var metadata runtime.ServerMetadata
+
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
+	}
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.CreateUser(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_PortfolioService_CreateUser_0(ctx context.Context, marshaler runtime.Marshaler, server PortfolioServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq CreateUserRequest
+	var metadata runtime.ServerMetadata
+
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
+	}
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := server.CreateUser(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
+func request_PortfolioService_LoginUser_0(ctx context.Context, marshaler runtime.Marshaler, client PortfolioServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq LoginRequest
 	var metadata runtime.ServerMetadata
 
@@ -43,12 +77,12 @@ func request_PortfolioService_Login_0(ctx context.Context, marshaler runtime.Mar
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := client.Login(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.LoginUser(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_PortfolioService_Login_0(ctx context.Context, marshaler runtime.Marshaler, server PortfolioServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_PortfolioService_LoginUser_0(ctx context.Context, marshaler runtime.Marshaler, server PortfolioServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq LoginRequest
 	var metadata runtime.ServerMetadata
 
@@ -60,12 +94,12 @@ func local_request_PortfolioService_Login_0(ctx context.Context, marshaler runti
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := server.Login(ctx, &protoReq)
+	msg, err := server.LoginUser(ctx, &protoReq)
 	return msg, metadata, err
 
 }
 
-func request_PortfolioService_Logout_0(ctx context.Context, marshaler runtime.Marshaler, client PortfolioServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_PortfolioService_LogoutUser_0(ctx context.Context, marshaler runtime.Marshaler, client PortfolioServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq LogoutRequest
 	var metadata runtime.ServerMetadata
 
@@ -77,12 +111,12 @@ func request_PortfolioService_Logout_0(ctx context.Context, marshaler runtime.Ma
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := client.Logout(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.LogoutUser(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_PortfolioService_Logout_0(ctx context.Context, marshaler runtime.Marshaler, server PortfolioServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_PortfolioService_LogoutUser_0(ctx context.Context, marshaler runtime.Marshaler, server PortfolioServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq LogoutRequest
 	var metadata runtime.ServerMetadata
 
@@ -94,7 +128,7 @@ func local_request_PortfolioService_Logout_0(ctx context.Context, marshaler runt
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := server.Logout(ctx, &protoReq)
+	msg, err := server.LogoutUser(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -567,7 +601,7 @@ func local_request_PortfolioService_ListRecipes_0(ctx context.Context, marshaler
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterPortfolioServiceHandlerFromEndpoint instead.
 func RegisterPortfolioServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server PortfolioServiceServer) error {
 
-	mux.Handle("POST", pattern_PortfolioService_Login_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_PortfolioService_CreateUser_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -575,12 +609,12 @@ func RegisterPortfolioServiceHandlerServer(ctx context.Context, mux *runtime.Ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.PortfolioService/Login", runtime.WithHTTPPathPattern("/v1/user/login"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.PortfolioService/CreateUser", runtime.WithHTTPPathPattern("/v1/user/create"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_PortfolioService_Login_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_PortfolioService_CreateUser_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -588,11 +622,11 @@ func RegisterPortfolioServiceHandlerServer(ctx context.Context, mux *runtime.Ser
 			return
 		}
 
-		forward_PortfolioService_Login_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_PortfolioService_CreateUser_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("POST", pattern_PortfolioService_Logout_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_PortfolioService_LoginUser_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -600,12 +634,12 @@ func RegisterPortfolioServiceHandlerServer(ctx context.Context, mux *runtime.Ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.PortfolioService/Logout", runtime.WithHTTPPathPattern("/v1/user/logout"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.PortfolioService/LoginUser", runtime.WithHTTPPathPattern("/v1/user/login"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_PortfolioService_Logout_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_PortfolioService_LoginUser_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -613,7 +647,32 @@ func RegisterPortfolioServiceHandlerServer(ctx context.Context, mux *runtime.Ser
 			return
 		}
 
-		forward_PortfolioService_Logout_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_PortfolioService_LoginUser_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("POST", pattern_PortfolioService_LogoutUser_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.PortfolioService/LogoutUser", runtime.WithHTTPPathPattern("/v1/user/logout"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_PortfolioService_LogoutUser_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_PortfolioService_LogoutUser_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -933,47 +992,69 @@ func RegisterPortfolioServiceHandler(ctx context.Context, mux *runtime.ServeMux,
 // "PortfolioServiceClient" to call the correct interceptors.
 func RegisterPortfolioServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client PortfolioServiceClient) error {
 
-	mux.Handle("POST", pattern_PortfolioService_Login_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_PortfolioService_CreateUser_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pb.PortfolioService/Login", runtime.WithHTTPPathPattern("/v1/user/login"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pb.PortfolioService/CreateUser", runtime.WithHTTPPathPattern("/v1/user/create"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_PortfolioService_Login_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_PortfolioService_CreateUser_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_PortfolioService_Login_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_PortfolioService_CreateUser_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("POST", pattern_PortfolioService_Logout_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_PortfolioService_LoginUser_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pb.PortfolioService/Logout", runtime.WithHTTPPathPattern("/v1/user/logout"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pb.PortfolioService/LoginUser", runtime.WithHTTPPathPattern("/v1/user/login"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_PortfolioService_Logout_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_PortfolioService_LoginUser_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_PortfolioService_Logout_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_PortfolioService_LoginUser_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("POST", pattern_PortfolioService_LogoutUser_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pb.PortfolioService/LogoutUser", runtime.WithHTTPPathPattern("/v1/user/logout"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_PortfolioService_LogoutUser_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_PortfolioService_LogoutUser_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -1223,9 +1304,11 @@ func RegisterPortfolioServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 }
 
 var (
-	pattern_PortfolioService_Login_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "user", "login"}, ""))
+	pattern_PortfolioService_CreateUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "user", "create"}, ""))
 
-	pattern_PortfolioService_Logout_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "user", "logout"}, ""))
+	pattern_PortfolioService_LoginUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "user", "login"}, ""))
+
+	pattern_PortfolioService_LogoutUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "user", "logout"}, ""))
 
 	pattern_PortfolioService_RefreshToken_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "user", "refresh"}, ""))
 
@@ -1251,9 +1334,11 @@ var (
 )
 
 var (
-	forward_PortfolioService_Login_0 = runtime.ForwardResponseMessage
+	forward_PortfolioService_CreateUser_0 = runtime.ForwardResponseMessage
 
-	forward_PortfolioService_Logout_0 = runtime.ForwardResponseMessage
+	forward_PortfolioService_LoginUser_0 = runtime.ForwardResponseMessage
+
+	forward_PortfolioService_LogoutUser_0 = runtime.ForwardResponseMessage
 
 	forward_PortfolioService_RefreshToken_0 = runtime.ForwardResponseMessage
 
