@@ -6,9 +6,10 @@ The main technologies and concepts involved in this project are:
 
 - Protocol Buffers & gRPC
 - SQLBoiler
+- SQL Migrations
 - JWT authentication (with PASETO)
 - Docker Compose
-- Tilt
+- Tilt (for hot reloading)
 - Email sending
 - Best practices
 - Testing
@@ -63,7 +64,7 @@ evans --host localhost --port 9090 -r repl
 
 Then, you can list the available services with the `service list` command and call the `GetUser` method with the `call GetUser` command.
 
-## Project Overview
+## Project Overview (Current State)
 
 The cookbook platform allows multiple users to register and submit their recipes with pictures, steps, and the list of ingredients. Users can view the ingredients in multiple units and adjust the quantities according to the desired serving size. They can also add multiple recipes to a cart (similar to an e-commerce platform) and get a comprehensive list of necessary ingredients. Identical ingredients will be merged, and the quantities will be added accordingly.
 
