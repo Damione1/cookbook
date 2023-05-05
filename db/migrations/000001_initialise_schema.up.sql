@@ -104,16 +104,32 @@ CREATE TABLE recipe_media (
   PRIMARY KEY (recipe_id, media_id)
 );
 
+-- create unit enum in sql
+CREATE TYPE ingredient_unit_enum AS ENUM (
+  'UNIT_UNSPECIFIED',
+  'GRAM',
+  'KILOGRAM',
+  'MILLILITER',
+  'LITER',
+  'TEASPOON',
+  'TABLESPOON',
+  'CUP',
+  'PINCH',
+  'PIECE'
+);
+
 -- Recipe ingredient relationship table
 CREATE TABLE recipe_ingredients (
   recipe_id SERIAL NOT NULL REFERENCES recipes(id) ON DELETE CASCADE,
   ingredient_id SERIAL NOT NULL REFERENCES ingredients(id) ON DELETE CASCADE,
   quantity DECIMAL(10, 2) NOT NULL,
-  unit VARCHAR(255) NOT NULL,
+  unit ingredient_unit_enum NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   PRIMARY KEY (recipe_id, ingredient_id)
 );
+
+
 
 CREATE INDEX recipe_ingredients_recipe_id_idx ON recipe_ingredients (recipe_id);
 CREATE INDEX recipe_ingredients_ingredient_id_idx ON recipe_ingredients (ingredient_id);

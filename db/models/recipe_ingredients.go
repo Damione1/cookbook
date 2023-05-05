@@ -25,12 +25,12 @@ import (
 
 // RecipeIngredient is an object representing the database table.
 type RecipeIngredient struct {
-	RecipeID     int           `boil:"recipe_id" json:"recipe_id" toml:"recipe_id" yaml:"recipe_id"`
-	IngredientID int           `boil:"ingredient_id" json:"ingredient_id" toml:"ingredient_id" yaml:"ingredient_id"`
-	Quantity     types.Decimal `boil:"quantity" json:"quantity" toml:"quantity" yaml:"quantity"`
-	Unit         string        `boil:"unit" json:"unit" toml:"unit" yaml:"unit"`
-	CreatedAt    null.Time     `boil:"created_at" json:"created_at,omitempty" toml:"created_at" yaml:"created_at,omitempty"`
-	UpdatedAt    null.Time     `boil:"updated_at" json:"updated_at,omitempty" toml:"updated_at" yaml:"updated_at,omitempty"`
+	RecipeID     int                `boil:"recipe_id" json:"recipe_id" toml:"recipe_id" yaml:"recipe_id"`
+	IngredientID int                `boil:"ingredient_id" json:"ingredient_id" toml:"ingredient_id" yaml:"ingredient_id"`
+	Quantity     types.Decimal      `boil:"quantity" json:"quantity" toml:"quantity" yaml:"quantity"`
+	Unit         IngredientUnitEnum `boil:"unit" json:"unit" toml:"unit" yaml:"unit"`
+	CreatedAt    null.Time          `boil:"created_at" json:"created_at,omitempty" toml:"created_at" yaml:"created_at,omitempty"`
+	UpdatedAt    null.Time          `boil:"updated_at" json:"updated_at,omitempty" toml:"updated_at" yaml:"updated_at,omitempty"`
 
 	R *recipeIngredientR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L recipeIngredientL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -91,18 +91,53 @@ func (w whereHelpertypes_Decimal) GTE(x types.Decimal) qm.QueryMod {
 	return qmhelper.Where(w.field, qmhelper.GTE, x)
 }
 
+type whereHelperIngredientUnitEnum struct{ field string }
+
+func (w whereHelperIngredientUnitEnum) EQ(x IngredientUnitEnum) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.EQ, x)
+}
+func (w whereHelperIngredientUnitEnum) NEQ(x IngredientUnitEnum) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.NEQ, x)
+}
+func (w whereHelperIngredientUnitEnum) LT(x IngredientUnitEnum) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LT, x)
+}
+func (w whereHelperIngredientUnitEnum) LTE(x IngredientUnitEnum) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LTE, x)
+}
+func (w whereHelperIngredientUnitEnum) GT(x IngredientUnitEnum) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GT, x)
+}
+func (w whereHelperIngredientUnitEnum) GTE(x IngredientUnitEnum) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GTE, x)
+}
+func (w whereHelperIngredientUnitEnum) IN(slice []IngredientUnitEnum) qm.QueryMod {
+	values := make([]interface{}, 0, len(slice))
+	for _, value := range slice {
+		values = append(values, value)
+	}
+	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
+}
+func (w whereHelperIngredientUnitEnum) NIN(slice []IngredientUnitEnum) qm.QueryMod {
+	values := make([]interface{}, 0, len(slice))
+	for _, value := range slice {
+		values = append(values, value)
+	}
+	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
+}
+
 var RecipeIngredientWhere = struct {
 	RecipeID     whereHelperint
 	IngredientID whereHelperint
 	Quantity     whereHelpertypes_Decimal
-	Unit         whereHelperstring
+	Unit         whereHelperIngredientUnitEnum
 	CreatedAt    whereHelpernull_Time
 	UpdatedAt    whereHelpernull_Time
 }{
 	RecipeID:     whereHelperint{field: "\"recipe_ingredients\".\"recipe_id\""},
 	IngredientID: whereHelperint{field: "\"recipe_ingredients\".\"ingredient_id\""},
 	Quantity:     whereHelpertypes_Decimal{field: "\"recipe_ingredients\".\"quantity\""},
-	Unit:         whereHelperstring{field: "\"recipe_ingredients\".\"unit\""},
+	Unit:         whereHelperIngredientUnitEnum{field: "\"recipe_ingredients\".\"unit\""},
 	CreatedAt:    whereHelpernull_Time{field: "\"recipe_ingredients\".\"created_at\""},
 	UpdatedAt:    whereHelpernull_Time{field: "\"recipe_ingredients\".\"updated_at\""},
 }

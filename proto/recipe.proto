@@ -32,6 +32,7 @@ message Recipe {
   string description = 3;
   string instructions = 4;
   repeated Ingredient ingredients = 5;
+  string author_id = 6;
 }
 
 message CreateRecipeRequest {

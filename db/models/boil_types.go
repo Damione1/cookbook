@@ -50,3 +50,47 @@ func makeCacheKey(cols boil.Columns, nzDefaults []string) string {
 	strmangle.PutBuffer(buf)
 	return str
 }
+
+type IngredientUnitEnum string
+
+// Enum values for IngredientUnitEnum
+const (
+	IngredientUnitEnumUNIT_UNSPECIFIED IngredientUnitEnum = "UNIT_UNSPECIFIED"
+	IngredientUnitEnumGRAM             IngredientUnitEnum = "GRAM"
+	IngredientUnitEnumKILOGRAM         IngredientUnitEnum = "KILOGRAM"
+	IngredientUnitEnumMILLILITER       IngredientUnitEnum = "MILLILITER"
+	IngredientUnitEnumLITER            IngredientUnitEnum = "LITER"
+	IngredientUnitEnumTEASPOON         IngredientUnitEnum = "TEASPOON"
+	IngredientUnitEnumTABLESPOON       IngredientUnitEnum = "TABLESPOON"
+	IngredientUnitEnumCUP              IngredientUnitEnum = "CUP"
+	IngredientUnitEnumPINCH            IngredientUnitEnum = "PINCH"
+	IngredientUnitEnumPIECE            IngredientUnitEnum = "PIECE"
+)
+
+func AllIngredientUnitEnum() []IngredientUnitEnum {
+	return []IngredientUnitEnum{
+		IngredientUnitEnumUNIT_UNSPECIFIED,
+		IngredientUnitEnumGRAM,
+		IngredientUnitEnumKILOGRAM,
+		IngredientUnitEnumMILLILITER,
+		IngredientUnitEnumLITER,
+		IngredientUnitEnumTEASPOON,
+		IngredientUnitEnumTABLESPOON,
+		IngredientUnitEnumCUP,
+		IngredientUnitEnumPINCH,
+		IngredientUnitEnumPIECE,
+	}
+}
+
+func (e IngredientUnitEnum) IsValid() error {
+	switch e {
+	case IngredientUnitEnumUNIT_UNSPECIFIED, IngredientUnitEnumGRAM, IngredientUnitEnumKILOGRAM, IngredientUnitEnumMILLILITER, IngredientUnitEnumLITER, IngredientUnitEnumTEASPOON, IngredientUnitEnumTABLESPOON, IngredientUnitEnumCUP, IngredientUnitEnumPINCH, IngredientUnitEnumPIECE:
+		return nil
+	default:
+		return errors.New("enum is not valid")
+	}
+}
+
+func (e IngredientUnitEnum) String() string {
+	return string(e)
+}
