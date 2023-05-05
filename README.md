@@ -1,4 +1,4 @@
-# Portfolio Playground
+# Damien's Cookbook
 
 Portfolio Playground is a personal project aimed at learning various technologies and best practices in the field of software development. This project focuses on creating a cookbook platform where users can register, submit their recipes with pictures, steps, and the list of ingredients. The backend is developed using Golang, and the frontend will be developed using Nuxt.js in the second phase.
 
