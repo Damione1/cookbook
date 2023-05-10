@@ -3,14 +3,16 @@ package grpcApi
 import (
 	"context"
 
+	"github.com/Damione1/portfolio-playground/db/models"
 	"github.com/Damione1/portfolio-playground/pkg/pb"
 	"github.com/Damione1/portfolio-playground/pkg/pbx"
 	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 )
 
 func (server *Server) CreateRecipe(ctx context.Context, req *pb.CreateRecipeRequest) (*pb.CreateRecipeResponse, error) {
-	_, err := server.authorizeUser(ctx)
+	authorizeUserPayload, err := server.authorizeUser(ctx)
 	if err != nil {
 		return nil, unauthenticatedError(err)
 	}
@@ -19,7 +21,35 @@ func (server *Server) CreateRecipe(ctx context.Context, req *pb.CreateRecipeRequ
 		return nil, err
 	}
 
-	recipe := pbx.ProtoRecipeToDb(req.GetRecipe())
+	recipe := &models.Recipe{
+		Title:       req.Recipe.Title,
+		Description: null.NewString(req.Recipe.GetDescription(), true),
+		Directions:  null.NewString(req.Recipe.GetInstructions(), true),
+		AuthorID:    authorizeUserPayload.ID.String(),
+	}
+
+	for _, ingredient := range req.Recipe.Ingredients {
+
+		if ingredient.Id == 0 {
+			ingredientDb := &models.Ingredient{
+				Name: ingredient.Name,
+			}
+
+			err := ingredientDb.Insert(ctx, server.config.DB, boil.Infer())
+			if err != nil {
+				return nil, err
+			}
+
+			ingredient.Id = int64(ingredientDb.ID)
+		}
+
+		recipeIngredient := &models.RecipeIngredient{
+			RecipeID:     recipe.ID,
+			Quantity:     float64(ingredient.Quantity),
+			IngredientID: int(ingredient.Id),
+		}
+		recipe.AddRecipeIngredients(ctx, server.config.DB, true, recipeIngredient)
+	}
 
 	err = recipe.Insert(ctx, server.config.DB, boil.Infer())
 	if err != nil {

@@ -36,7 +36,6 @@ func (maker *PasetoMaker) CreateToken(email string, duration time.Duration) (str
 
 	token, err := maker.paseto.Encrypt(maker.symKey, payload, nil)
 	return token, payload, err
-
 }
 
 func (maker *PasetoMaker) ValidateToken(token string) (*Payload, error) {

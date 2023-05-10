@@ -3,7 +3,8 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"os"
+
+	"github.com/rs/zerolog/log"
 
 	"github.com/Damione1/portfolio-playground/util"
 	"github.com/golang-migrate/migrate/v4"
@@ -21,11 +22,8 @@ func ConnectDb(config *util.Config) (*sql.DB, error) {
 		config.PostgresDb,
 	))
 	if err != nil {
-		fmt.Println("Failed to connect to database. \n", err)
-		os.Exit(2)
+		log.Fatal().Err(err).Msg("🥝 Failed to connect to database")
 	}
-
-	runDBMigration(config.MigrationPath, db)
 
 	boil.SetDB(db)
 
@@ -34,29 +32,24 @@ func ConnectDb(config *util.Config) (*sql.DB, error) {
 	return db, nil
 }
 
-func runDBMigration(migrationURL string, db *sql.DB) {
+func RunDBMigration(migrationURL string, db *sql.DB) {
 	driver, err := postgres.WithInstance(db, &postgres.Config{})
 	if err != nil {
-		fmt.Printf("Failed to create database driver. %v \n", err)
-		os.Exit(2)
+		log.Fatal().Err(err).Msg("🥝 Failed to create migration driver")
 	}
 
 	m, err := migrate.NewWithDatabaseInstance(migrationURL, "postgres", driver)
 	if err != nil {
-		fmt.Printf("Failed to create migration instance. %v \n", err)
-		os.Exit(2)
+		log.Fatal().Err(err).Msg("🥝 Failed to create migration instance")
 	}
 
 	err = m.Up()
 	if err != nil {
 		if err == migrate.ErrNoChange {
-			fmt.Printf("No migration to run. \n")
+			log.Print("🥝 No migration to run")
 		} else {
-			fmt.Println("Failed to run migration. \n", err)
-			os.Exit(2)
+			log.Fatal().Err(err).Msg("🥝 Failed to run migration")
 		}
 	}
-	fmt.Printf("Migration successful. \n")
-
 	return
 }

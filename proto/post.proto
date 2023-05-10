@@ -26,11 +26,29 @@ message Post {
     google.protobuf.Timestamp update_time = 7;
 }
 
+message CreatePostRequest {
+    // Post is the post.
+    Post post = 1 [(google.api.field_behavior) = REQUIRED];
+}
+message CreatePostResponse {
+    // Post is the post.
+    Post post = 1;
+}
+
+message UpdatePostRequest {
+    // Post is the post.
+    Post post = 1 [(google.api.field_behavior) = REQUIRED];
+}
+message UpdatePostResponse {
+    // Post is the post.
+    Post post = 1;
+}
+
+
 message GetPostRequest {
     // ID is the unique identifier for the post.
     int32 id = 1;
 }
-
 message GetPostResponse {
     // Post is the post.
     Post post = 1;
@@ -50,12 +68,11 @@ message ListPostsResponse {
     int32 next_page_token = 2;
 }
 
-message CreatePostRequest {
-    // Post is the post.
-    Post post = 1 [(google.api.field_behavior) = REQUIRED];
+message DeletePostRequest {
+    // ID is the unique identifier for the post.
+    int32 id = 1;
 }
-
-message CreatePostResponse {
+message DeletePostResponse {
     // Post is the post.
     Post post = 1;
 }

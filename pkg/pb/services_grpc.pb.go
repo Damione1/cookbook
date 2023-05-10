@@ -19,47 +19,58 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	PortfolioService_GetUser_FullMethodName        = "/pb.PortfolioService/GetUser"
-	PortfolioService_UpdateUser_FullMethodName     = "/pb.PortfolioService/UpdateUser"
-	PortfolioService_DeleteUser_FullMethodName     = "/pb.PortfolioService/DeleteUser"
-	PortfolioService_CreateUser_FullMethodName     = "/pb.PortfolioService/CreateUser"
-	PortfolioService_LoginUser_FullMethodName      = "/pb.PortfolioService/LoginUser"
-	PortfolioService_LogoutUser_FullMethodName     = "/pb.PortfolioService/LogoutUser"
-	PortfolioService_RefreshToken_FullMethodName   = "/pb.PortfolioService/RefreshToken"
-	PortfolioService_ResetPassword_FullMethodName  = "/pb.PortfolioService/ResetPassword"
-	PortfolioService_ChangePassword_FullMethodName = "/pb.PortfolioService/ChangePassword"
-	PortfolioService_CreatePost_FullMethodName     = "/pb.PortfolioService/CreatePost"
-	PortfolioService_GetPost_FullMethodName        = "/pb.PortfolioService/GetPost"
-	PortfolioService_ListPosts_FullMethodName      = "/pb.PortfolioService/ListPosts"
-	PortfolioService_CreateRecipe_FullMethodName   = "/pb.PortfolioService/CreateRecipe"
-	PortfolioService_GetRecipe_FullMethodName      = "/pb.PortfolioService/GetRecipe"
-	PortfolioService_UpdateRecipe_FullMethodName   = "/pb.PortfolioService/UpdateRecipe"
-	PortfolioService_DeleteRecipe_FullMethodName   = "/pb.PortfolioService/DeleteRecipe"
-	PortfolioService_ListRecipes_FullMethodName    = "/pb.PortfolioService/ListRecipes"
+	PortfolioService_LoginUser_FullMethodName        = "/pb.PortfolioService/LoginUser"
+	PortfolioService_LogoutUser_FullMethodName       = "/pb.PortfolioService/LogoutUser"
+	PortfolioService_RefreshToken_FullMethodName     = "/pb.PortfolioService/RefreshToken"
+	PortfolioService_CreateUser_FullMethodName       = "/pb.PortfolioService/CreateUser"
+	PortfolioService_UpdateUser_FullMethodName       = "/pb.PortfolioService/UpdateUser"
+	PortfolioService_GetUser_FullMethodName          = "/pb.PortfolioService/GetUser"
+	PortfolioService_ResetPassword_FullMethodName    = "/pb.PortfolioService/ResetPassword"
+	PortfolioService_ChangePassword_FullMethodName   = "/pb.PortfolioService/ChangePassword"
+	PortfolioService_CreatePost_FullMethodName       = "/pb.PortfolioService/CreatePost"
+	PortfolioService_UpdatePost_FullMethodName       = "/pb.PortfolioService/UpdatePost"
+	PortfolioService_GetPost_FullMethodName          = "/pb.PortfolioService/GetPost"
+	PortfolioService_ListPosts_FullMethodName        = "/pb.PortfolioService/ListPosts"
+	PortfolioService_DeletePost_FullMethodName       = "/pb.PortfolioService/DeletePost"
+	PortfolioService_CreateRecipe_FullMethodName     = "/pb.PortfolioService/CreateRecipe"
+	PortfolioService_UpdateRecipe_FullMethodName     = "/pb.PortfolioService/UpdateRecipe"
+	PortfolioService_GetRecipe_FullMethodName        = "/pb.PortfolioService/GetRecipe"
+	PortfolioService_ListRecipes_FullMethodName      = "/pb.PortfolioService/ListRecipes"
+	PortfolioService_DeleteRecipe_FullMethodName     = "/pb.PortfolioService/DeleteRecipe"
+	PortfolioService_CreateIngredient_FullMethodName = "/pb.PortfolioService/CreateIngredient"
+	PortfolioService_UpdateIngredient_FullMethodName = "/pb.PortfolioService/UpdateIngredient"
+	PortfolioService_GetIngredient_FullMethodName    = "/pb.PortfolioService/GetIngredient"
+	PortfolioService_ListIngredients_FullMethodName  = "/pb.PortfolioService/ListIngredients"
+	PortfolioService_DeleteIngredient_FullMethodName = "/pb.PortfolioService/DeleteIngredient"
 )
 
 // PortfolioServiceClient is the client API for PortfolioService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PortfolioServiceClient interface {
-	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
-	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
-	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error)
-	// user create account
-	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 	LoginUser(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	LogoutUser(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
 	RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
+	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
+	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
+	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error)
 	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*ChangePasswordResponse, error)
 	CreatePost(ctx context.Context, in *CreatePostRequest, opts ...grpc.CallOption) (*CreatePostResponse, error)
+	UpdatePost(ctx context.Context, in *UpdatePostRequest, opts ...grpc.CallOption) (*UpdatePostResponse, error)
 	GetPost(ctx context.Context, in *GetPostRequest, opts ...grpc.CallOption) (*GetPostResponse, error)
 	ListPosts(ctx context.Context, in *ListPostsRequest, opts ...grpc.CallOption) (*ListPostsResponse, error)
+	DeletePost(ctx context.Context, in *DeletePostRequest, opts ...grpc.CallOption) (*DeletePostResponse, error)
 	CreateRecipe(ctx context.Context, in *CreateRecipeRequest, opts ...grpc.CallOption) (*CreateRecipeResponse, error)
-	GetRecipe(ctx context.Context, in *GetRecipeRequest, opts ...grpc.CallOption) (*GetRecipeResponse, error)
 	UpdateRecipe(ctx context.Context, in *UpdateRecipeRequest, opts ...grpc.CallOption) (*UpdateRecipeResponse, error)
-	DeleteRecipe(ctx context.Context, in *DeleteRecipeRequest, opts ...grpc.CallOption) (*DeleteRecipeResponse, error)
+	GetRecipe(ctx context.Context, in *GetRecipeRequest, opts ...grpc.CallOption) (*GetRecipeResponse, error)
 	ListRecipes(ctx context.Context, in *ListRecipesRequest, opts ...grpc.CallOption) (*ListRecipesResponse, error)
+	DeleteRecipe(ctx context.Context, in *DeleteRecipeRequest, opts ...grpc.CallOption) (*DeleteRecipeResponse, error)
+	CreateIngredient(ctx context.Context, in *CreateIngredientRequest, opts ...grpc.CallOption) (*CreateIngredientResponse, error)
+	UpdateIngredient(ctx context.Context, in *UpdateIngredientRequest, opts ...grpc.CallOption) (*UpdateIngredientResponse, error)
+	GetIngredient(ctx context.Context, in *GetIngredientRequest, opts ...grpc.CallOption) (*GetIngredientResponse, error)
+	ListIngredients(ctx context.Context, in *ListIngredientsRequest, opts ...grpc.CallOption) (*ListIngredientsResponse, error)
+	DeleteIngredient(ctx context.Context, in *DeleteIngredientRequest, opts ...grpc.CallOption) (*DeleteIngredientResponse, error)
 }
 
 type portfolioServiceClient struct {
@@ -68,42 +79,6 @@ type portfolioServiceClient struct {
 
 func NewPortfolioServiceClient(cc grpc.ClientConnInterface) PortfolioServiceClient {
 	return &portfolioServiceClient{cc}
-}
-
-func (c *portfolioServiceClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error) {
-	out := new(GetUserResponse)
-	err := c.cc.Invoke(ctx, PortfolioService_GetUser_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *portfolioServiceClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error) {
-	out := new(UpdateUserResponse)
-	err := c.cc.Invoke(ctx, PortfolioService_UpdateUser_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *portfolioServiceClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error) {
-	out := new(DeleteUserResponse)
-	err := c.cc.Invoke(ctx, PortfolioService_DeleteUser_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *portfolioServiceClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error) {
-	out := new(CreateUserResponse)
-	err := c.cc.Invoke(ctx, PortfolioService_CreateUser_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *portfolioServiceClient) LoginUser(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
@@ -127,6 +102,33 @@ func (c *portfolioServiceClient) LogoutUser(ctx context.Context, in *LogoutReque
 func (c *portfolioServiceClient) RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error) {
 	out := new(RefreshTokenResponse)
 	err := c.cc.Invoke(ctx, PortfolioService_RefreshToken_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *portfolioServiceClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error) {
+	out := new(CreateUserResponse)
+	err := c.cc.Invoke(ctx, PortfolioService_CreateUser_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *portfolioServiceClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error) {
+	out := new(UpdateUserResponse)
+	err := c.cc.Invoke(ctx, PortfolioService_UpdateUser_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *portfolioServiceClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error) {
+	out := new(GetUserResponse)
+	err := c.cc.Invoke(ctx, PortfolioService_GetUser_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -160,6 +162,15 @@ func (c *portfolioServiceClient) CreatePost(ctx context.Context, in *CreatePostR
 	return out, nil
 }
 
+func (c *portfolioServiceClient) UpdatePost(ctx context.Context, in *UpdatePostRequest, opts ...grpc.CallOption) (*UpdatePostResponse, error) {
+	out := new(UpdatePostResponse)
+	err := c.cc.Invoke(ctx, PortfolioService_UpdatePost_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *portfolioServiceClient) GetPost(ctx context.Context, in *GetPostRequest, opts ...grpc.CallOption) (*GetPostResponse, error) {
 	out := new(GetPostResponse)
 	err := c.cc.Invoke(ctx, PortfolioService_GetPost_FullMethodName, in, out, opts...)
@@ -178,18 +189,18 @@ func (c *portfolioServiceClient) ListPosts(ctx context.Context, in *ListPostsReq
 	return out, nil
 }
 
-func (c *portfolioServiceClient) CreateRecipe(ctx context.Context, in *CreateRecipeRequest, opts ...grpc.CallOption) (*CreateRecipeResponse, error) {
-	out := new(CreateRecipeResponse)
-	err := c.cc.Invoke(ctx, PortfolioService_CreateRecipe_FullMethodName, in, out, opts...)
+func (c *portfolioServiceClient) DeletePost(ctx context.Context, in *DeletePostRequest, opts ...grpc.CallOption) (*DeletePostResponse, error) {
+	out := new(DeletePostResponse)
+	err := c.cc.Invoke(ctx, PortfolioService_DeletePost_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *portfolioServiceClient) GetRecipe(ctx context.Context, in *GetRecipeRequest, opts ...grpc.CallOption) (*GetRecipeResponse, error) {
-	out := new(GetRecipeResponse)
-	err := c.cc.Invoke(ctx, PortfolioService_GetRecipe_FullMethodName, in, out, opts...)
+func (c *portfolioServiceClient) CreateRecipe(ctx context.Context, in *CreateRecipeRequest, opts ...grpc.CallOption) (*CreateRecipeResponse, error) {
+	out := new(CreateRecipeResponse)
+	err := c.cc.Invoke(ctx, PortfolioService_CreateRecipe_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -205,9 +216,9 @@ func (c *portfolioServiceClient) UpdateRecipe(ctx context.Context, in *UpdateRec
 	return out, nil
 }
 
-func (c *portfolioServiceClient) DeleteRecipe(ctx context.Context, in *DeleteRecipeRequest, opts ...grpc.CallOption) (*DeleteRecipeResponse, error) {
-	out := new(DeleteRecipeResponse)
-	err := c.cc.Invoke(ctx, PortfolioService_DeleteRecipe_FullMethodName, in, out, opts...)
+func (c *portfolioServiceClient) GetRecipe(ctx context.Context, in *GetRecipeRequest, opts ...grpc.CallOption) (*GetRecipeResponse, error) {
+	out := new(GetRecipeResponse)
+	err := c.cc.Invoke(ctx, PortfolioService_GetRecipe_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -223,28 +234,87 @@ func (c *portfolioServiceClient) ListRecipes(ctx context.Context, in *ListRecipe
 	return out, nil
 }
 
+func (c *portfolioServiceClient) DeleteRecipe(ctx context.Context, in *DeleteRecipeRequest, opts ...grpc.CallOption) (*DeleteRecipeResponse, error) {
+	out := new(DeleteRecipeResponse)
+	err := c.cc.Invoke(ctx, PortfolioService_DeleteRecipe_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *portfolioServiceClient) CreateIngredient(ctx context.Context, in *CreateIngredientRequest, opts ...grpc.CallOption) (*CreateIngredientResponse, error) {
+	out := new(CreateIngredientResponse)
+	err := c.cc.Invoke(ctx, PortfolioService_CreateIngredient_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *portfolioServiceClient) UpdateIngredient(ctx context.Context, in *UpdateIngredientRequest, opts ...grpc.CallOption) (*UpdateIngredientResponse, error) {
+	out := new(UpdateIngredientResponse)
+	err := c.cc.Invoke(ctx, PortfolioService_UpdateIngredient_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *portfolioServiceClient) GetIngredient(ctx context.Context, in *GetIngredientRequest, opts ...grpc.CallOption) (*GetIngredientResponse, error) {
+	out := new(GetIngredientResponse)
+	err := c.cc.Invoke(ctx, PortfolioService_GetIngredient_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *portfolioServiceClient) ListIngredients(ctx context.Context, in *ListIngredientsRequest, opts ...grpc.CallOption) (*ListIngredientsResponse, error) {
+	out := new(ListIngredientsResponse)
+	err := c.cc.Invoke(ctx, PortfolioService_ListIngredients_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *portfolioServiceClient) DeleteIngredient(ctx context.Context, in *DeleteIngredientRequest, opts ...grpc.CallOption) (*DeleteIngredientResponse, error) {
+	out := new(DeleteIngredientResponse)
+	err := c.cc.Invoke(ctx, PortfolioService_DeleteIngredient_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PortfolioServiceServer is the server API for PortfolioService service.
 // All implementations must embed UnimplementedPortfolioServiceServer
 // for forward compatibility
 type PortfolioServiceServer interface {
-	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
-	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
-	DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error)
-	// user create account
-	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	LoginUser(context.Context, *LoginRequest) (*LoginResponse, error)
 	LogoutUser(context.Context, *LogoutRequest) (*LogoutResponse, error)
 	RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error)
+	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
+	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
+	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	ResetPassword(context.Context, *ResetPasswordRequest) (*ResetPasswordResponse, error)
 	ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponse, error)
 	CreatePost(context.Context, *CreatePostRequest) (*CreatePostResponse, error)
+	UpdatePost(context.Context, *UpdatePostRequest) (*UpdatePostResponse, error)
 	GetPost(context.Context, *GetPostRequest) (*GetPostResponse, error)
 	ListPosts(context.Context, *ListPostsRequest) (*ListPostsResponse, error)
+	DeletePost(context.Context, *DeletePostRequest) (*DeletePostResponse, error)
 	CreateRecipe(context.Context, *CreateRecipeRequest) (*CreateRecipeResponse, error)
-	GetRecipe(context.Context, *GetRecipeRequest) (*GetRecipeResponse, error)
 	UpdateRecipe(context.Context, *UpdateRecipeRequest) (*UpdateRecipeResponse, error)
-	DeleteRecipe(context.Context, *DeleteRecipeRequest) (*DeleteRecipeResponse, error)
+	GetRecipe(context.Context, *GetRecipeRequest) (*GetRecipeResponse, error)
 	ListRecipes(context.Context, *ListRecipesRequest) (*ListRecipesResponse, error)
+	DeleteRecipe(context.Context, *DeleteRecipeRequest) (*DeleteRecipeResponse, error)
+	CreateIngredient(context.Context, *CreateIngredientRequest) (*CreateIngredientResponse, error)
+	UpdateIngredient(context.Context, *UpdateIngredientRequest) (*UpdateIngredientResponse, error)
+	GetIngredient(context.Context, *GetIngredientRequest) (*GetIngredientResponse, error)
+	ListIngredients(context.Context, *ListIngredientsRequest) (*ListIngredientsResponse, error)
+	DeleteIngredient(context.Context, *DeleteIngredientRequest) (*DeleteIngredientResponse, error)
 	mustEmbedUnimplementedPortfolioServiceServer()
 }
 
@@ -252,18 +322,6 @@ type PortfolioServiceServer interface {
 type UnimplementedPortfolioServiceServer struct {
 }
 
-func (UnimplementedPortfolioServiceServer) GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
-}
-func (UnimplementedPortfolioServiceServer) UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
-}
-func (UnimplementedPortfolioServiceServer) DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
-}
-func (UnimplementedPortfolioServiceServer) CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
-}
 func (UnimplementedPortfolioServiceServer) LoginUser(context.Context, *LoginRequest) (*LoginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoginUser not implemented")
 }
@@ -272,6 +330,15 @@ func (UnimplementedPortfolioServiceServer) LogoutUser(context.Context, *LogoutRe
 }
 func (UnimplementedPortfolioServiceServer) RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RefreshToken not implemented")
+}
+func (UnimplementedPortfolioServiceServer) CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
+}
+func (UnimplementedPortfolioServiceServer) UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
+}
+func (UnimplementedPortfolioServiceServer) GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
 }
 func (UnimplementedPortfolioServiceServer) ResetPassword(context.Context, *ResetPasswordRequest) (*ResetPasswordResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResetPassword not implemented")
@@ -282,26 +349,47 @@ func (UnimplementedPortfolioServiceServer) ChangePassword(context.Context, *Chan
 func (UnimplementedPortfolioServiceServer) CreatePost(context.Context, *CreatePostRequest) (*CreatePostResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePost not implemented")
 }
+func (UnimplementedPortfolioServiceServer) UpdatePost(context.Context, *UpdatePostRequest) (*UpdatePostResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdatePost not implemented")
+}
 func (UnimplementedPortfolioServiceServer) GetPost(context.Context, *GetPostRequest) (*GetPostResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPost not implemented")
 }
 func (UnimplementedPortfolioServiceServer) ListPosts(context.Context, *ListPostsRequest) (*ListPostsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListPosts not implemented")
 }
+func (UnimplementedPortfolioServiceServer) DeletePost(context.Context, *DeletePostRequest) (*DeletePostResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeletePost not implemented")
+}
 func (UnimplementedPortfolioServiceServer) CreateRecipe(context.Context, *CreateRecipeRequest) (*CreateRecipeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateRecipe not implemented")
-}
-func (UnimplementedPortfolioServiceServer) GetRecipe(context.Context, *GetRecipeRequest) (*GetRecipeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetRecipe not implemented")
 }
 func (UnimplementedPortfolioServiceServer) UpdateRecipe(context.Context, *UpdateRecipeRequest) (*UpdateRecipeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateRecipe not implemented")
 }
-func (UnimplementedPortfolioServiceServer) DeleteRecipe(context.Context, *DeleteRecipeRequest) (*DeleteRecipeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteRecipe not implemented")
+func (UnimplementedPortfolioServiceServer) GetRecipe(context.Context, *GetRecipeRequest) (*GetRecipeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRecipe not implemented")
 }
 func (UnimplementedPortfolioServiceServer) ListRecipes(context.Context, *ListRecipesRequest) (*ListRecipesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListRecipes not implemented")
+}
+func (UnimplementedPortfolioServiceServer) DeleteRecipe(context.Context, *DeleteRecipeRequest) (*DeleteRecipeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteRecipe not implemented")
+}
+func (UnimplementedPortfolioServiceServer) CreateIngredient(context.Context, *CreateIngredientRequest) (*CreateIngredientResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateIngredient not implemented")
+}
+func (UnimplementedPortfolioServiceServer) UpdateIngredient(context.Context, *UpdateIngredientRequest) (*UpdateIngredientResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateIngredient not implemented")
+}
+func (UnimplementedPortfolioServiceServer) GetIngredient(context.Context, *GetIngredientRequest) (*GetIngredientResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetIngredient not implemented")
+}
+func (UnimplementedPortfolioServiceServer) ListIngredients(context.Context, *ListIngredientsRequest) (*ListIngredientsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListIngredients not implemented")
+}
+func (UnimplementedPortfolioServiceServer) DeleteIngredient(context.Context, *DeleteIngredientRequest) (*DeleteIngredientResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteIngredient not implemented")
 }
 func (UnimplementedPortfolioServiceServer) mustEmbedUnimplementedPortfolioServiceServer() {}
 
@@ -314,78 +402,6 @@ type UnsafePortfolioServiceServer interface {
 
 func RegisterPortfolioServiceServer(s grpc.ServiceRegistrar, srv PortfolioServiceServer) {
 	s.RegisterService(&PortfolioService_ServiceDesc, srv)
-}
-
-func _PortfolioService_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PortfolioServiceServer).GetUser(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PortfolioService_GetUser_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PortfolioServiceServer).GetUser(ctx, req.(*GetUserRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PortfolioService_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateUserRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PortfolioServiceServer).UpdateUser(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PortfolioService_UpdateUser_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PortfolioServiceServer).UpdateUser(ctx, req.(*UpdateUserRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PortfolioService_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteUserRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PortfolioServiceServer).DeleteUser(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PortfolioService_DeleteUser_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PortfolioServiceServer).DeleteUser(ctx, req.(*DeleteUserRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PortfolioService_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateUserRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PortfolioServiceServer).CreateUser(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PortfolioService_CreateUser_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PortfolioServiceServer).CreateUser(ctx, req.(*CreateUserRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _PortfolioService_LoginUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -438,6 +454,60 @@ func _PortfolioService_RefreshToken_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PortfolioServiceServer).RefreshToken(ctx, req.(*RefreshTokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PortfolioService_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PortfolioServiceServer).CreateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PortfolioService_CreateUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PortfolioServiceServer).CreateUser(ctx, req.(*CreateUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PortfolioService_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PortfolioServiceServer).UpdateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PortfolioService_UpdateUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PortfolioServiceServer).UpdateUser(ctx, req.(*UpdateUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PortfolioService_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PortfolioServiceServer).GetUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PortfolioService_GetUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PortfolioServiceServer).GetUser(ctx, req.(*GetUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -496,6 +566,24 @@ func _PortfolioService_CreatePost_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PortfolioService_UpdatePost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdatePostRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PortfolioServiceServer).UpdatePost(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PortfolioService_UpdatePost_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PortfolioServiceServer).UpdatePost(ctx, req.(*UpdatePostRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _PortfolioService_GetPost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetPostRequest)
 	if err := dec(in); err != nil {
@@ -532,6 +620,24 @@ func _PortfolioService_ListPosts_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PortfolioService_DeletePost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeletePostRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PortfolioServiceServer).DeletePost(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PortfolioService_DeletePost_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PortfolioServiceServer).DeletePost(ctx, req.(*DeletePostRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _PortfolioService_CreateRecipe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateRecipeRequest)
 	if err := dec(in); err != nil {
@@ -546,24 +652,6 @@ func _PortfolioService_CreateRecipe_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PortfolioServiceServer).CreateRecipe(ctx, req.(*CreateRecipeRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PortfolioService_GetRecipe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetRecipeRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PortfolioServiceServer).GetRecipe(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PortfolioService_GetRecipe_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PortfolioServiceServer).GetRecipe(ctx, req.(*GetRecipeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -586,20 +674,20 @@ func _PortfolioService_UpdateRecipe_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PortfolioService_DeleteRecipe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteRecipeRequest)
+func _PortfolioService_GetRecipe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRecipeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PortfolioServiceServer).DeleteRecipe(ctx, in)
+		return srv.(PortfolioServiceServer).GetRecipe(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PortfolioService_DeleteRecipe_FullMethodName,
+		FullMethod: PortfolioService_GetRecipe_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PortfolioServiceServer).DeleteRecipe(ctx, req.(*DeleteRecipeRequest))
+		return srv.(PortfolioServiceServer).GetRecipe(ctx, req.(*GetRecipeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -622,6 +710,114 @@ func _PortfolioService_ListRecipes_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PortfolioService_DeleteRecipe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteRecipeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PortfolioServiceServer).DeleteRecipe(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PortfolioService_DeleteRecipe_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PortfolioServiceServer).DeleteRecipe(ctx, req.(*DeleteRecipeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PortfolioService_CreateIngredient_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateIngredientRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PortfolioServiceServer).CreateIngredient(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PortfolioService_CreateIngredient_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PortfolioServiceServer).CreateIngredient(ctx, req.(*CreateIngredientRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PortfolioService_UpdateIngredient_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateIngredientRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PortfolioServiceServer).UpdateIngredient(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PortfolioService_UpdateIngredient_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PortfolioServiceServer).UpdateIngredient(ctx, req.(*UpdateIngredientRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PortfolioService_GetIngredient_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetIngredientRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PortfolioServiceServer).GetIngredient(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PortfolioService_GetIngredient_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PortfolioServiceServer).GetIngredient(ctx, req.(*GetIngredientRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PortfolioService_ListIngredients_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListIngredientsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PortfolioServiceServer).ListIngredients(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PortfolioService_ListIngredients_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PortfolioServiceServer).ListIngredients(ctx, req.(*ListIngredientsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PortfolioService_DeleteIngredient_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteIngredientRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PortfolioServiceServer).DeleteIngredient(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PortfolioService_DeleteIngredient_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PortfolioServiceServer).DeleteIngredient(ctx, req.(*DeleteIngredientRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PortfolioService_ServiceDesc is the grpc.ServiceDesc for PortfolioService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -629,22 +825,6 @@ var PortfolioService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "pb.PortfolioService",
 	HandlerType: (*PortfolioServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "GetUser",
-			Handler:    _PortfolioService_GetUser_Handler,
-		},
-		{
-			MethodName: "UpdateUser",
-			Handler:    _PortfolioService_UpdateUser_Handler,
-		},
-		{
-			MethodName: "DeleteUser",
-			Handler:    _PortfolioService_DeleteUser_Handler,
-		},
-		{
-			MethodName: "CreateUser",
-			Handler:    _PortfolioService_CreateUser_Handler,
-		},
 		{
 			MethodName: "LoginUser",
 			Handler:    _PortfolioService_LoginUser_Handler,
@@ -656,6 +836,18 @@ var PortfolioService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RefreshToken",
 			Handler:    _PortfolioService_RefreshToken_Handler,
+		},
+		{
+			MethodName: "CreateUser",
+			Handler:    _PortfolioService_CreateUser_Handler,
+		},
+		{
+			MethodName: "UpdateUser",
+			Handler:    _PortfolioService_UpdateUser_Handler,
+		},
+		{
+			MethodName: "GetUser",
+			Handler:    _PortfolioService_GetUser_Handler,
 		},
 		{
 			MethodName: "ResetPassword",
@@ -670,6 +862,10 @@ var PortfolioService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PortfolioService_CreatePost_Handler,
 		},
 		{
+			MethodName: "UpdatePost",
+			Handler:    _PortfolioService_UpdatePost_Handler,
+		},
+		{
 			MethodName: "GetPost",
 			Handler:    _PortfolioService_GetPost_Handler,
 		},
@@ -678,24 +874,48 @@ var PortfolioService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PortfolioService_ListPosts_Handler,
 		},
 		{
-			MethodName: "CreateRecipe",
-			Handler:    _PortfolioService_CreateRecipe_Handler,
+			MethodName: "DeletePost",
+			Handler:    _PortfolioService_DeletePost_Handler,
 		},
 		{
-			MethodName: "GetRecipe",
-			Handler:    _PortfolioService_GetRecipe_Handler,
+			MethodName: "CreateRecipe",
+			Handler:    _PortfolioService_CreateRecipe_Handler,
 		},
 		{
 			MethodName: "UpdateRecipe",
 			Handler:    _PortfolioService_UpdateRecipe_Handler,
 		},
 		{
-			MethodName: "DeleteRecipe",
-			Handler:    _PortfolioService_DeleteRecipe_Handler,
+			MethodName: "GetRecipe",
+			Handler:    _PortfolioService_GetRecipe_Handler,
 		},
 		{
 			MethodName: "ListRecipes",
 			Handler:    _PortfolioService_ListRecipes_Handler,
+		},
+		{
+			MethodName: "DeleteRecipe",
+			Handler:    _PortfolioService_DeleteRecipe_Handler,
+		},
+		{
+			MethodName: "CreateIngredient",
+			Handler:    _PortfolioService_CreateIngredient_Handler,
+		},
+		{
+			MethodName: "UpdateIngredient",
+			Handler:    _PortfolioService_UpdateIngredient_Handler,
+		},
+		{
+			MethodName: "GetIngredient",
+			Handler:    _PortfolioService_GetIngredient_Handler,
+		},
+		{
+			MethodName: "ListIngredients",
+			Handler:    _PortfolioService_ListIngredients_Handler,
+		},
+		{
+			MethodName: "DeleteIngredient",
+			Handler:    _PortfolioService_DeleteIngredient_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

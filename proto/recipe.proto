@@ -5,7 +5,7 @@ import "google/protobuf/field_mask.proto";
 
 option go_package = "portfolio-playground/pkg/proto;pb";
 
-//enum unit
+// Enum Unit
 enum Unit {
   UNIT_UNSPECIFIED = 0;
   GRAM = 1;
@@ -19,13 +19,15 @@ enum Unit {
   PIECE = 9;
 }
 
+// Message Ingredient
 message Ingredient {
     int64 id = 1;
     string name = 2;
-    string quantity = 3;
+    float quantity = 3;
     Unit unit = 4;
 }
 
+// Message Recipe
 message Recipe {
   int64 id = 1;
   string title = 2;
@@ -35,6 +37,7 @@ message Recipe {
   string author_id = 6;
 }
 
+// Create
 message CreateRecipeRequest {
   Recipe recipe = 1;
 }
@@ -42,6 +45,7 @@ message CreateRecipeResponse {
   Recipe recipe = 1;
 }
 
+// Get
 message GetRecipeRequest {
   int64 id = 1;
 }
@@ -49,6 +53,7 @@ message GetRecipeResponse {
   Recipe recipe = 1;
 }
 
+// Update
 message UpdateRecipeRequest {
   int64 id = 1;
   Recipe recipe = 2;
@@ -58,16 +63,61 @@ message UpdateRecipeResponse {
   Recipe recipe = 1;
 }
 
+// Delete
 message DeleteRecipeRequest {
   int64 id = 1;
 }
 message DeleteRecipeResponse {}
 
+// List
 message ListRecipesRequest {
   int32 page_size = 1;
-  string page_token = 2;
+  int32 page_token = 2;
 }
 message ListRecipesResponse {
   repeated Recipe recipes = 1;
-  string next_page_token = 2;
+  int32 next_page_token = 2;
+}
+
+// Create
+message CreateIngredientRequest {
+  Ingredient ingredient = 1;
+}
+message CreateIngredientResponse {
+  Ingredient ingredient = 1;
+}
+
+// Get
+message GetIngredientRequest {
+  int64 id = 1;
+}
+message GetIngredientResponse {
+  Ingredient ingredient = 1;
+}
+
+// Update
+message UpdateIngredientRequest {
+  int64 id = 1;
+  Ingredient ingredient = 2;
+  google.protobuf.FieldMask update_mask = 3;
+}
+message UpdateIngredientResponse {
+  Ingredient ingredient = 1;
+}
+
+// Delete
+message DeleteIngredientRequest {
+  int64 id = 1;
+}
+message DeleteIngredientResponse {}
+
+// List
+message ListIngredientsRequest {
+  int32 page_size = 1;
+  int32 page_token = 2;
+  string name = 3;
+}
+message ListIngredientsResponse {
+  repeated Ingredient ingredients = 1;
+  int32 next_page_token = 2;
 }

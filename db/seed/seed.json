@@ -1,0 +1,63 @@
+{
+    "users": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "email": "john.doe@example.com",
+        "password": "hashed_password_here",
+        "name": "John Doe",
+        "active": true,
+        "role": "admin"
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440001",
+        "email": "jane.doe@example.com",
+        "password": "hashed_password_here",
+        "name": "Jane Doe",
+        "active": true,
+        "role": "user"
+      }
+    ],
+    "posts": [
+      {
+        "id": 1,
+        "title": "Sample blog post",
+        "slug": "sample-blog-post",
+        "content": "This is a sample blog post content.",
+        "excerpt": "This is a sample blog post excerpt."
+      }
+    ],
+    "ingredients": [
+      {
+        "id": 1,
+        "name": "Flour"
+      },
+      {
+        "id": 2,
+        "name": "Sugar"
+      }
+    ],
+    "recipes": [
+      {
+        "id": 1,
+        "title": "Sample recipe",
+        "slug": "sample-recipe",
+        "description": "This is a sample recipe description.",
+        "directions": "These are the sample recipe directions.",
+        "author_id": "550e8400-e29b-41d4-a716-446655440000"
+      }
+    ],
+    "recipe_ingredients": [
+      {
+        "recipe_id": 1,
+        "ingredient_id": 1,
+        "quantity": 500,
+        "unit": "GRAM"
+      },
+      {
+        "recipe_id": 1,
+        "ingredient_id": 2,
+        "quantity": 200,
+        "unit": "GRAM"
+      }
+    ]
+  }

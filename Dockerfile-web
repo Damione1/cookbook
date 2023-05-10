@@ -1,13 +1,19 @@
-FROM golang:1.20.2
+# Build stage
+FROM golang:1.20.2 AS builder
 
 WORKDIR /app
 
 COPY go.mod go.sum ./
-
 RUN go mod download
 
-
 COPY ./ ./
+RUN go build -o /appbin/main .
 
+# Run stage
+FROM golang:1.20.2
 
-CMD ["go", "run", "main.go"]
+WORKDIR /app
+
+COPY --from=builder /appbin/main /appbin/main
+
+CMD ["/appbin/main"]

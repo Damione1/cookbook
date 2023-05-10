@@ -7,6 +7,7 @@ import (
 	"github.com/Damione1/portfolio-playground/db/models"
 	"github.com/Damione1/portfolio-playground/pkg/pb"
 	"github.com/Damione1/portfolio-playground/pkg/pbx"
+	"github.com/friendsofgo/errors"
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
 	"github.com/volatiletech/sqlboiler/v4/boil"
@@ -14,13 +15,21 @@ import (
 )
 
 func (server *Server) CreatePost(ctx context.Context, req *pb.CreatePostRequest) (*pb.CreatePostResponse, error) {
-	_, err := server.authorizeUser(ctx)
+	authorizeUserPayload, err := server.authorizeUser(ctx)
 	if err != nil {
 		return nil, unauthenticatedError(err)
 	}
 
 	if err := validateCreatePostRequest(req); err != nil {
 		return nil, err
+	}
+
+	user, err := models.FindUser(ctx, server.config.DB, authorizeUserPayload.ID.String())
+	if err != nil {
+		return nil, err
+	}
+	if user.Role != "admin" {
+		return nil, errors.Wrap(err, "Unsufficient permissions to create a post")
 	}
 
 	post := pbx.ProtoPostToDb(req.GetPost())
@@ -48,7 +57,28 @@ func validateCreatePostRequest(req *pb.CreatePostRequest) error {
 	)
 }
 
-func validateUpdatePostRequest(req *pb.CreatePostRequest) error {
+func (server *Server) UpdatePost(ctx context.Context, req *pb.UpdatePostRequest) (*pb.UpdatePostResponse, error) {
+	if _, err := server.authorizeUser(ctx); err != nil {
+		return nil, unauthenticatedError(err)
+	}
+
+	if err := validateUpdatePostRequest(req); err != nil {
+		return nil, err
+	}
+
+	post := pbx.ProtoPostToDb(req.GetPost())
+
+	_, err := post.Update(ctx, server.config.DB, boil.Infer())
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.UpdatePostResponse{
+		Post: pbx.DbPostToProto(post),
+	}, nil
+}
+
+func validateUpdatePostRequest(req *pb.UpdatePostRequest) error {
 	return validation.ValidateStruct(&req,
 		validation.Field(&req.Post,
 			validation.Required,
@@ -64,15 +94,6 @@ func validateUpdatePostRequest(req *pb.CreatePostRequest) error {
 				},
 			),
 		),
-	)
-}
-
-func validatePost(post *pb.Post) error {
-	return validation.ValidateStruct(post,
-		validation.Field(&post.Title, validation.Required, validation.Length(1, 255)),
-		validation.Field(&post.Content, validation.Required),
-		validation.Field(&post.Slug, validation.Length(1, 255), validation.Match(regexp.MustCompile(`^[a-zA-Z0-9_-]+$`))),
-		validation.Field(&post.Excerpt, validation.Length(1, 255)),
 	)
 }
 
@@ -120,8 +141,8 @@ func (server *Server) ListPosts(ctx context.Context, req *pb.ListPostsRequest) (
 
 func validateListPostsRequest(req *pb.ListPostsRequest) error {
 	return validation.ValidateStruct(req,
-		validation.Field(&req.PageSize, validation.Required, is.Int),
-		validation.Field(&req.PageToken, validation.Required, is.Int),
+		validation.Field(&req.PageSize, validation.Required, validation.Min(1), validation.Max(50)),
+		validation.Field(&req.PageToken, validation.Min(0)),
 	)
 }
 
@@ -146,5 +167,40 @@ func (server *Server) GetPost(ctx context.Context, req *pb.GetPostRequest) (*pb.
 func validateGetPostRequest(req *pb.GetPostRequest) error {
 	return validation.ValidateStruct(req,
 		validation.Field(&req.Id, validation.Required, is.Int),
+	)
+}
+
+func (server *Server) DeletePost(ctx context.Context, req *pb.DeletePostRequest) (*pb.DeletePostResponse, error) {
+	if _, err := server.authorizeUser(ctx); err != nil {
+		return nil, unauthenticatedError(err)
+	}
+
+	err := validateDeletePostRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = models.Posts(
+		models.PostWhere.ID.EQ(int(req.GetId())),
+	).DeleteAll(ctx, server.config.DB)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.DeletePostResponse{}, nil
+}
+
+func validateDeletePostRequest(req *pb.DeletePostRequest) error {
+	return validation.ValidateStruct(req,
+		validation.Field(&req.Id, validation.Required, is.Int),
+	)
+}
+
+func validatePost(post *pb.Post) error {
+	return validation.ValidateStruct(post,
+		validation.Field(&post.Title, validation.Required, validation.Length(1, 255)),
+		validation.Field(&post.Content, validation.Required),
+		validation.Field(&post.Slug, validation.Length(1, 255), validation.Match(regexp.MustCompile(`^[a-zA-Z0-9_-]+$`))),
+		validation.Field(&post.Excerpt, validation.Length(1, 255)),
 	)
 }

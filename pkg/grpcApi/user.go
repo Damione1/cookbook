@@ -35,7 +35,7 @@ const (
 
 func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
 	if err := validateCreateUserRequest(req); err != nil {
-		return nil, fmt.Errorf( "failed to validate request: %w", err)
+		return nil, fmt.Errorf("failed to validate request: %w", err)
 	}
 
 	hashedPassword, err := util.HashPassword(req.GetPassword())
@@ -66,7 +66,6 @@ func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 
 // update user
 func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
-
 	authPayload, err := server.authorizeUser(ctx)
 	if err != nil {
 		return nil, unauthenticatedError(err)
@@ -133,8 +132,7 @@ func validateUpdateUserRequest(req *pb.UpdateUserRequest) error {
 }
 
 // login user
-func (server *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
-
+func (server *Server) LoginUser(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
 	err := validateLoginUserRequest(req)
 	if err != nil {
 		return nil, err
@@ -197,8 +195,7 @@ func (server *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Logi
 
 // refresh token service
 func (server *Server) RefreshToken(ctx context.Context, req *pb.RefreshTokenRequest) (*pb.RefreshTokenResponse, error) {
-
-	err := validation.ValidateStruct(&req, validation.Field(&req.RefreshToken, validation.Required))
+	err := validation.ValidateStruct(req, validation.Field(&req.RefreshToken, validation.Required))
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid request: %s", err)
 	}
@@ -240,17 +237,17 @@ func (server *Server) RefreshToken(ctx context.Context, req *pb.RefreshTokenRequ
 
 	return &pb.RefreshTokenResponse{
 		AccessToken:            accessToken,
-		RefreshToken:           refreshToken,
 		AccessTokenExpireTime:  timestamppb.New(accessPayload.ExpireTime),
+		RefreshToken:           refreshToken,
 		RefreshTokenExpireTime: timestamppb.New(refreshPayload.ExpireTime),
 	}, nil
 
 }
 
 // logout
-func (server *Server) Logout(ctx context.Context, req *pb.LogoutRequest) (*pb.LogoutResponse, error) {
+func (server *Server) LogoutUser(ctx context.Context, req *pb.LogoutRequest) (*pb.LogoutResponse, error) {
 
-	err := validation.ValidateStruct(&req, validation.Field(&req.RefreshToken, validation.Required))
+	err := validation.ValidateStruct(req, validation.Field(&req.RefreshToken, validation.Required))
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid request: %s", err)
 	}
@@ -323,7 +320,6 @@ func checkPassword(value interface{}) error {
 	}
 	return nil
 }
-
 
 func validateLoginUserRequest(req *pb.LoginRequest) error {
 	return validation.ValidateStruct(req,

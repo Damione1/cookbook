@@ -37,7 +37,7 @@ func DbIngredientToProto(ingredient *models.RecipeIngredient) *pb.Ingredient {
 	ingredientPb := &pb.Ingredient{
 		Id:       int64(ingredient.IngredientID),
 		Name:     ingredient.R.Ingredient.Name,
-		Quantity: ingredient.Quantity.String(),
+		Quantity: float32(ingredient.Quantity),
 		Unit:     UnitEnumToProto(ingredient.Unit),
 	}
 	return ingredientPb
