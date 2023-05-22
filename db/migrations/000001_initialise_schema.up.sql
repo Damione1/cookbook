@@ -121,9 +121,10 @@ CREATE TYPE ingredient_unit_enum AS ENUM (
 -- Recipe ingredient relationship table
 CREATE TABLE recipe_ingredients (
   recipe_id SERIAL NOT NULL REFERENCES recipes(id) ON DELETE CASCADE,
-  ingredient_id SERIAL NOT NULL REFERENCES ingredients(id) ON DELETE CASCADE,
+  ingredient_id SERIAL REFERENCES ingredients(id) ON DELETE CASCADE,
   quantity FLOAT NOT NULL,
   unit ingredient_unit_enum NOT NULL,
+  manual_name VARCHAR(255),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   PRIMARY KEY (recipe_id, ingredient_id)
