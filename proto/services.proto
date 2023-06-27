@@ -216,7 +216,7 @@ service PortfolioService {
   }
   rpc UpdateRecipe (UpdateRecipeRequest) returns (UpdateRecipeResponse) {
     option (google.api.http) = {
-      put: "/v1/recipe/update/{id}"
+      put: "/v1/recipe/update"
       body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -270,7 +270,7 @@ service PortfolioService {
   }
   rpc UpdateIngredient (UpdateIngredientRequest) returns (UpdateIngredientResponse) {
     option (google.api.http) = {
-      put: "/v1/ingredient/update/{id}"
+      put: "/v1/ingredient/update"
       body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
