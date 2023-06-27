@@ -1,0 +1,1446 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Cookbook",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Damien Goehrig",
+      "url": "https://github.com/Damione1",
+      "email": "cookbook@damiengoehrig.ca"
+    }
+  },
+  "tags": [
+    {
+      "name": "PortfolioService"
+    },
+    {
+      "name": "Authentication",
+      "description": "Endpoints for authentication"
+    },
+    {
+      "name": "Users",
+      "description": "Endpoints for user management"
+    },
+    {
+      "name": "Recipes",
+      "description": "Endpoints for recipe management"
+    },
+    {
+      "name": "Ingredients",
+      "description": "Endpoints for ingredient management"
+    },
+    {
+      "name": "Posts",
+      "description": "Endpoints for post management"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/ingredient/create": {
+      "post": {
+        "summary": "Create a new ingredient",
+        "description": "Add a new ingredient to the system with the provided information.",
+        "operationId": "PortfolioService_CreateIngredient",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateIngredientResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateIngredientRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Ingredients"
+        ]
+      }
+    },
+    "/v1/ingredient/delete/{id}": {
+      "delete": {
+        "summary": "Delete an ingredient",
+        "description": "Remove a specific ingredient from the system.",
+        "operationId": "PortfolioService_DeleteIngredient",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDeleteIngredientResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Ingredients"
+        ]
+      }
+    },
+    "/v1/ingredient/get/{id}": {
+      "get": {
+        "summary": "Get an ingredient's information",
+        "description": "Retrieve information for a specific ingredient by its ID.",
+        "operationId": "PortfolioService_GetIngredient",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetIngredientResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Ingredients"
+        ],
+        "security": []
+      }
+    },
+    "/v1/ingredient/list": {
+      "post": {
+        "summary": "List all ingredients",
+        "description": "Retrieve a list of all ingredients in the system.",
+        "operationId": "PortfolioService_ListIngredients",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbListIngredientsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbListIngredientsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Ingredients"
+        ],
+        "security": []
+      }
+    },
+    "/v1/ingredient/update/{id}": {
+      "put": {
+        "summary": "Update an ingredient's information",
+        "description": "Modify the information of a specific ingredient.",
+        "operationId": "PortfolioService_UpdateIngredient",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbUpdateIngredientResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ingredient": {
+                  "$ref": "#/definitions/pbIngredient"
+                },
+                "updateMask": {
+                  "type": "string"
+                }
+              },
+              "title": "Update"
+            }
+          }
+        ],
+        "tags": [
+          "Ingredients"
+        ]
+      }
+    },
+    "/v1/post/create": {
+      "post": {
+        "summary": "Create a new post",
+        "description": "Add a new post to the system with the provided information.",
+        "operationId": "PortfolioService_CreatePost",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreatePostResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreatePostRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Posts"
+        ]
+      }
+    },
+    "/v1/post/delete/{id}": {
+      "delete": {
+        "summary": "Delete a post",
+        "description": "Remove a specific post from the system.",
+        "operationId": "PortfolioService_DeletePost",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDeletePostResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "ID is the unique identifier for the post.",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "Posts"
+        ]
+      }
+    },
+    "/v1/post/get/{id}": {
+      "get": {
+        "summary": "Get a post's information",
+        "description": "Retrieve information for a specific post by its ID.",
+        "operationId": "PortfolioService_GetPost",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetPostResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "ID is the unique identifier for the post.",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "Posts"
+        ],
+        "security": []
+      }
+    },
+    "/v1/post/list": {
+      "post": {
+        "summary": "List all posts",
+        "description": "Retrieve a list of all posts in the system.",
+        "operationId": "PortfolioService_ListPosts",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbListPostsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbListPostsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Posts"
+        ],
+        "security": []
+      }
+    },
+    "/v1/post/update": {
+      "put": {
+        "summary": "Update a post's information",
+        "description": "Modify the information of a specific post.",
+        "operationId": "PortfolioService_UpdatePost",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbUpdatePostResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbUpdatePostRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Posts"
+        ]
+      }
+    },
+    "/v1/recipe/create": {
+      "post": {
+        "summary": "Create a new recipe",
+        "description": "Add a new recipe to the system with the provided information.",
+        "operationId": "PortfolioService_CreateRecipe",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateRecipeResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateRecipeRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Recipes"
+        ]
+      }
+    },
+    "/v1/recipe/delete/{id}": {
+      "delete": {
+        "summary": "Delete a recipe",
+        "description": "Remove a specific recipe from the system.",
+        "operationId": "PortfolioService_DeleteRecipe",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDeleteRecipeResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Recipes"
+        ]
+      }
+    },
+    "/v1/recipe/get/{id}": {
+      "get": {
+        "summary": "Get a recipe's information",
+        "description": "Retrieve information for a specific recipe by its ID.",
+        "operationId": "PortfolioService_GetRecipe",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetRecipeResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Recipes"
+        ]
+      }
+    },
+    "/v1/recipe/list": {
+      "post": {
+        "summary": "List all recipes",
+        "description": "Retrieve a list of all recipes in the system.",
+        "operationId": "PortfolioService_ListRecipes",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbListRecipesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbListRecipesRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Recipes"
+        ],
+        "security": []
+      }
+    },
+    "/v1/recipe/update/{id}": {
+      "put": {
+        "summary": "Update a recipe's information",
+        "description": "Modify the information of a specific recipe.",
+        "operationId": "PortfolioService_UpdateRecipe",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbUpdateRecipeResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "recipe": {
+                  "$ref": "#/definitions/pbRecipe"
+                },
+                "updateMask": {
+                  "type": "string"
+                }
+              },
+              "title": "Update"
+            }
+          }
+        ],
+        "tags": [
+          "Recipes"
+        ]
+      }
+    },
+    "/v1/user/change": {
+      "post": {
+        "summary": "Change a user's password",
+        "description": "Update the password of a specific user.",
+        "operationId": "PortfolioService_ChangePassword",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbChangePasswordResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbChangePasswordRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/v1/user/create": {
+      "post": {
+        "summary": "Create a new user",
+        "description": "Add a new user to the system with the provided information.",
+        "operationId": "PortfolioService_CreateUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Users"
+        ],
+        "security": []
+      }
+    },
+    "/v1/user/get/{id}": {
+      "get": {
+        "summary": "Get a user's information",
+        "description": "Retrieve information for a specific user by their ID.",
+        "operationId": "PortfolioService_GetUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "ID is the unique identifier for the user.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Users"
+        ],
+        "security": []
+      }
+    },
+    "/v1/user/login": {
+      "post": {
+        "summary": "Log in a user",
+        "description": "Authenticate a user with their email and password and return an access token.",
+        "operationId": "PortfolioService_LoginUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbLoginResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbLoginRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Authentication"
+        ],
+        "security": []
+      }
+    },
+    "/v1/user/logout": {
+      "post": {
+        "summary": "Log out a user",
+        "description": "Revoke the access token of a logged-in user.",
+        "operationId": "PortfolioService_LogoutUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbLogoutResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbLogoutRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/user/refresh": {
+      "post": {
+        "summary": "Refresh an access token",
+        "description": "Refresh an expired access token using a refresh token.",
+        "operationId": "PortfolioService_RefreshToken",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbRefreshTokenResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbRefreshTokenRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Authentication"
+        ],
+        "security": []
+      }
+    },
+    "/v1/user/reset": {
+      "post": {
+        "summary": "Reset a user's password",
+        "description": "Send a password reset email to a user's registered email address.",
+        "operationId": "PortfolioService_ResetPassword",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbResetPasswordResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbResetPasswordRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Users"
+        ],
+        "security": []
+      }
+    },
+    "/v1/user/update": {
+      "put": {
+        "summary": "Update a user's information",
+        "description": "Modify the information of a specific user.",
+        "operationId": "PortfolioService_UpdateUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbUpdateUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbUpdateUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Users"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "pbChangePasswordRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "Email is the user's email."
+        },
+        "password": {
+          "type": "string",
+          "description": "Password is the user's password."
+        },
+        "token": {
+          "type": "string",
+          "description": "Token is the token."
+        }
+      }
+    },
+    "pbChangePasswordResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        }
+      }
+    },
+    "pbCreateIngredientRequest": {
+      "type": "object",
+      "properties": {
+        "ingredient": {
+          "$ref": "#/definitions/pbIngredient"
+        }
+      },
+      "title": "Create"
+    },
+    "pbCreateIngredientResponse": {
+      "type": "object",
+      "properties": {
+        "ingredient": {
+          "$ref": "#/definitions/pbIngredient"
+        }
+      }
+    },
+    "pbCreatePostRequest": {
+      "type": "object",
+      "properties": {
+        "post": {
+          "$ref": "#/definitions/pbPost",
+          "description": "Post is the post."
+        }
+      },
+      "required": [
+        "post"
+      ]
+    },
+    "pbCreatePostResponse": {
+      "type": "object",
+      "properties": {
+        "post": {
+          "$ref": "#/definitions/pbPost",
+          "description": "Post is the post."
+        }
+      }
+    },
+    "pbCreateRecipeRequest": {
+      "type": "object",
+      "properties": {
+        "recipe": {
+          "$ref": "#/definitions/pbRecipe"
+        }
+      },
+      "title": "Create"
+    },
+    "pbCreateRecipeResponse": {
+      "type": "object",
+      "properties": {
+        "recipe": {
+          "$ref": "#/definitions/pbRecipe"
+        }
+      }
+    },
+    "pbCreateUserRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name is the user's name."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email is the user's email."
+        },
+        "password": {
+          "type": "string",
+          "description": "Password is the user's password."
+        }
+      }
+    },
+    "pbCreateUserResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/pbUser",
+          "description": "User is the created user."
+        }
+      }
+    },
+    "pbDeleteIngredientResponse": {
+      "type": "object"
+    },
+    "pbDeletePostResponse": {
+      "type": "object",
+      "properties": {
+        "post": {
+          "$ref": "#/definitions/pbPost",
+          "description": "Post is the post."
+        }
+      }
+    },
+    "pbDeleteRecipeResponse": {
+      "type": "object"
+    },
+    "pbGetIngredientResponse": {
+      "type": "object",
+      "properties": {
+        "ingredient": {
+          "$ref": "#/definitions/pbIngredient"
+        }
+      }
+    },
+    "pbGetPostResponse": {
+      "type": "object",
+      "properties": {
+        "post": {
+          "$ref": "#/definitions/pbPost",
+          "description": "Post is the post."
+        }
+      }
+    },
+    "pbGetRecipeResponse": {
+      "type": "object",
+      "properties": {
+        "recipe": {
+          "$ref": "#/definitions/pbRecipe"
+        }
+      }
+    },
+    "pbGetUserResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/pbUser",
+          "description": "User is the user."
+        }
+      }
+    },
+    "pbIngredient": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "number",
+          "format": "float"
+        },
+        "unit": {
+          "$ref": "#/definitions/pbUnit"
+        }
+      },
+      "title": "Message Ingredient"
+    },
+    "pbListIngredientsRequest": {
+      "type": "object",
+      "properties": {
+        "pageSize": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "pageToken": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "title": "List"
+    },
+    "pbListIngredientsResponse": {
+      "type": "object",
+      "properties": {
+        "ingredients": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbIngredient"
+          }
+        },
+        "nextPageToken": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "pbListPostsRequest": {
+      "type": "object",
+      "properties": {
+        "pageToken": {
+          "type": "integer",
+          "format": "int32",
+          "description": "PageToken is the page token."
+        },
+        "pageSize": {
+          "type": "integer",
+          "format": "int32",
+          "description": "PageSize is the page size."
+        }
+      }
+    },
+    "pbListPostsResponse": {
+      "type": "object",
+      "properties": {
+        "posts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbPost"
+          },
+          "description": "Posts is the list of posts."
+        },
+        "nextPageToken": {
+          "type": "integer",
+          "format": "int32",
+          "description": "NextPageToken is the next page token."
+        }
+      }
+    },
+    "pbListRecipesRequest": {
+      "type": "object",
+      "properties": {
+        "pageSize": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "pageToken": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "title": "List"
+    },
+    "pbListRecipesResponse": {
+      "type": "object",
+      "properties": {
+        "recipes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbRecipe"
+          }
+        },
+        "nextPageToken": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "pbLoginRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "Email is the user's email."
+        },
+        "password": {
+          "type": "string",
+          "description": "Password is the user's password."
+        }
+      }
+    },
+    "pbLoginResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/pbUser",
+          "description": "User is the user."
+        },
+        "sessionId": {
+          "type": "string",
+          "title": "Session ID"
+        },
+        "accessToken": {
+          "type": "string",
+          "description": "AccessToken is the access token."
+        },
+        "refreshToken": {
+          "type": "string",
+          "description": "RefreshToken is the refresh token."
+        },
+        "accessTokenExpireTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "AccessTokenExpiresTime is the access token expiration time."
+        },
+        "refreshTokenExpireTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "RefreshTokenExpiresTime is the refresh token expiration time."
+        }
+      }
+    },
+    "pbLogoutRequest": {
+      "type": "object",
+      "properties": {
+        "refreshToken": {
+          "type": "string",
+          "description": "RefreshToken is the refresh token."
+        }
+      }
+    },
+    "pbLogoutResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        }
+      }
+    },
+    "pbPost": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32",
+          "description": "ID is the unique identifier for the post."
+        },
+        "title": {
+          "type": "string",
+          "description": "Title is the post's title."
+        },
+        "content": {
+          "type": "string",
+          "description": "Content is the post's content."
+        },
+        "slug": {
+          "type": "string",
+          "description": "Post Slug is the post's slug."
+        },
+        "excerpt": {
+          "type": "string",
+          "description": "Post excerpt is the post's excerpt."
+        },
+        "createTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Thumbnail is the post's thumbnail.\nstring thumbnail = 4;\nCreatedAt is the post's creation time."
+        },
+        "updateTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "UpdatedAt is the post's last update time."
+        }
+      }
+    },
+    "pbRecipe": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "instructions": {
+          "type": "string"
+        },
+        "ingredients": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbIngredient"
+          }
+        },
+        "authorId": {
+          "type": "string"
+        }
+      },
+      "title": "Message Recipe"
+    },
+    "pbRefreshTokenRequest": {
+      "type": "object",
+      "properties": {
+        "refreshToken": {
+          "type": "string",
+          "description": "RefreshToken is the refresh token."
+        }
+      }
+    },
+    "pbRefreshTokenResponse": {
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string",
+          "description": "AccessToken is the access token."
+        },
+        "refreshToken": {
+          "type": "string",
+          "description": "RefreshToken is the refresh token."
+        },
+        "accessTokenExpireTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "AccessTokenExpiresTime is the access token expiration time."
+        },
+        "refreshTokenExpireTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "RefreshTokenExpiresTime is the refresh token expiration time."
+        }
+      }
+    },
+    "pbResetPasswordRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "Email is the user's email."
+        }
+      },
+      "title": "reset password"
+    },
+    "pbResetPasswordResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        }
+      }
+    },
+    "pbUnit": {
+      "type": "string",
+      "enum": [
+        "UNIT_UNSPECIFIED",
+        "GRAM",
+        "KILOGRAM",
+        "MILLILITER",
+        "LITER",
+        "TEASPOON",
+        "TABLESPOON",
+        "CUP",
+        "PINCH",
+        "PIECE"
+      ],
+      "default": "UNIT_UNSPECIFIED",
+      "title": "Enum Unit"
+    },
+    "pbUpdateIngredientResponse": {
+      "type": "object",
+      "properties": {
+        "ingredient": {
+          "$ref": "#/definitions/pbIngredient"
+        }
+      }
+    },
+    "pbUpdatePostRequest": {
+      "type": "object",
+      "properties": {
+        "post": {
+          "$ref": "#/definitions/pbPost",
+          "description": "Post is the post."
+        }
+      },
+      "required": [
+        "post"
+      ]
+    },
+    "pbUpdatePostResponse": {
+      "type": "object",
+      "properties": {
+        "post": {
+          "$ref": "#/definitions/pbPost",
+          "description": "Post is the post."
+        }
+      }
+    },
+    "pbUpdateRecipeResponse": {
+      "type": "object",
+      "properties": {
+        "recipe": {
+          "$ref": "#/definitions/pbRecipe"
+        }
+      }
+    },
+    "pbUpdateUserRequest": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/pbUser"
+        }
+      }
+    },
+    "pbUpdateUserResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/pbUser",
+          "description": "User is the updated user."
+        }
+      }
+    },
+    "pbUser": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "ID is the unique identifier for the user."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name is the user's name."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email is the user's email."
+        },
+        "password": {
+          "type": "string",
+          "description": "Password is the user's password."
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "description": "Access token obtained from the login endpoint. Bearer authentication should be used with the format: 'Bearer {access_token}'.",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
+}

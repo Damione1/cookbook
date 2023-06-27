@@ -19,7 +19,6 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/queries"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 	"github.com/volatiletech/sqlboiler/v4/queries/qmhelper"
-	"github.com/volatiletech/sqlboiler/v4/types"
 	"github.com/volatiletech/strmangle"
 )
 
@@ -27,7 +26,7 @@ import (
 type RecipeIngredient struct {
 	RecipeID     int                `boil:"recipe_id" json:"recipe_id" toml:"recipe_id" yaml:"recipe_id"`
 	IngredientID int                `boil:"ingredient_id" json:"ingredient_id" toml:"ingredient_id" yaml:"ingredient_id"`
-	Quantity     types.Decimal      `boil:"quantity" json:"quantity" toml:"quantity" yaml:"quantity"`
+	Quantity     float64            `boil:"quantity" json:"quantity" toml:"quantity" yaml:"quantity"`
 	Unit         IngredientUnitEnum `boil:"unit" json:"unit" toml:"unit" yaml:"unit"`
 	CreatedAt    null.Time          `boil:"created_at" json:"created_at,omitempty" toml:"created_at" yaml:"created_at,omitempty"`
 	UpdatedAt    null.Time          `boil:"updated_at" json:"updated_at,omitempty" toml:"updated_at" yaml:"updated_at,omitempty"`
@@ -70,25 +69,33 @@ var RecipeIngredientTableColumns = struct {
 
 // Generated where
 
-type whereHelpertypes_Decimal struct{ field string }
+type whereHelperfloat64 struct{ field string }
 
-func (w whereHelpertypes_Decimal) EQ(x types.Decimal) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.EQ, x)
-}
-func (w whereHelpertypes_Decimal) NEQ(x types.Decimal) qm.QueryMod {
+func (w whereHelperfloat64) EQ(x float64) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.EQ, x) }
+func (w whereHelperfloat64) NEQ(x float64) qm.QueryMod {
 	return qmhelper.Where(w.field, qmhelper.NEQ, x)
 }
-func (w whereHelpertypes_Decimal) LT(x types.Decimal) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LT, x)
-}
-func (w whereHelpertypes_Decimal) LTE(x types.Decimal) qm.QueryMod {
+func (w whereHelperfloat64) LT(x float64) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LT, x) }
+func (w whereHelperfloat64) LTE(x float64) qm.QueryMod {
 	return qmhelper.Where(w.field, qmhelper.LTE, x)
 }
-func (w whereHelpertypes_Decimal) GT(x types.Decimal) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GT, x)
-}
-func (w whereHelpertypes_Decimal) GTE(x types.Decimal) qm.QueryMod {
+func (w whereHelperfloat64) GT(x float64) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GT, x) }
+func (w whereHelperfloat64) GTE(x float64) qm.QueryMod {
 	return qmhelper.Where(w.field, qmhelper.GTE, x)
+}
+func (w whereHelperfloat64) IN(slice []float64) qm.QueryMod {
+	values := make([]interface{}, 0, len(slice))
+	for _, value := range slice {
+		values = append(values, value)
+	}
+	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
+}
+func (w whereHelperfloat64) NIN(slice []float64) qm.QueryMod {
+	values := make([]interface{}, 0, len(slice))
+	for _, value := range slice {
+		values = append(values, value)
+	}
+	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
 }
 
 type whereHelperIngredientUnitEnum struct{ field string }
@@ -129,14 +136,14 @@ func (w whereHelperIngredientUnitEnum) NIN(slice []IngredientUnitEnum) qm.QueryM
 var RecipeIngredientWhere = struct {
 	RecipeID     whereHelperint
 	IngredientID whereHelperint
-	Quantity     whereHelpertypes_Decimal
+	Quantity     whereHelperfloat64
 	Unit         whereHelperIngredientUnitEnum
 	CreatedAt    whereHelpernull_Time
 	UpdatedAt    whereHelpernull_Time
 }{
 	RecipeID:     whereHelperint{field: "\"recipe_ingredients\".\"recipe_id\""},
 	IngredientID: whereHelperint{field: "\"recipe_ingredients\".\"ingredient_id\""},
-	Quantity:     whereHelpertypes_Decimal{field: "\"recipe_ingredients\".\"quantity\""},
+	Quantity:     whereHelperfloat64{field: "\"recipe_ingredients\".\"quantity\""},
 	Unit:         whereHelperIngredientUnitEnum{field: "\"recipe_ingredients\".\"unit\""},
 	CreatedAt:    whereHelpernull_Time{field: "\"recipe_ingredients\".\"created_at\""},
 	UpdatedAt:    whereHelpernull_Time{field: "\"recipe_ingredients\".\"updated_at\""},

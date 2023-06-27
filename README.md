@@ -1,20 +1,30 @@
 # Damien's Cookbook
 
-Portfolio Playground is a personal project aimed at learning various technologies and best practices in the field of software development. This project focuses on creating a cookbook platform where users can register, submit their recipes with pictures, steps, and the list of ingredients. The backend is developed using Golang, and the frontend will be developed using Nuxt.js in the second phase.
+Damien's Cookbook is a personal project aimed at learning various technologies and best practices in the field of software development. This project focuses on creating a cookbook platform where users can register, submit their recipes with pictures, instructions, and the list of ingredients. The backend is developed using Golang, and the frontend will be developed using Nuxt.js in the second phase. Most of the logic and validation will be handled on the backend to ensure data integrity and security (and also because it's the funniest part to develop).
 
 The main technologies and concepts involved in this project are:
 
-- Protocol Buffers & gRPC
-- SQLBoiler
-- SQL Migrations
-- JWT authentication (with PASETO)
-- Docker Compose
-- Tilt (for hot reloading)
-- Email sending
-- Best practices
-- Testing
-- Automated deployments
-- Google Cloud Services
+- [x] Protocol Buffers & gRPC
+- [x] RESTful API (With GRPC Gateway)
+- [x] SQLBoiler as ORM
+- [x] SQL Migrations (with Golang Migrate)
+- [x] JWT authentication (with PASETO)
+- [x] Docker Compose
+- [-] Strict validations
+- [-] Strict Linter
+- [] Roles & Permissions
+- [x] Tilt (for hot reloading)
+- [x] Automated documentation (with Swagger)
+- [-] Logging
+- [] Media management
+- [] Redis caching
+- [] Email sending
+- [] Best practices
+- [] Testing
+- [] Automated deployments
+- [] Google Cloud Services
+
+The list will be updated as the project progresses. The goal is to learn to use most of the microservices best practices and technologies.
 
 ## Getting Started
 
@@ -23,46 +33,24 @@ To start the project with tilt, run the following command:
 ```bash
 tilt up
 ```
-
-To start the project using Docker Compose, run the following command:
-
-```bash
-docker-compose up
-```
-
-For hot reloading, start the project with the following command:
+Then to access the tilt UI, go to the following URL:
 
 ```bash
-docker-compose up web-with-air
+http://localhost:10350/
 ```
 
-To generate models from the database, run the following command:
-
-```bash
-docker-compose up generate-models
-```
-
-To generate the protobuf files, run the following command:
-
-```bash
-protoc --go-grpc_out=pkg/pb --go_out=pkg/pb --proto_path=proto --go-grpc_opt=paths=source_relative --go_opt=paths=source_relative --grpc-gateway_out=pkg/pb --grpc-gateway_opt=paths=source_relative ./proto/*.proto
-```
-
-**Note: You need to have the `protoc` binary installed on your machine. You can download it from [here](https://github.com/protocolbuffers/protobuf/releases/), copy it in a folder and put the path of its `bin` folder in your `PATH` environment variable.**
 
 To connect to the PostgreSQL database, use the following command:
 
 ```bash
-docker-compose exec db psql -U postgres -d portfolio_playground
+docker-compose exec db psql -U postgres -d cookbook
 ```
 
-To test the gRPC server, use the following command:
+To access the Swagger UI, go to the following URL once the project is running:
 
 ```bash
-evans --host localhost --port 9090 -r repl
+http://localhost:8080/swagger/
 ```
-
-Then, you can list the available services with the `service list` command and call the `GetUser` method with the `call GetUser` command.
 
 ## Project Overview (Current State)
 

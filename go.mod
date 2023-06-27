@@ -7,11 +7,11 @@ require (
 	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang-migrate/migrate/v4 v4.15.2
+	github.com/golang/protobuf v1.5.2
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.2
 	github.com/lib/pq v1.10.7
 	github.com/o1egl/paseto v1.0.0
-	github.com/rakyll/statik v0.1.7
 	github.com/rs/zerolog v1.15.0
 	github.com/spf13/viper v1.12.0
 	github.com/stretchr/testify v1.8.1
@@ -22,7 +22,6 @@ require (
 	golang.org/x/crypto v0.0.0-20220826181053-bd7e27e6170d
 	google.golang.org/genproto v0.0.0-20230223222841-637eb2293923
 	google.golang.org/grpc v1.53.0
-	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.1.0
 	google.golang.org/protobuf v1.28.1
 )
 
@@ -32,11 +31,8 @@ require (
 	github.com/aead/poly1305 v0.0.0-20180717145839-3fee0db0b635 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/ericlagergren/decimal v0.0.0-20211103172832-aca2edc11f73 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/gofrs/uuid v4.2.0+incompatible // indirect
-	github.com/golang/glog v1.0.0 // indirect
-	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
