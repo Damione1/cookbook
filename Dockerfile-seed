@@ -1,0 +1,20 @@
+# Build stage
+FROM golang:1.20.2 AS builder
+
+WORKDIR /app
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY ./ ./
+RUN go build -o /appbin/seeder ./db/seed/main.go && \
+    chmod +x /appbin/seeder
+
+# Run stage
+FROM golang:1.20.2
+
+WORKDIR /app
+
+COPY --from=builder /appbin/seeder /appbin/seeder
+
+CMD ["/appbin/seeder"]
