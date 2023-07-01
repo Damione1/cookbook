@@ -61,5 +61,18 @@ services:
     container_name: test
     profiles:
     - manual
+  seeder:
+    build:
+      context: .
+      dockerfile: Dockerfile-seed
+    env_file:
+      - app.env
+    volumes:
+      - ./:/app:delegated
+    depends_on:
+      - "db"
+    container_name: seeder
+    profiles:
+      - manual
 volumes:
   postgres-db:

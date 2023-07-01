@@ -1,63 +1,233 @@
 {
-    "users": [
-      {
-        "id": "550e8400-e29b-41d4-a716-446655440000",
-        "email": "john.doe@example.com",
-        "password": "hashed_password_here",
-        "name": "John Doe",
-        "active": true,
-        "role": "admin"
-      },
-      {
-        "id": "550e8400-e29b-41d4-a716-446655440001",
-        "email": "jane.doe@example.com",
-        "password": "hashed_password_here",
-        "name": "Jane Doe",
-        "active": true,
-        "role": "user"
-      }
-    ],
-    "posts": [
-      {
-        "id": 1,
-        "title": "Sample blog post",
-        "slug": "sample-blog-post",
-        "content": "This is a sample blog post content.",
-        "excerpt": "This is a sample blog post excerpt."
-      }
-    ],
-    "ingredients": [
-      {
-        "id": 1,
-        "name": "Flour"
-      },
-      {
-        "id": 2,
-        "name": "Sugar"
-      }
-    ],
-    "recipes": [
-      {
-        "id": 1,
-        "title": "Sample recipe",
-        "slug": "sample-recipe",
-        "description": "This is a sample recipe description.",
-        "directions": "These are the sample recipe directions.",
-        "author_id": "550e8400-e29b-41d4-a716-446655440000"
-      }
-    ],
-    "recipe_ingredients": [
-      {
-        "recipe_id": 1,
-        "ingredient_id": 1,
-        "quantity": 500,
-        "unit": "GRAM"
-      },
-      {
-        "recipe_id": 1,
-        "ingredient_id": 2,
-        "quantity": 200,
-        "unit": "GRAM"
-      }
-    ]
-  }
+  "users": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "email": "john.doe@example.com",
+      "password": "hashed_password_here",
+      "name": "John Doe",
+      "active": true,
+      "role": "admin"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "email": "jane.doe@example.com",
+      "password": "hashed_password_here",
+      "name": "Jane Doe",
+      "active": true,
+      "role": "user"
+    }
+  ],
+  "posts": [
+    {
+      "id": 1,
+      "title": "Delving into Mediterranean Delights",
+      "slug": "delving-into-mediterranean-delights",
+      "content": "Join us as we sail across the waters and delve into the wonders of Mediterranean cuisine. From the coastal areas of Spain to the rolling hills of Tuscany, the sunny shores of Greece to the bustling markets of Morocco, the Mediterranean region is known for its vibrant and healthy cooking. Celebrated for its use of fresh vegetables, fruits, fish, whole grains and olive oil, the Mediterranean diet is as delicious as it is nourishing. This blog post is just the beginning of our journey through the various regions and flavors that make up this rich cuisine, and we’ll be sharing delicious Mediterranean recipes in our upcoming posts.",
+      "excerpt": "Embark with us on a culinary adventure, exploring the healthy and flavorful delights of Mediterranean cuisine."
+    },
+    {
+      "id": 2,
+      "title": "Exploring Italian Cuisine",
+      "slug": "exploring-italian-cuisine",
+      "content": "Welcome to our journey exploring the vibrant world of Italian cuisine. Known for its rich tapestry of flavors, Italian cuisine is the epitome of culinary passion. From mouth-watering pasta dishes to delectable traditional pizzas, and the world-renowned gelato, this cuisine is immensely varied, catering to all taste buds. Not to mention, the triumph of Italian cuisine lies in its simplicity; by combining fresh, quality ingredients, Italian cooks create dishes that satisfy without complexity. Join us as we delve into the history, regional variations, and signature recipes of Italian cuisine. Stay tuned for the following blog posts where we will be sharing with you some staple Italian recipes that you can try at home.",
+      "excerpt": "In the heart of Italy lies a cuinary passion like no other. Today, we begin our exploration into the world of Italian cuisine."
+    },
+    {
+      "id": 3,
+      "title": "Savoring French Gastronomy",
+      "slug": "savoring-french-gastronomy",
+      "content": "Embark with us on a flavorful journey into the intricate world of French gastronomy. As one of the world's most renowned culinary landscapes, French cuisine is celebrated for its elegance, sophistication, and unparalleled attention to detail. From delectable sauces, tender meats, divine pastries, to world-class cheeses and wines, every aspect of French cuisine can be an adventure in taste. Accompany us as we navigate the waters of this luxurious cuisine, discussing its history, regional differences and the techniques that define French cooking. We will also be featuring simple and some complex French recipes to enrich your repertoire in the coming blog posts.",
+      "excerpt": "Take a journey with us into the intricate and diverse world of French gastronomy."
+    },
+    {
+      "id": 4,
+      "title": "Unlocking the Secrets of Mexican Cooking",
+      "slug": "unlocking-secrets-of-mexican-cooking",
+      "content": "Allow us to take you on a colourful and sensory experience through the heart of Mexican cuisine. Known for its vibrant flavors, staple ingredients like corn, beans, chillies, and meat, Mexican cuisine is a beloved choice worldwide. But there's much more to discover beyond the popular tacos, enchiladas and guacamole. In this blog post, we will be exploring the depth and diversity of Mexican cuisine – its pre-Hispanic roots, regional variations, and rich culinary traditions. In subsequent blogs, we will guide you through preparing authentic Mexican dishes that you can bring to your own table.",
+      "excerpt": "Embark with us on a vibrant journey through the heart and soul of Mexican cuisine."
+    },
+    {
+      "id": 5,
+      "title": "Journey Through Thai Cuisine",
+      "slug": "journey-through-thai-cuisine",
+      "content": "Let’s voyage together through Thailand's rich culinary tradition. Thai cuisine is admired globally for its bold and harmonious flavors. A remarkable blend of sweet, sour, salty, spicy, and bitter tastes, each Thai dish is a gastronomical delight. Staples like jasmine rice, coconut milk, fresh herbs and a variety of chillies feature prominently in Thai cuisine. This blog post will delve into the history, influences, and regional diversity of Thai food, and over the course of this series, we will be sharing traditional Thai recipes for you to experiment with at home.",
+      "excerpt": "Come join us in exploring the bold flavors and culinary wonders of Thai cuisine."
+    }
+  ],
+  "ingredients": [
+    {
+      "id": 1,
+      "name": "White onions",
+      "category": "vegetables"
+    },
+    {
+      "id": 14,
+      "name": "Salt",
+      "category": "seasonings"
+    },
+    {
+      "id": 2,
+      "name": "Garlic cloves",
+      "category": "vegetables"
+    },
+    {
+      "id": 6,
+      "name": "Italian tomatoes",
+      "category": "vegetables"
+    },
+    {
+      "id": 4,
+      "name": "Zucchini",
+      "category": "vegetables"
+    },
+    {
+      "id": 5,
+      "name": "Eggplant",
+      "category": "vegetables"
+    },
+    {
+      "id": 7,
+      "name": "Flour",
+      "category": "grains"
+    },
+    {
+      "id": 8,
+      "name": "Sugar",
+      "category": "sweeteners"
+    },
+    {
+      "id": 9,
+      "name": "Butter",
+      "category": "dairy"
+    },
+    {
+      "id": 10,
+      "name": "Baker's yeast",
+      "category": "leavening-agents"
+    },
+    {
+      "id": 11,
+      "name": "Milk",
+      "category": "dairy"
+    },
+    {
+      "id": 12,
+      "name": "Eggs",
+      "category": "dairy"
+    },
+    {
+      "id": 13,
+      "name": "Walnuts",
+      "category": "nuts"
+    },
+    {
+      "id": 3,
+      "name": "Bay leaves",
+      "category": "herbs-and-spices"
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "title": "French Ratatouille",
+      "slug": "french-ratatouille",
+      "description": "My mom Ratatouille, a classic french recipe",
+      "directions": "1. Start by browning the fresh garlic in olive oil over medium heat followed by the onions. 2. Add the diced peppers along with the sliced courgettes. Also add herbs from Provence and bay leaves. 3. Reduce over low/medium heat for 30 minutes then add the tomatoes. If the tomatoes are too acidic, add a spoonful of sugar. 4. Cook for another 40 minutes. 5. Salt and pepper to taste.",
+      "author_id": "550e8400-e29b-41d4-a716-446655440000"
+    },
+    {
+      "id": 2,
+      "title": "Kouglof recipe",
+      "slug": "kouglof-recipe",
+      "description": "A great Kouglof recipe.",
+      "directions": "1. Mix the yeast with lukewarm milk. 2. Mix the milk + yeast with the flour, sugar, eggs, and salt. 3. Add the butter. 4. Continue kneading until the dough comes off the container. 5. Butter and flour a Kouglof mold. Add the walnuts to the bottom. 6. Let the dough rest in for 2 hours, until it doubles in size and reaches the edges. 7. Bake at 215 ° C or 420 ° F. If the bottom starts to darken, place an aluminum foil and add 5 minutes of cooking. 8. Leave to cool for at least 15 minutes before unmolding, and sprinkle with icing sugar.",
+      "author_id": "550e8400-e29b-41d4-a716-446655440000"
+    }
+  ],
+  "recipe_ingredients": [
+    {
+      "recipe_id": 1,
+      "ingredient_id": 1,
+      "quantity": 3,
+      "unit": "UNIT"
+    },
+    {
+      "recipe_id": 1,
+      "ingredient_id": 2,
+      "quantity": 3,
+      "unit": "UNIT"
+    },
+    {
+      "recipe_id": 1,
+      "ingredient_id": 3,
+      "quantity": 2,
+      "unit": "UNIT"
+    },
+    {
+      "recipe_id": 1,
+      "ingredient_id": 4,
+      "quantity": 3,
+      "unit": "UNIT"
+    },
+    {
+      "recipe_id": 1,
+      "ingredient_id": 5,
+      "quantity": 1,
+      "unit": "UNIT"
+    },
+    {
+      "recipe_id": 1,
+      "ingredient_id": 6,
+      "quantity": 4,
+      "unit": "UNIT"
+    },
+    {
+      "recipe_id": 2,
+      "ingredient_id": 7,
+      "quantity": 500,
+      "unit": "GRAM"
+    },
+    {
+      "recipe_id": 2,
+      "ingredient_id": 8,
+      "quantity": 100,
+      "unit": "GRAM"
+    },
+    {
+      "recipe_id": 2,
+      "ingredient_id": 9,
+      "quantity": 130,
+      "unit": "GRAM"
+    },
+    {
+      "recipe_id": 2,
+      "ingredient_id": 10,
+      "quantity": 20,
+      "unit": "GRAM"
+    },
+    {
+      "recipe_id": 2,
+      "ingredient_id": 11,
+      "quantity": 25,
+      "unit": "CENTILITER"
+    },
+    {
+      "recipe_id": 2,
+      "ingredient_id": 12,
+      "quantity": 2,
+      "unit": "UNIT"
+    },
+    {
+      "recipe_id": 2,
+      "ingredient_id": 13,
+      "quantity": 1,
+      "unit": "HANDFUL"
+    },
+    {
+      "recipe_id": 2,
+      "ingredient_id": 14,
+      "quantity": 1,
+      "unit": "PINCH"
+    }
+  ]
+}

@@ -107,15 +107,28 @@ CREATE TABLE recipe_media (
 -- create unit enum in sql
 CREATE TYPE ingredient_unit_enum AS ENUM (
   'UNIT_UNSPECIFIED',
+  'MILLIGRAM',
   'GRAM',
   'KILOGRAM',
   'MILLILITER',
+  'CENTILITER',
   'LITER',
   'TEASPOON',
   'TABLESPOON',
   'CUP',
   'PINCH',
-  'PIECE'
+  'UNIT',
+  'PACKAGE',
+  'CAN',
+  'BOTTLE',
+  'JAR',
+  'BAG',
+  'BOX',
+  'BUNCH',
+  'HEAD',
+  'CLOVE',
+  'LEAF',
+  'HANDFUL'
 );
 
 -- Recipe ingredient relationship table

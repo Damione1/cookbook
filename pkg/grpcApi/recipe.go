@@ -9,6 +9,8 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (server *Server) CreateRecipe(ctx context.Context, req *pb.CreateRecipeRequest) (*pb.CreateRecipeResponse, error) {
@@ -61,6 +63,67 @@ func (server *Server) CreateRecipe(ctx context.Context, req *pb.CreateRecipeRequ
 	}, nil
 }
 
+func (server *Server) GetRecipe(ctx context.Context, req *pb.GetRecipeRequest) (*pb.GetRecipeResponse, error) {
+	if err := validateGetRecipeRequest(req); err != nil {
+		return nil, err
+	}
+	recipe, err := models.Recipes(models.RecipeWhere.ID.EQ(int(req.Id))).One(ctx, server.config.DB)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.GetRecipeResponse{
+		Recipe: pbx.DbRecipeToProto(recipe),
+	}, nil
+}
+
+func (server *Server) ListRecipes(ctx context.Context, req *pb.ListRecipesRequest) (*pb.ListRecipesResponse, error) {
+	if err := validateListRecipesRequest(req); err != nil {
+		return nil, err
+	}
+	recipes, err := models.Recipes().All(ctx, server.config.DB)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &pb.ListRecipesResponse{}
+	response.Recipes = make([]*pb.Recipe, len(recipes))
+
+	for i, recipe := range recipes {
+		response.Recipes[i] = pbx.DbRecipeToProto(recipe)
+	}
+
+	return response, nil
+}
+
+func (server *Server) DeleteRecipe(ctx context.Context, req *pb.DeleteRecipeRequest) (*pb.DeleteRecipeResponse, error) {
+	authorizeUserPayload, err := server.authorizeUser(ctx)
+	if err != nil {
+		return nil, unauthenticatedError(err)
+	}
+
+	if err := validateDeleteRecipeRequest(req); err != nil {
+		return nil, err
+	}
+
+	id := req.Id
+	recipe, err := models.Recipes(models.RecipeWhere.ID.EQ(int(id))).One(ctx, server.config.DB)
+	if err != nil {
+		return nil, err
+	}
+
+	if recipe.AuthorID != authorizeUserPayload.ID.String() {
+		return nil, status.Error(codes.PermissionDenied, "only the author can delete recipes")
+	}
+
+	_, err = recipe.Delete(ctx, server.config.DB)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.DeleteRecipeResponse{}, nil
+}
+
 func validateCreateRecipeRequest(req *pb.CreateRecipeRequest) error {
 	return validation.ValidateStruct(req,
 		validation.Field(&req.Recipe,
@@ -72,6 +135,28 @@ func validateCreateRecipeRequest(req *pb.CreateRecipeRequest) error {
 			),
 		),
 	)
+}
+
+func validateGetRecipeRequest(req *pb.GetRecipeRequest) error {
+	return validation.ValidateStruct(req,
+		validation.Field(&req.Id,
+			validation.Required,
+			validation.Min(1),
+		),
+	)
+}
+
+func validateDeleteRecipeRequest(req *pb.DeleteRecipeRequest) error {
+	return validation.ValidateStruct(req,
+		validation.Field(&req.Id,
+			validation.Required,
+			validation.Min(1),
+		),
+	)
+}
+
+func validateListRecipesRequest(req *pb.ListRecipesRequest) error {
+	return nil
 }
 
 func validateRecipe(recipe *pb.Recipe) error {
