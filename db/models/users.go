@@ -135,12 +135,12 @@ var UserRels = struct {
 	Avatar         string
 	PasswordResets string
 	AuthorRecipes  string
-	EmailSessions  string
+	Sessions       string
 }{
 	Avatar:         "Avatar",
 	PasswordResets: "PasswordResets",
 	AuthorRecipes:  "AuthorRecipes",
-	EmailSessions:  "EmailSessions",
+	Sessions:       "Sessions",
 }
 
 // userR is where relationships are stored.
@@ -148,7 +148,7 @@ type userR struct {
 	Avatar         *Medium            `boil:"Avatar" json:"Avatar" toml:"Avatar" yaml:"Avatar"`
 	PasswordResets PasswordResetSlice `boil:"PasswordResets" json:"PasswordResets" toml:"PasswordResets" yaml:"PasswordResets"`
 	AuthorRecipes  RecipeSlice        `boil:"AuthorRecipes" json:"AuthorRecipes" toml:"AuthorRecipes" yaml:"AuthorRecipes"`
-	EmailSessions  SessionSlice       `boil:"EmailSessions" json:"EmailSessions" toml:"EmailSessions" yaml:"EmailSessions"`
+	Sessions       SessionSlice       `boil:"Sessions" json:"Sessions" toml:"Sessions" yaml:"Sessions"`
 }
 
 // NewStruct creates a new relationship struct
@@ -177,11 +177,11 @@ func (r *userR) GetAuthorRecipes() RecipeSlice {
 	return r.AuthorRecipes
 }
 
-func (r *userR) GetEmailSessions() SessionSlice {
+func (r *userR) GetSessions() SessionSlice {
 	if r == nil {
 		return nil
 	}
-	return r.EmailSessions
+	return r.Sessions
 }
 
 // userL is where Load methods for each relationship are stored.
@@ -532,15 +532,15 @@ func (o *User) AuthorRecipes(mods ...qm.QueryMod) recipeQuery {
 	return Recipes(queryMods...)
 }
 
-// EmailSessions retrieves all the session's Sessions with an executor via email column.
-func (o *User) EmailSessions(mods ...qm.QueryMod) sessionQuery {
+// Sessions retrieves all the session's Sessions with an executor.
+func (o *User) Sessions(mods ...qm.QueryMod) sessionQuery {
 	var queryMods []qm.QueryMod
 	if len(mods) != 0 {
 		queryMods = append(queryMods, mods...)
 	}
 
 	queryMods = append(queryMods,
-		qm.Where("\"sessions\".\"email\"=?", o.Email),
+		qm.Where("\"sessions\".\"user_id\"=?", o.ID),
 	)
 
 	return Sessions(queryMods...)
@@ -898,9 +898,9 @@ func (userL) LoadAuthorRecipes(ctx context.Context, e boil.ContextExecutor, sing
 	return nil
 }
 
-// LoadEmailSessions allows an eager lookup of values, cached into the
+// LoadSessions allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (userL) LoadEmailSessions(ctx context.Context, e boil.ContextExecutor, singular bool, maybeUser interface{}, mods queries.Applicator) error {
+func (userL) LoadSessions(ctx context.Context, e boil.ContextExecutor, singular bool, maybeUser interface{}, mods queries.Applicator) error {
 	var slice []*User
 	var object *User
 
@@ -931,7 +931,7 @@ func (userL) LoadEmailSessions(ctx context.Context, e boil.ContextExecutor, sing
 		if object.R == nil {
 			object.R = &userR{}
 		}
-		args = append(args, object.Email)
+		args = append(args, object.ID)
 	} else {
 	Outer:
 		for _, obj := range slice {
@@ -940,12 +940,12 @@ func (userL) LoadEmailSessions(ctx context.Context, e boil.ContextExecutor, sing
 			}
 
 			for _, a := range args {
-				if a == obj.Email {
+				if a == obj.ID {
 					continue Outer
 				}
 			}
 
-			args = append(args, obj.Email)
+			args = append(args, obj.ID)
 		}
 	}
 
@@ -955,7 +955,7 @@ func (userL) LoadEmailSessions(ctx context.Context, e boil.ContextExecutor, sing
 
 	query := NewQuery(
 		qm.From(`sessions`),
-		qm.WhereIn(`sessions.email in ?`, args...),
+		qm.WhereIn(`sessions.user_id in ?`, args...),
 	)
 	if mods != nil {
 		mods.Apply(query)
@@ -986,24 +986,24 @@ func (userL) LoadEmailSessions(ctx context.Context, e boil.ContextExecutor, sing
 		}
 	}
 	if singular {
-		object.R.EmailSessions = resultSlice
+		object.R.Sessions = resultSlice
 		for _, foreign := range resultSlice {
 			if foreign.R == nil {
 				foreign.R = &sessionR{}
 			}
-			foreign.R.EmailUser = object
+			foreign.R.User = object
 		}
 		return nil
 	}
 
 	for _, foreign := range resultSlice {
 		for _, local := range slice {
-			if local.Email == foreign.Email {
-				local.R.EmailSessions = append(local.R.EmailSessions, foreign)
+			if local.ID == foreign.UserID {
+				local.R.Sessions = append(local.R.Sessions, foreign)
 				if foreign.R == nil {
 					foreign.R = &sessionR{}
 				}
-				foreign.R.EmailUser = local
+				foreign.R.User = local
 				break
 			}
 		}
@@ -1232,34 +1232,34 @@ func (o *User) AddAuthorRecipes(ctx context.Context, exec boil.ContextExecutor, 
 	return nil
 }
 
-// AddEmailSessionsG adds the given related objects to the existing relationships
+// AddSessionsG adds the given related objects to the existing relationships
 // of the user, optionally inserting them as new records.
-// Appends related to o.R.EmailSessions.
-// Sets related.R.EmailUser appropriately.
+// Appends related to o.R.Sessions.
+// Sets related.R.User appropriately.
 // Uses the global database handle.
-func (o *User) AddEmailSessionsG(ctx context.Context, insert bool, related ...*Session) error {
-	return o.AddEmailSessions(ctx, boil.GetContextDB(), insert, related...)
+func (o *User) AddSessionsG(ctx context.Context, insert bool, related ...*Session) error {
+	return o.AddSessions(ctx, boil.GetContextDB(), insert, related...)
 }
 
-// AddEmailSessions adds the given related objects to the existing relationships
+// AddSessions adds the given related objects to the existing relationships
 // of the user, optionally inserting them as new records.
-// Appends related to o.R.EmailSessions.
-// Sets related.R.EmailUser appropriately.
-func (o *User) AddEmailSessions(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Session) error {
+// Appends related to o.R.Sessions.
+// Sets related.R.User appropriately.
+func (o *User) AddSessions(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Session) error {
 	var err error
 	for _, rel := range related {
 		if insert {
-			rel.Email = o.Email
+			rel.UserID = o.ID
 			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
 				return errors.Wrap(err, "failed to insert into foreign table")
 			}
 		} else {
 			updateQuery := fmt.Sprintf(
 				"UPDATE \"sessions\" SET %s WHERE %s",
-				strmangle.SetParamNames("\"", "\"", 1, []string{"email"}),
+				strmangle.SetParamNames("\"", "\"", 1, []string{"user_id"}),
 				strmangle.WhereClause("\"", "\"", 2, sessionPrimaryKeyColumns),
 			)
-			values := []interface{}{o.Email, rel.ID}
+			values := []interface{}{o.ID, rel.ID}
 
 			if boil.IsDebug(ctx) {
 				writer := boil.DebugWriterFrom(ctx)
@@ -1270,25 +1270,25 @@ func (o *User) AddEmailSessions(ctx context.Context, exec boil.ContextExecutor, 
 				return errors.Wrap(err, "failed to update foreign table")
 			}
 
-			rel.Email = o.Email
+			rel.UserID = o.ID
 		}
 	}
 
 	if o.R == nil {
 		o.R = &userR{
-			EmailSessions: related,
+			Sessions: related,
 		}
 	} else {
-		o.R.EmailSessions = append(o.R.EmailSessions, related...)
+		o.R.Sessions = append(o.R.Sessions, related...)
 	}
 
 	for _, rel := range related {
 		if rel.R == nil {
 			rel.R = &sessionR{
-				EmailUser: o,
+				User: o,
 			}
 		} else {
-			rel.R.EmailUser = o
+			rel.R.User = o
 		}
 	}
 	return nil

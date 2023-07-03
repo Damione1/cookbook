@@ -8,8 +8,8 @@ option go_package = "portfolio-playground/pkg/proto;pb";
 
 
 message Post {
-    // ID is the unique identifier for the post.
-    int32 id = 1;
+    // Output only. ID is the unique identifier for the post.
+    int32 id = 1 [(google.api.field_behavior) = OUTPUT_ONLY];
     // Title is the post's title.
     string title = 2;
     // Content is the post's content.
@@ -20,10 +20,10 @@ message Post {
     string excerpt = 5;
     // Thumbnail is the post's thumbnail.
     //string thumbnail = 4;
-    // CreatedAt is the post's creation time.
-    google.protobuf.Timestamp create_time = 6;
-    // UpdatedAt is the post's last update time.
-    google.protobuf.Timestamp update_time = 7;
+    // Output only. CreatedAt is the post's creation time.
+    google.protobuf.Timestamp create_time = 6 [(google.api.field_behavior) = OUTPUT_ONLY];
+    // Output only. UpdatedAt is the post's last update time.
+    google.protobuf.Timestamp update_time = 7 [(google.api.field_behavior) = OUTPUT_ONLY];
 }
 
 message CreatePostRequest {

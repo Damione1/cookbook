@@ -12,6 +12,7 @@ import (
 	"github.com/go-ozzo/ozzo-validation/is"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func (server *Server) CreatePost(ctx context.Context, req *pb.CreatePostRequest) (*pb.CreatePostResponse, error) {
@@ -104,15 +105,11 @@ func (server *Server) ListPosts(ctx context.Context, req *pb.ListPostsRequest) (
 	}
 
 	pageSize := int(req.GetPageSize())
-	pageToken := int(req.GetPageToken())
-
-	// Set default page size if not provided or if it's greater than the maximum allowed
-	var maxPageSize int = 50
-	if pageSize <= 0 || pageSize > maxPageSize {
-		pageSize = maxPageSize
+	pageToken := 1
+	if req.GetPageToken() != 0 {
+		pageToken = int(req.GetPageToken())
 	}
-
-	offset := pageSize * pageToken
+	offset := (pageToken - 1) * pageSize
 
 	dbPosts, err := models.Posts(
 		qm.OrderBy("created_at desc"),
@@ -123,9 +120,16 @@ func (server *Server) ListPosts(ctx context.Context, req *pb.ListPostsRequest) (
 		return nil, err
 	}
 
-	posts := make([]*pb.Post, 0, len(dbPosts))
-	for _, dbPost := range dbPosts {
-		posts = append(posts, pbx.DbPostToProto(dbPost))
+	posts := make([]*pb.Post, len(dbPosts))
+	for i, dbPost := range dbPosts {
+		posts[i] = &pb.Post{
+			Id:         int32(dbPost.ID),
+			Title:      dbPost.Title,
+			Slug:       dbPost.Slug,
+			Excerpt:    dbPost.Excerpt.String,
+			CreateTime: timestamppb.New(dbPost.CreatedAt.Time),
+			UpdateTime: timestamppb.New(dbPost.UpdatedAt.Time),
+		}
 	}
 
 	nextPageToken := 0
@@ -141,8 +145,8 @@ func (server *Server) ListPosts(ctx context.Context, req *pb.ListPostsRequest) (
 
 func validateListPostsRequest(req *pb.ListPostsRequest) error {
 	return validation.ValidateStruct(req,
-		validation.Field(&req.PageSize, validation.Required, validation.Min(1), validation.Max(50)),
-		validation.Field(&req.PageToken, validation.Min(0)),
+		validation.Field(&req.PageSize, validation.Required, validation.Min(1), validation.Max(100)),
+		validation.Field(&req.PageToken, validation.Min(1)),
 	)
 }
 
@@ -166,7 +170,7 @@ func (server *Server) GetPost(ctx context.Context, req *pb.GetPostRequest) (*pb.
 
 func validateGetPostRequest(req *pb.GetPostRequest) error {
 	return validation.ValidateStruct(req,
-		validation.Field(&req.Id, validation.Required, is.Int),
+		validation.Field(&req.Id, validation.Required),
 	)
 }
 

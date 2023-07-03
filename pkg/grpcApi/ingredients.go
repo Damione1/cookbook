@@ -2,6 +2,7 @@ package grpcApi
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/Damione1/portfolio-playground/db/models"
@@ -57,15 +58,11 @@ func (server *Server) ListIngredients(ctx context.Context, req *pb.ListIngredien
 	}
 
 	pageSize := int(req.GetPageSize())
-	pageToken := int(req.GetPageToken())
-
-	// Set default page size if not provided or if it's greater than the maximum allowed
-	var maxPageSize int = 50
-	if pageSize <= 0 || pageSize > maxPageSize {
-		pageSize = maxPageSize
+	page := 1
+	if req.GetPageToken() > 0 {
+		page = int(req.GetPageToken())
 	}
-
-	offset := pageSize * pageToken
+	offset := (page - 1) * pageSize
 
 	queryMods := []qm.QueryMod{
 		qm.OrderBy("created_at desc"),
@@ -73,32 +70,31 @@ func (server *Server) ListIngredients(ctx context.Context, req *pb.ListIngredien
 		qm.Offset(offset),
 	}
 
-	if search := strings.TrimSpace(req.GetName()); search != "" {
-		queryMods = append(queryMods, qm.Where("LOWER(name) ILIKE ?", strings.ToLower("%"+search+"%")))
+	search := strings.TrimSpace(req.GetName())
+	if search != "" {
+		queryMods = append(queryMods, qm.Where("name ILIKE ?", fmt.Sprintf("%%%s%%", search)))
 	}
 
 	dbIngredients, err := models.Ingredients(queryMods...).All(ctx, server.config.DB)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to list ingredients: %w", err)
 	}
 
-	posts := make([]*pb.Ingredient, 0, len(dbIngredients))
-	for _, dbIngredient := range dbIngredients {
-		posts = append(posts,
-			&pb.Ingredient{
-				Id:   int64(dbIngredient.ID),
-				Name: dbIngredient.Name,
-			},
-		)
+	ingredients := make([]*pb.Ingredient, len(dbIngredients))
+	for i, dbIngredient := range dbIngredients {
+		ingredients[i] = &pb.Ingredient{
+			Id:   int64(dbIngredient.ID),
+			Name: dbIngredient.Name,
+		}
 	}
 
 	nextPageToken := 0
 	if len(dbIngredients) == pageSize {
-		nextPageToken = pageToken + 1
+		nextPageToken = page + 1
 	}
 
 	return &pb.ListIngredientsResponse{
-		Ingredients:   posts,
+		Ingredients:   ingredients,
 		NextPageToken: int32(nextPageToken),
 	}, nil
 }
@@ -107,6 +103,7 @@ func validateListIngredientsRequest(req *pb.ListIngredientsRequest) error {
 	return validation.ValidateStruct(req,
 		validation.Field(&req.PageSize, validation.Required, validation.Min(1), validation.Max(50)),
 		validation.Field(&req.PageToken, validation.Min(0)),
+		validation.Field(&req.Name, validation.RuneLength(0, 50)),
 	)
 }
 
@@ -207,11 +204,35 @@ func validateDeleteIngredientRequest(req *pb.DeleteIngredientRequest) error {
 	)
 }
 
+func validateIngredients(ingredients []*pb.Ingredient) error {
+	for _, ingredient := range ingredients {
+		if err := validateIngredient(ingredient); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func validateIngredient(ingredient *pb.Ingredient) error {
 	return validation.ValidateStruct(ingredient,
 		validation.Field(&ingredient.Name,
-			validation.Required,
 			validation.Length(1, 100),
+			//required if id is not set
+			validation.By(
+				func(value interface{}) error {
+					if ingredient.Id == 0 {
+						return validation.Required.Validate(value)
+					}
+					return nil
+				},
+			),
+		),
+		validation.Field(&ingredient.Quantity,
+			validation.Required,
+			validation.Min(1),
+		),
+		validation.Field(&ingredient.Unit,
+			validation.Required,
 		),
 	)
 }

@@ -77,7 +77,7 @@ func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 
 	pbUser := req.GetUser()
 
-	if authPayload.Email != pbUser.GetEmail() {
+	if authPayload.UserID != pbUser.GetId() {
 		return nil, status.Errorf(codes.PermissionDenied, "cannot update other user's info")
 	}
 
@@ -154,7 +154,7 @@ func (server *Server) LoginUser(ctx context.Context, req *pb.LoginRequest) (*pb.
 	}
 
 	accessToken, accessPayload, err := server.tokenMaker.CreateToken(
-		user.Email,
+		user.ID,
 		server.config.AccessTokenDuration,
 	)
 	if err != nil {
@@ -162,7 +162,7 @@ func (server *Server) LoginUser(ctx context.Context, req *pb.LoginRequest) (*pb.
 	}
 
 	refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(
-		user.Email,
+		user.ID,
 		server.config.RefreshTokenDuration,
 	)
 
@@ -170,7 +170,7 @@ func (server *Server) LoginUser(ctx context.Context, req *pb.LoginRequest) (*pb.
 
 	session := &models.Session{
 		ID:           refreshPayload.ID.String(),
-		Email:        user.Email,
+		UserID:       user.ID,
 		RefreshToken: refreshToken,
 		UserAgent:    metadata.UserAgent,
 		ClientIP:     metadata.ClientIP,
@@ -213,7 +213,7 @@ func (server *Server) RefreshToken(ctx context.Context, req *pb.RefreshTokenRequ
 	}
 
 	accessToken, accessPayload, err := server.tokenMaker.CreateToken(
-		session.Email,
+		session.UserID,
 		server.config.AccessTokenDuration,
 	)
 	if err != nil {
@@ -221,7 +221,7 @@ func (server *Server) RefreshToken(ctx context.Context, req *pb.RefreshTokenRequ
 	}
 
 	refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(
-		session.Email,
+		session.UserID,
 		server.config.RefreshTokenDuration,
 	)
 	if err != nil {

@@ -44,12 +44,20 @@ func RunDBMigration(migrationURL string, db *sql.DB) {
 	}
 
 	err = m.Up()
-	if err != nil {
-		if err == migrate.ErrNoChange {
-			log.Print("🥝 No migration to run")
+	if err != nil && err != migrate.ErrNoChange {
+		log.Error().Err(err).Msg("🥝 Migration failed, attempting to recover")
+
+		if mErr := m.Force(-1); mErr != nil {
+			log.Fatal().Err(mErr).Msg("🥝 Failed to revert failed migration")
 		} else {
-			log.Fatal().Err(err).Msg("🥝 Failed to run migration")
+			log.Print("🥝 Reverted failed migration")
+
+			if err = m.Up(); err != nil {
+				log.Fatal().Err(err).Msg("🥝 Failed to rerun migration after revert")
+			}
 		}
+	} else {
+		log.Print("🥝 No migration to run")
 	}
 	return
 }

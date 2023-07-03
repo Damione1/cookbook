@@ -990,7 +990,8 @@
       "properties": {
         "id": {
           "type": "string",
-          "format": "int64"
+          "format": "int64",
+          "readOnly": true
         },
         "name": {
           "type": "string"
@@ -1168,7 +1169,8 @@
         "id": {
           "type": "integer",
           "format": "int32",
-          "description": "ID is the unique identifier for the post."
+          "description": "Output only. ID is the unique identifier for the post.",
+          "readOnly": true
         },
         "title": {
           "type": "string",
@@ -1189,12 +1191,14 @@
         "createTime": {
           "type": "string",
           "format": "date-time",
-          "description": "Thumbnail is the post's thumbnail.\nstring thumbnail = 4;\nCreatedAt is the post's creation time."
+          "description": "Thumbnail is the post's thumbnail.\nstring thumbnail = 4;\nOutput only. CreatedAt is the post's creation time.",
+          "readOnly": true
         },
         "updateTime": {
           "type": "string",
           "format": "date-time",
-          "description": "UpdatedAt is the post's last update time."
+          "description": "Output only. UpdatedAt is the post's last update time.",
+          "readOnly": true
         }
       }
     },
@@ -1203,7 +1207,8 @@
       "properties": {
         "id": {
           "type": "string",
-          "format": "int64"
+          "format": "int64",
+          "readOnly": true
         },
         "title": {
           "type": "string"
@@ -1223,6 +1228,18 @@
         },
         "authorId": {
           "type": "string"
+        },
+        "createTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Output only. CreatedAt is the post's creation time.",
+          "readOnly": true
+        },
+        "updateTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Output only. UpdatedAt is the post's last update time.",
+          "readOnly": true
         }
       },
       "title": "Message Recipe"
@@ -1289,7 +1306,7 @@
         "TABLESPOON",
         "CUP",
         "PINCH",
-        "PIECE"
+        "UNIT"
       ],
       "default": "UNIT_UNSPECIFIED",
       "title": "Enum Unit"

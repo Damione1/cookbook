@@ -56,7 +56,7 @@
   ],
   "ingredients": [
     {
-      "id": 1,
+      "id": 15,
       "name": "White onions",
       "category": "vegetables"
     },
@@ -147,7 +147,7 @@
   "recipe_ingredients": [
     {
       "recipe_id": 1,
-      "ingredient_id": 1,
+      "ingredient_id": 15,
       "quantity": 3,
       "unit": "UNIT"
     },

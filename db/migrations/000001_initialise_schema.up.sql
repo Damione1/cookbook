@@ -1,4 +1,20 @@
 CREATE EXTENSION "uuid-ossp";
+
+-- status enum in sql
+CREATE TYPE status_enum AS ENUM (
+  'DRAFT',
+  'REVIEW',
+  'PUBLISHED',
+  'ARCHIVED'
+);
+
+-- role enum in sql
+CREATE TYPE role_enum AS ENUM (
+  'user',
+  'moderator',
+  'admin'
+);
+
 -- Media table
 CREATE TABLE media (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -20,7 +36,7 @@ CREATE TABLE users (
   active BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  role VARCHAR(255) NOT NULL DEFAULT 'user'
+  role role_enum NOT NULL DEFAULT 'user'
 );
 
 CREATE INDEX users_email_idx ON users (email);
@@ -28,7 +44,7 @@ CREATE INDEX users_email_idx ON users (email);
 -- Session table
 CREATE TABLE sessions (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-  email varchar NOT NULL,
+  user_id uuid NOT NULL REFERENCES users(id),
   refresh_token varchar NOT NULL,
   user_agent varchar NOT NULL,
   client_ip varchar NOT NULL,
@@ -36,7 +52,7 @@ CREATE TABLE sessions (
   expires_at timestamptz NOT NULL,
   created_at timestamptz NOT NULL DEFAULT now()
 );
-ALTER TABLE "sessions" ADD FOREIGN KEY ("email") REFERENCES "users" ("email");
+ALTER TABLE "sessions" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 CREATE INDEX sessions_refresh_token_idx ON sessions (refresh_token);
 
 -- Password reset table
@@ -58,7 +74,8 @@ CREATE TABLE posts (
   image_id uuid REFERENCES media(id),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  deleted_at TIMESTAMP WITH TIME ZONE
+  deleted_at TIMESTAMP WITH TIME ZONE,
+  status status_enum NOT NULL DEFAULT 'DRAFT'
 );
 CREATE INDEX posts_slug_idx ON posts (slug);
 
@@ -81,6 +98,7 @@ CREATE TABLE ingredients (
 );
 
 CREATE INDEX ingredients_name_idx ON ingredients (name);
+INSERT INTO ingredients (name) VALUES ('Manual Entry');
 
 -- Recipe table
 CREATE TABLE recipes (
@@ -92,7 +110,8 @@ CREATE TABLE recipes (
   author_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  deleted_at TIMESTAMP WITH TIME ZONE
+  deleted_at TIMESTAMP WITH TIME ZONE,
+  status status_enum NOT NULL DEFAULT 'DRAFT'
 );
 
 CREATE INDEX recipes_name_idx ON recipes (title);
@@ -103,6 +122,8 @@ CREATE TABLE recipe_media (
   media_id uuid NOT NULL REFERENCES media(id) ON DELETE CASCADE,
   PRIMARY KEY (recipe_id, media_id)
 );
+
+
 
 -- create unit enum in sql
 CREATE TYPE ingredient_unit_enum AS ENUM (
@@ -134,14 +155,14 @@ CREATE TYPE ingredient_unit_enum AS ENUM (
 -- Recipe ingredient relationship table
 CREATE TABLE recipe_ingredients (
   recipe_id SERIAL NOT NULL REFERENCES recipes(id) ON DELETE CASCADE,
-  ingredient_id SERIAL NOT NULL REFERENCES ingredients(id) ON DELETE CASCADE,
+  ingredient_id SERIAL REFERENCES ingredients(id) ON DELETE CASCADE,
   quantity FLOAT NOT NULL,
   unit ingredient_unit_enum NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  PRIMARY KEY (recipe_id, ingredient_id)
+  PRIMARY KEY (recipe_id, ingredient_id),
+  manual_name VARCHAR(255)
 );
-
 
 
 CREATE INDEX recipe_ingredients_recipe_id_idx ON recipe_ingredients (recipe_id);

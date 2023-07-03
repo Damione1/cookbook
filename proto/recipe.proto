@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package pb;
 import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "google/api/field_behavior.proto";
 
 option go_package = "portfolio-playground/pkg/proto;pb";
 
@@ -16,12 +18,12 @@ enum Unit {
   TABLESPOON = 6;
   CUP = 7;
   PINCH = 8;
-  PIECE = 9;
+  UNIT = 9;
 }
 
 // Message Ingredient
 message Ingredient {
-    int64 id = 1;
+    int64 id = 1 [(google.api.field_behavior) = OUTPUT_ONLY];
     string name = 2;
     float quantity = 3;
     Unit unit = 4;
@@ -29,12 +31,16 @@ message Ingredient {
 
 // Message Recipe
 message Recipe {
-  int64 id = 1;
+  int64 id = 1 [(google.api.field_behavior) = OUTPUT_ONLY];
   string title = 2;
   string description = 3;
   string instructions = 4;
   repeated Ingredient ingredients = 5;
   string author_id = 6;
+  // Output only. CreatedAt is the post's creation time.
+  google.protobuf.Timestamp create_time = 7 [(google.api.field_behavior) = OUTPUT_ONLY];
+  // Output only. UpdatedAt is the post's last update time.
+  google.protobuf.Timestamp update_time = 8 [(google.api.field_behavior) = OUTPUT_ONLY];
 }
 
 // Create

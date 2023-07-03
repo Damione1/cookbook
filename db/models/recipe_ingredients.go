@@ -30,6 +30,7 @@ type RecipeIngredient struct {
 	Unit         IngredientUnitEnum `boil:"unit" json:"unit" toml:"unit" yaml:"unit"`
 	CreatedAt    null.Time          `boil:"created_at" json:"created_at,omitempty" toml:"created_at" yaml:"created_at,omitempty"`
 	UpdatedAt    null.Time          `boil:"updated_at" json:"updated_at,omitempty" toml:"updated_at" yaml:"updated_at,omitempty"`
+	ManualName   null.String        `boil:"manual_name" json:"manual_name,omitempty" toml:"manual_name" yaml:"manual_name,omitempty"`
 
 	R *recipeIngredientR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L recipeIngredientL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -42,6 +43,7 @@ var RecipeIngredientColumns = struct {
 	Unit         string
 	CreatedAt    string
 	UpdatedAt    string
+	ManualName   string
 }{
 	RecipeID:     "recipe_id",
 	IngredientID: "ingredient_id",
@@ -49,6 +51,7 @@ var RecipeIngredientColumns = struct {
 	Unit:         "unit",
 	CreatedAt:    "created_at",
 	UpdatedAt:    "updated_at",
+	ManualName:   "manual_name",
 }
 
 var RecipeIngredientTableColumns = struct {
@@ -58,6 +61,7 @@ var RecipeIngredientTableColumns = struct {
 	Unit         string
 	CreatedAt    string
 	UpdatedAt    string
+	ManualName   string
 }{
 	RecipeID:     "recipe_ingredients.recipe_id",
 	IngredientID: "recipe_ingredients.ingredient_id",
@@ -65,6 +69,7 @@ var RecipeIngredientTableColumns = struct {
 	Unit:         "recipe_ingredients.unit",
 	CreatedAt:    "recipe_ingredients.created_at",
 	UpdatedAt:    "recipe_ingredients.updated_at",
+	ManualName:   "recipe_ingredients.manual_name",
 }
 
 // Generated where
@@ -140,6 +145,7 @@ var RecipeIngredientWhere = struct {
 	Unit         whereHelperIngredientUnitEnum
 	CreatedAt    whereHelpernull_Time
 	UpdatedAt    whereHelpernull_Time
+	ManualName   whereHelpernull_String
 }{
 	RecipeID:     whereHelperint{field: "\"recipe_ingredients\".\"recipe_id\""},
 	IngredientID: whereHelperint{field: "\"recipe_ingredients\".\"ingredient_id\""},
@@ -147,6 +153,7 @@ var RecipeIngredientWhere = struct {
 	Unit:         whereHelperIngredientUnitEnum{field: "\"recipe_ingredients\".\"unit\""},
 	CreatedAt:    whereHelpernull_Time{field: "\"recipe_ingredients\".\"created_at\""},
 	UpdatedAt:    whereHelpernull_Time{field: "\"recipe_ingredients\".\"updated_at\""},
+	ManualName:   whereHelpernull_String{field: "\"recipe_ingredients\".\"manual_name\""},
 }
 
 // RecipeIngredientRels is where relationship names are stored.
@@ -187,9 +194,9 @@ func (r *recipeIngredientR) GetRecipe() *Recipe {
 type recipeIngredientL struct{}
 
 var (
-	recipeIngredientAllColumns            = []string{"recipe_id", "ingredient_id", "quantity", "unit", "created_at", "updated_at"}
+	recipeIngredientAllColumns            = []string{"recipe_id", "ingredient_id", "quantity", "unit", "created_at", "updated_at", "manual_name"}
 	recipeIngredientColumnsWithoutDefault = []string{"quantity", "unit"}
-	recipeIngredientColumnsWithDefault    = []string{"recipe_id", "ingredient_id", "created_at", "updated_at"}
+	recipeIngredientColumnsWithDefault    = []string{"recipe_id", "ingredient_id", "created_at", "updated_at", "manual_name"}
 	recipeIngredientPrimaryKeyColumns     = []string{"recipe_id", "ingredient_id"}
 	recipeIngredientGeneratedColumns      = []string{}
 )

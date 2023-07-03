@@ -62,6 +62,7 @@ func main() {
 			log.Fatal().Err(err).Msg("🌱 Failed to insert user")
 		}
 	}
+	// reset the auto increment
 	log.Info().Msg("🌱 Inserted users")
 
 	models.Ingredients().DeleteAll(ctx, config.DB)
@@ -70,6 +71,11 @@ func main() {
 		if err != nil {
 			log.Fatal().Err(err).Msg("🌱 Failed to insert ingredient")
 		}
+	}
+	// reset the auto increment
+	_, err = config.DB.Exec("select setval('ingredients_id_seq', (select max(id) from ingredients))")
+	if err != nil {
+		log.Fatal().Err(err).Msg("🌱 Failed to reset auto increment")
 	}
 	log.Info().Msg("🌱 Inserted ingredients")
 
@@ -80,6 +86,11 @@ func main() {
 			log.Fatal().Err(err).Msg("🌱 Failed to insert recipe")
 		}
 	}
+	// reset the auto increment
+	_, err = config.DB.Exec("select setval('recipes_id_seq', (select max(id) from recipes))")
+	if err != nil {
+		log.Fatal().Err(err).Msg("🌱 Failed to reset auto increment")
+	}
 	log.Info().Msg("🌱 Inserted recipes")
 
 	models.Posts().DeleteAll(ctx, config.DB)
@@ -88,6 +99,11 @@ func main() {
 		if err != nil {
 			log.Fatal().Err(err).Msg("🌱 Failed to insert post")
 		}
+	}
+	// reset the auto increment
+	_, err = config.DB.Exec("select setval('posts_id_seq', (select max(id) from posts))")
+	if err != nil {
+		log.Fatal().Err(err).Msg("🌱 Failed to reset auto increment")
 	}
 	log.Info().Msg("🌱 Inserted posts")
 
