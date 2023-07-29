@@ -18,77 +18,75 @@ import (
 type SeedData struct {
 	Users             []models.User             `json:"users"`
 	Ingredients       []models.Ingredient       `json:"ingredients"`
+	Posts             []models.Post             `json:"posts"`
 	Recipes           []models.Recipe           `json:"recipes"`
 	RecipeIngredients []models.RecipeIngredient `json:"recipe_ingredients"`
-	Post              []models.Post             `json:"posts"`
 }
 
 func main() {
 	ctx := context.Background()
-	log.Info().Msg("🌱 Seeding database")
 	config, err := util.LoadConfig(".")
 	if err != nil {
-		log.Fatal().Err(err).Msg("👋 Failed to load config")
+		log.Fatal().Err(err).Msg("🌱 Failed to load config")
 	}
 
-	db, err := database.ConnectDb(&config)
+	_, err = database.ConnectDb(&config)
 	if err != nil {
-		log.Fatal().Err(err).Msg("👋 Failed to connect to database")
+		log.Fatal().Err(err).Msg("🌱 Failed to connect to database")
 	}
 
 	// Read the JSON file
 	jsonFile, err := os.Open("seed_data.json")
 	if err != nil {
-		log.Fatal().Err(err).Msg("Error opening JSON file")
+		log.Fatal().Err(err).Msg("🌱 Failed to open JSON file")
 	}
 	defer jsonFile.Close()
 
 	jsonData, err := ioutil.ReadAll(jsonFile)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Error reading JSON data")
+		log.Fatal().Err(err).Msg("🌱 Failed to read JSON data")
 	}
 
 	// Deserialize the JSON data
 	var seedData SeedData
 	err = json.Unmarshal(jsonData, &seedData)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Error unmarshalling JSON data")
+		log.Fatal().Err(err).Msg("🌱 Failed to deserialize JSON data")
 	}
 
+	// Insert the data into the database
 	for _, user := range seedData.Users {
-		err := user.Insert(ctx, db, boil.Infer())
+		err = user.Insert(ctx, config.DB, boil.Infer())
 		if err != nil {
-			log.Fatal().Err(err).Msg("Error creating user")
+			log.Fatal().Err(err).Msg("🌱 Failed to insert user")
 		}
 	}
 
 	for _, ingredient := range seedData.Ingredients {
-		err := ingredient.Insert(ctx, db, boil.Infer())
+		err = ingredient.Insert(ctx, config.DB, boil.Infer())
 		if err != nil {
-			log.Fatal().Err(err).Msg("Error creating ingredient")
+			log.Fatal().Err(err).Msg("🌱 Failed to insert ingredient")
 		}
 	}
 
 	for _, recipe := range seedData.Recipes {
-		err := recipe.Insert(ctx, db, boil.Infer())
+		err = recipe.Insert(ctx, config.DB, boil.Infer())
 		if err != nil {
-			log.Fatal().Err(err).Msg("Error creating recipe")
+			log.Fatal().Err(err).Msg("🌱 Failed to insert recipe")
+		}
+	}
+
+	for _, post := range seedData.Posts {
+		err = post.Insert(ctx, config.DB, boil.Infer())
+		if err != nil {
+			log.Fatal().Err(err).Msg("🌱 Failed to insert post")
 		}
 	}
 
 	for _, recipeIngredient := range seedData.RecipeIngredients {
-		err := recipeIngredient.Insert(ctx, db, boil.Infer())
+		err = recipeIngredient.Insert(ctx, config.DB, boil.Infer())
 		if err != nil {
-			log.Fatal().Err(err).Msg("Error creating recipe ingredient")
+			log.Fatal().Err(err).Msg("🌱 Failed to insert recipe ingredient")
 		}
 	}
-
-	for _, post := range seedData.Post {
-		err := post.Insert(ctx, db, boil.Infer())
-		if err != nil {
-			log.Fatal().Err(err).Msg("Error creating post")
-		}
-	}
-
-	log.Info().Msg("🌱 Seeding complete")
 }
