@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"os"
 
 	"github.com/rs/zerolog/log"
@@ -42,7 +42,7 @@ func main() {
 	}
 	defer jsonFile.Close()
 
-	jsonData, err := ioutil.ReadAll(jsonFile)
+	jsonData, err := io.ReadAll(jsonFile)
 	if err != nil {
 		log.Fatal().Err(err).Msg("🌱 Failed to read JSON data")
 	}
