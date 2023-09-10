@@ -7,15 +7,14 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 COPY ./ ./
-RUN go build -o /seedbin/seed /db/seed/main.go
+RUN go build -o /appbin/seeder ./db/seed/main.go && \
+    chmod +x /appbin/seeder
 
 # Run stage
 FROM golang:1.20.2
 
 WORKDIR /app
 
-COPY --from=builder /seedbin/seed /seedbin/seed
-COPY app.env /app/app.env
-COPY db/seed/seed.json /app/db/seed/seed.json
+COPY --from=builder /appbin/seeder /appbin/seeder
 
-CMD ["/seedbin/seed"]
+CMD ["/appbin/seeder"]

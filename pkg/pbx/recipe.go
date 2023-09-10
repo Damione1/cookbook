@@ -14,12 +14,12 @@ func DbRecipeToProto(recipe *models.Recipe) *pb.Recipe {
 		AuthorId:     recipe.AuthorID,
 	}
 
-	if recipe.R.RecipeIngredients != nil {
-		recipePb.Ingredients = make([]*pb.Ingredient, len(recipe.R.RecipeIngredients))
-		for i, ingredient := range recipe.R.RecipeIngredients {
-			recipePb.Ingredients[i] = DbIngredientToProto(ingredient)
-		}
-	}
+	//if recipe.R.RecipeIngredients != nil {
+	//	recipePb.Ingredients = make([]*pb.Ingredient, len(recipe.R.RecipeIngredients))
+	//	for i, ingredient := range recipe.R.RecipeIngredients {
+	//		recipePb.Ingredients[i] = DbIngredientToProto(ingredient)
+	//	}
+	//}
 	return recipePb
 }
 

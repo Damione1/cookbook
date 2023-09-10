@@ -177,7 +177,7 @@
         "security": []
       }
     },
-    "/v1/ingredient/update/{id}": {
+    "/v1/ingredient/update": {
       "put": {
         "summary": "Update an ingredient's information",
         "description": "Modify the information of a specific ingredient.",
@@ -198,27 +198,11 @@
         },
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "int64"
-          },
-          {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "type": "object",
-              "properties": {
-                "ingredient": {
-                  "$ref": "#/definitions/pbIngredient"
-                },
-                "updateMask": {
-                  "type": "string"
-                }
-              },
-              "title": "Update"
+              "$ref": "#/definitions/pbUpdateIngredientRequest"
             }
           }
         ],
@@ -534,7 +518,7 @@
         "security": []
       }
     },
-    "/v1/recipe/update/{id}": {
+    "/v1/recipe/update": {
       "put": {
         "summary": "Update a recipe's information",
         "description": "Modify the information of a specific recipe.",
@@ -555,27 +539,11 @@
         },
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "int64"
-          },
-          {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "type": "object",
-              "properties": {
-                "recipe": {
-                  "$ref": "#/definitions/pbRecipe"
-                },
-                "updateMask": {
-                  "type": "string"
-                }
-              },
-              "title": "Update"
+              "$ref": "#/definitions/pbUpdateRecipeRequest"
             }
           }
         ],
@@ -1326,6 +1294,22 @@
       "default": "UNIT_UNSPECIFIED",
       "title": "Enum Unit"
     },
+    "pbUpdateIngredientRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "ingredient": {
+          "$ref": "#/definitions/pbIngredient"
+        },
+        "updateMask": {
+          "type": "string"
+        }
+      },
+      "title": "Update"
+    },
     "pbUpdateIngredientResponse": {
       "type": "object",
       "properties": {
@@ -1354,6 +1338,22 @@
           "description": "Post is the post."
         }
       }
+    },
+    "pbUpdateRecipeRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "recipe": {
+          "$ref": "#/definitions/pbRecipe"
+        },
+        "updateMask": {
+          "type": "string"
+        }
+      },
+      "title": "Update"
     },
     "pbUpdateRecipeResponse": {
       "type": "object",
