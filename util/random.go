@@ -31,6 +31,15 @@ func RandomString(n int) string {
 	return sb.String()
 }
 
+func RandomUUID() string {
+	return fmt.Sprintf("%s-%s-%s-%s-%s",
+		RandomString(8),
+		RandomString(4),
+		RandomString(4),
+		RandomString(4),
+		RandomString(12))
+}
+
 // RandomOwner generates a random owner name
 func RandomOwner() string {
 	return RandomString(6)

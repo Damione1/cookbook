@@ -2,11 +2,12 @@ package grpcApi
 
 import (
 	"context"
-	"fmt"
+	"database/sql"
 
 	"github.com/Damione1/portfolio-playground/db/models"
 	"github.com/Damione1/portfolio-playground/pkg/pb"
 	"github.com/Damione1/portfolio-playground/pkg/pbx"
+	"github.com/Damione1/portfolio-playground/util"
 	"github.com/friendsofgo/errors"
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/volatiletech/null/v8"
@@ -25,23 +26,29 @@ func (server *Server) CreateRecipe(ctx context.Context, req *pb.CreateRecipeRequ
 		return nil, err
 	}
 
-	fmt.Println("🌻 author id", authorizeUserPayload.ID)
 	recipe := &models.Recipe{
 		Title:       req.Recipe.Title,
 		Description: null.NewString(req.Recipe.GetDescription(), true),
 		Directions:  req.Recipe.Instructions,
-		AuthorID:    authorizeUserPayload.ID.String(),
+		AuthorID:    authorizeUserPayload.UserID,
+		Slug:        util.Slugify(req.Recipe.Title + "-" + util.RandomString(6)),
 	}
 
 	for _, ingredient := range req.Recipe.Ingredients {
 		if ingredient.Id == "" {
-			ingredientDb := &models.Ingredient{
-				Name: ingredient.Name,
+			ingredientDb, err := models.Ingredients(models.IngredientWhere.Name.EQ(ingredient.Name)).One(ctx, server.config.DB)
+			if err != nil && !errors.Is(err, sql.ErrNoRows) {
+				return nil, errors.Wrap(err, "models.Ingredients")
 			}
 
-			err := ingredientDb.Insert(ctx, server.config.DB, boil.Infer())
-			if err != nil {
-				return nil, errors.Wrap(err, "ingredientDb.Insert")
+			if ingredientDb.ID == "" {
+				ingredientDb = &models.Ingredient{
+					Name: ingredient.Name,
+				}
+				err = ingredientDb.Insert(ctx, server.config.DB, boil.Infer())
+				if err != nil {
+					return nil, errors.Wrap(err, "ingredientDb.Insert")
+				}
 			}
 			ingredient.Id = ingredientDb.ID
 		}
@@ -57,7 +64,7 @@ func (server *Server) CreateRecipe(ctx context.Context, req *pb.CreateRecipeRequ
 
 	err = recipe.Insert(ctx, server.config.DB, boil.Infer())
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "recipe.Insert")
 	}
 
 	return &pb.CreateRecipeResponse{

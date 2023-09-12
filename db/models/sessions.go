@@ -24,13 +24,13 @@ import (
 // Session is an object representing the database table.
 type Session struct {
 	ID           string    `boil:"id" json:"id" toml:"id" yaml:"id"`
-	Email        string    `boil:"email" json:"email" toml:"email" yaml:"email"`
 	RefreshToken string    `boil:"refresh_token" json:"refresh_token" toml:"refresh_token" yaml:"refresh_token"`
 	UserAgent    string    `boil:"user_agent" json:"user_agent" toml:"user_agent" yaml:"user_agent"`
 	ClientIP     string    `boil:"client_ip" json:"client_ip" toml:"client_ip" yaml:"client_ip"`
 	IsBlocked    bool      `boil:"is_blocked" json:"is_blocked" toml:"is_blocked" yaml:"is_blocked"`
 	ExpiresAt    time.Time `boil:"expires_at" json:"expires_at" toml:"expires_at" yaml:"expires_at"`
 	CreatedAt    time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	UserID       string    `boil:"user_id" json:"user_id" toml:"user_id" yaml:"user_id"`
 
 	R *sessionR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L sessionL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -38,76 +38,76 @@ type Session struct {
 
 var SessionColumns = struct {
 	ID           string
-	Email        string
 	RefreshToken string
 	UserAgent    string
 	ClientIP     string
 	IsBlocked    string
 	ExpiresAt    string
 	CreatedAt    string
+	UserID       string
 }{
 	ID:           "id",
-	Email:        "email",
 	RefreshToken: "refresh_token",
 	UserAgent:    "user_agent",
 	ClientIP:     "client_ip",
 	IsBlocked:    "is_blocked",
 	ExpiresAt:    "expires_at",
 	CreatedAt:    "created_at",
+	UserID:       "user_id",
 }
 
 var SessionTableColumns = struct {
 	ID           string
-	Email        string
 	RefreshToken string
 	UserAgent    string
 	ClientIP     string
 	IsBlocked    string
 	ExpiresAt    string
 	CreatedAt    string
+	UserID       string
 }{
 	ID:           "sessions.id",
-	Email:        "sessions.email",
 	RefreshToken: "sessions.refresh_token",
 	UserAgent:    "sessions.user_agent",
 	ClientIP:     "sessions.client_ip",
 	IsBlocked:    "sessions.is_blocked",
 	ExpiresAt:    "sessions.expires_at",
 	CreatedAt:    "sessions.created_at",
+	UserID:       "sessions.user_id",
 }
 
 // Generated where
 
 var SessionWhere = struct {
 	ID           whereHelperstring
-	Email        whereHelperstring
 	RefreshToken whereHelperstring
 	UserAgent    whereHelperstring
 	ClientIP     whereHelperstring
 	IsBlocked    whereHelperbool
 	ExpiresAt    whereHelpertime_Time
 	CreatedAt    whereHelpertime_Time
+	UserID       whereHelperstring
 }{
 	ID:           whereHelperstring{field: "\"sessions\".\"id\""},
-	Email:        whereHelperstring{field: "\"sessions\".\"email\""},
 	RefreshToken: whereHelperstring{field: "\"sessions\".\"refresh_token\""},
 	UserAgent:    whereHelperstring{field: "\"sessions\".\"user_agent\""},
 	ClientIP:     whereHelperstring{field: "\"sessions\".\"client_ip\""},
 	IsBlocked:    whereHelperbool{field: "\"sessions\".\"is_blocked\""},
 	ExpiresAt:    whereHelpertime_Time{field: "\"sessions\".\"expires_at\""},
 	CreatedAt:    whereHelpertime_Time{field: "\"sessions\".\"created_at\""},
+	UserID:       whereHelperstring{field: "\"sessions\".\"user_id\""},
 }
 
 // SessionRels is where relationship names are stored.
 var SessionRels = struct {
-	EmailUser string
+	User string
 }{
-	EmailUser: "EmailUser",
+	User: "User",
 }
 
 // sessionR is where relationships are stored.
 type sessionR struct {
-	EmailUser *User `boil:"EmailUser" json:"EmailUser" toml:"EmailUser" yaml:"EmailUser"`
+	User *User `boil:"User" json:"User" toml:"User" yaml:"User"`
 }
 
 // NewStruct creates a new relationship struct
@@ -115,19 +115,19 @@ func (*sessionR) NewStruct() *sessionR {
 	return &sessionR{}
 }
 
-func (r *sessionR) GetEmailUser() *User {
+func (r *sessionR) GetUser() *User {
 	if r == nil {
 		return nil
 	}
-	return r.EmailUser
+	return r.User
 }
 
 // sessionL is where Load methods for each relationship are stored.
 type sessionL struct{}
 
 var (
-	sessionAllColumns            = []string{"id", "email", "refresh_token", "user_agent", "client_ip", "is_blocked", "expires_at", "created_at"}
-	sessionColumnsWithoutDefault = []string{"email", "refresh_token", "user_agent", "client_ip", "expires_at"}
+	sessionAllColumns            = []string{"id", "refresh_token", "user_agent", "client_ip", "is_blocked", "expires_at", "created_at", "user_id"}
+	sessionColumnsWithoutDefault = []string{"refresh_token", "user_agent", "client_ip", "expires_at", "user_id"}
 	sessionColumnsWithDefault    = []string{"id", "is_blocked", "created_at"}
 	sessionPrimaryKeyColumns     = []string{"id"}
 	sessionGeneratedColumns      = []string{}
@@ -431,10 +431,10 @@ func (q sessionQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bo
 	return count > 0, nil
 }
 
-// EmailUser pointed to by the foreign key.
-func (o *Session) EmailUser(mods ...qm.QueryMod) userQuery {
+// User pointed to by the foreign key.
+func (o *Session) User(mods ...qm.QueryMod) userQuery {
 	queryMods := []qm.QueryMod{
-		qm.Where("\"email\" = ?", o.Email),
+		qm.Where("\"id\" = ?", o.UserID),
 	}
 
 	queryMods = append(queryMods, mods...)
@@ -442,9 +442,9 @@ func (o *Session) EmailUser(mods ...qm.QueryMod) userQuery {
 	return Users(queryMods...)
 }
 
-// LoadEmailUser allows an eager lookup of values, cached into the
+// LoadUser allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for an N-1 relationship.
-func (sessionL) LoadEmailUser(ctx context.Context, e boil.ContextExecutor, singular bool, maybeSession interface{}, mods queries.Applicator) error {
+func (sessionL) LoadUser(ctx context.Context, e boil.ContextExecutor, singular bool, maybeSession interface{}, mods queries.Applicator) error {
 	var slice []*Session
 	var object *Session
 
@@ -475,7 +475,7 @@ func (sessionL) LoadEmailUser(ctx context.Context, e boil.ContextExecutor, singu
 		if object.R == nil {
 			object.R = &sessionR{}
 		}
-		args = append(args, object.Email)
+		args = append(args, object.UserID)
 
 	} else {
 	Outer:
@@ -485,12 +485,12 @@ func (sessionL) LoadEmailUser(ctx context.Context, e boil.ContextExecutor, singu
 			}
 
 			for _, a := range args {
-				if a == obj.Email {
+				if a == obj.UserID {
 					continue Outer
 				}
 			}
 
-			args = append(args, obj.Email)
+			args = append(args, obj.UserID)
 
 		}
 	}
@@ -501,7 +501,7 @@ func (sessionL) LoadEmailUser(ctx context.Context, e boil.ContextExecutor, singu
 
 	query := NewQuery(
 		qm.From(`users`),
-		qm.WhereIn(`users.email in ?`, args...),
+		qm.WhereIn(`users.id in ?`, args...),
 	)
 	if mods != nil {
 		mods.Apply(query)
@@ -538,22 +538,22 @@ func (sessionL) LoadEmailUser(ctx context.Context, e boil.ContextExecutor, singu
 
 	if singular {
 		foreign := resultSlice[0]
-		object.R.EmailUser = foreign
+		object.R.User = foreign
 		if foreign.R == nil {
 			foreign.R = &userR{}
 		}
-		foreign.R.EmailSessions = append(foreign.R.EmailSessions, object)
+		foreign.R.Sessions = append(foreign.R.Sessions, object)
 		return nil
 	}
 
 	for _, local := range slice {
 		for _, foreign := range resultSlice {
-			if local.Email == foreign.Email {
-				local.R.EmailUser = foreign
+			if local.UserID == foreign.ID {
+				local.R.User = foreign
 				if foreign.R == nil {
 					foreign.R = &userR{}
 				}
-				foreign.R.EmailSessions = append(foreign.R.EmailSessions, local)
+				foreign.R.Sessions = append(foreign.R.Sessions, local)
 				break
 			}
 		}
@@ -562,18 +562,18 @@ func (sessionL) LoadEmailUser(ctx context.Context, e boil.ContextExecutor, singu
 	return nil
 }
 
-// SetEmailUserG of the session to the related item.
-// Sets o.R.EmailUser to related.
-// Adds o to related.R.EmailSessions.
+// SetUserG of the session to the related item.
+// Sets o.R.User to related.
+// Adds o to related.R.Sessions.
 // Uses the global database handle.
-func (o *Session) SetEmailUserG(ctx context.Context, insert bool, related *User) error {
-	return o.SetEmailUser(ctx, boil.GetContextDB(), insert, related)
+func (o *Session) SetUserG(ctx context.Context, insert bool, related *User) error {
+	return o.SetUser(ctx, boil.GetContextDB(), insert, related)
 }
 
-// SetEmailUser of the session to the related item.
-// Sets o.R.EmailUser to related.
-// Adds o to related.R.EmailSessions.
-func (o *Session) SetEmailUser(ctx context.Context, exec boil.ContextExecutor, insert bool, related *User) error {
+// SetUser of the session to the related item.
+// Sets o.R.User to related.
+// Adds o to related.R.Sessions.
+func (o *Session) SetUser(ctx context.Context, exec boil.ContextExecutor, insert bool, related *User) error {
 	var err error
 	if insert {
 		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
@@ -583,10 +583,10 @@ func (o *Session) SetEmailUser(ctx context.Context, exec boil.ContextExecutor, i
 
 	updateQuery := fmt.Sprintf(
 		"UPDATE \"sessions\" SET %s WHERE %s",
-		strmangle.SetParamNames("\"", "\"", 1, []string{"email"}),
+		strmangle.SetParamNames("\"", "\"", 1, []string{"user_id"}),
 		strmangle.WhereClause("\"", "\"", 2, sessionPrimaryKeyColumns),
 	)
-	values := []interface{}{related.Email, o.ID}
+	values := []interface{}{related.ID, o.ID}
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)
@@ -597,21 +597,21 @@ func (o *Session) SetEmailUser(ctx context.Context, exec boil.ContextExecutor, i
 		return errors.Wrap(err, "failed to update local table")
 	}
 
-	o.Email = related.Email
+	o.UserID = related.ID
 	if o.R == nil {
 		o.R = &sessionR{
-			EmailUser: related,
+			User: related,
 		}
 	} else {
-		o.R.EmailUser = related
+		o.R.User = related
 	}
 
 	if related.R == nil {
 		related.R = &userR{
-			EmailSessions: SessionSlice{o},
+			Sessions: SessionSlice{o},
 		}
 	} else {
-		related.R.EmailSessions = append(related.R.EmailSessions, o)
+		related.R.Sessions = append(related.R.Sessions, o)
 	}
 
 	return nil

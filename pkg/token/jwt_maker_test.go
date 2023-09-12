@@ -13,13 +13,13 @@ func TestJWTMaker(t *testing.T) {
 	maker, err := NewJWTMaker(util.RandomString(32))
 	require.NoError(t, err)
 
-	email := util.RandomEmail()
+	user_id := util.RandomUUID()
 	duration := time.Minute
 
 	IssuedTime := time.Now()
 	ExpireTime := time.Now().Add(duration)
 
-	token, _, err := maker.CreateToken(email, duration)
+	token, _, err := maker.CreateToken(user_id, duration)
 
 	require.NoError(t, err)
 	require.NotEmpty(t, token)
@@ -29,7 +29,7 @@ func TestJWTMaker(t *testing.T) {
 	require.NotEmpty(t, payload)
 
 	require.NotZero(t, payload.ID)
-	require.Equal(t, email, payload.Email)
+	require.Equal(t, user_id, payload.UserID)
 	require.WithinDuration(t, IssuedTime, payload.IssuedTime, time.Second)
 	require.WithinDuration(t, ExpireTime, payload.ExpireTime, time.Second)
 }

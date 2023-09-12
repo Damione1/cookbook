@@ -28,7 +28,7 @@ CREATE INDEX users_email_idx ON users (email);
 -- Session table
 CREATE TABLE sessions (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  email varchar NOT NULL,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   refresh_token varchar NOT NULL,
   user_agent varchar NOT NULL,
   client_ip varchar NOT NULL,
