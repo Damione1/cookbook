@@ -21,7 +21,7 @@ enum Unit {
 
 // Message Ingredient
 message Ingredient {
-    int64 id = 1;
+  string id = 1;
     string name = 2;
     float quantity = 3;
     Unit unit = 4;
@@ -29,10 +29,10 @@ message Ingredient {
 
 // Message Recipe
 message Recipe {
-  int64 id = 1;
+  string id = 1;
   string title = 2;
   string description = 3;
-  string instructions = 4;
+  repeated string instructions = 4;
   repeated Ingredient ingredients = 5;
   string author_id = 6;
 }
@@ -47,7 +47,7 @@ message CreateRecipeResponse {
 
 // Get
 message GetRecipeRequest {
-  int64 id = 1;
+  string id = 1;
 }
 message GetRecipeResponse {
   Recipe recipe = 1;
@@ -55,7 +55,7 @@ message GetRecipeResponse {
 
 // Update
 message UpdateRecipeRequest {
-  int64 id = 1;
+  string id = 1;
   Recipe recipe = 2;
   google.protobuf.FieldMask update_mask = 3;
 }
@@ -65,7 +65,7 @@ message UpdateRecipeResponse {
 
 // Delete
 message DeleteRecipeRequest {
-  int64 id = 1;
+  string id = 1;
 }
 message DeleteRecipeResponse {}
 
@@ -89,7 +89,7 @@ message CreateIngredientResponse {
 
 // Get
 message GetIngredientRequest {
-  int64 id = 1;
+  string id = 1;
 }
 message GetIngredientResponse {
   Ingredient ingredient = 1;
@@ -97,7 +97,7 @@ message GetIngredientResponse {
 
 // Update
 message UpdateIngredientRequest {
-  int64 id = 1;
+  string id = 1;
   Ingredient ingredient = 2;
   google.protobuf.FieldMask update_mask = 3;
 }
@@ -107,7 +107,7 @@ message UpdateIngredientResponse {
 
 // Delete
 message DeleteIngredientRequest {
-  int64 id = 1;
+  string id = 1;
 }
 message DeleteIngredientResponse {}
 

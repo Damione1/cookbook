@@ -153,7 +153,7 @@ func (server *Server) GetPost(ctx context.Context, req *pb.GetPostRequest) (*pb.
 	}
 
 	dbPost, err := models.Posts(
-		models.PostWhere.ID.EQ(int(req.GetId())),
+		models.PostWhere.ID.EQ(req.GetId()),
 	).One(ctx, server.config.DB)
 	if err != nil {
 		return nil, err
@@ -181,7 +181,7 @@ func (server *Server) DeletePost(ctx context.Context, req *pb.DeletePostRequest)
 	}
 
 	_, err = models.Posts(
-		models.PostWhere.ID.EQ(int(req.GetId())),
+		models.PostWhere.ID.EQ(req.GetId()),
 	).DeleteAll(ctx, server.config.DB)
 	if err != nil {
 		return nil, err

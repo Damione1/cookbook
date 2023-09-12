@@ -31,7 +31,7 @@ func (server *Server) InsertIngredient(ctx context.Context, req *pb.CreateIngred
 
 	return &pb.CreateIngredientResponse{
 		Ingredient: &pb.Ingredient{
-			Id:   int64(ingredient.ID),
+			Id:   ingredient.ID,
 			Name: ingredient.Name,
 		},
 	}, nil
@@ -86,7 +86,7 @@ func (server *Server) ListIngredients(ctx context.Context, req *pb.ListIngredien
 	for _, dbIngredient := range dbIngredients {
 		posts = append(posts,
 			&pb.Ingredient{
-				Id:   int64(dbIngredient.ID),
+				Id:   dbIngredient.ID,
 				Name: dbIngredient.Name,
 			},
 		)
@@ -115,14 +115,14 @@ func (server *Server) GetIngredient(ctx context.Context, req *pb.GetIngredientRe
 		return nil, err
 	}
 
-	dbIngredient, err := models.FindIngredient(ctx, server.config.DB, int(req.GetId()))
+	dbIngredient, err := models.FindIngredient(ctx, server.config.DB, req.GetId())
 	if err != nil {
 		return nil, err
 	}
 
 	return &pb.GetIngredientResponse{
 		Ingredient: &pb.Ingredient{
-			Id:   int64(dbIngredient.ID),
+			Id:   dbIngredient.ID,
 			Name: dbIngredient.Name,
 		},
 	}, nil
@@ -145,7 +145,7 @@ func (server *Server) UpdateIngredient(ctx context.Context, req *pb.UpdateIngred
 		return nil, err
 	}
 
-	dbIngredient, err := models.FindIngredient(ctx, server.config.DB, int(req.Ingredient.Id))
+	dbIngredient, err := models.FindIngredient(ctx, server.config.DB, req.Ingredient.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -159,7 +159,7 @@ func (server *Server) UpdateIngredient(ctx context.Context, req *pb.UpdateIngred
 
 	return &pb.UpdateIngredientResponse{
 		Ingredient: &pb.Ingredient{
-			Id:   int64(dbIngredient.ID),
+			Id:   dbIngredient.ID,
 			Name: dbIngredient.Name,
 		},
 	}, nil
@@ -188,7 +188,7 @@ func (server *Server) DeleteIngredient(ctx context.Context, req *pb.DeleteIngred
 		return nil, err
 	}
 
-	dbIngredient, err := models.FindIngredient(ctx, server.config.DB, int(req.GetId()))
+	dbIngredient, err := models.FindIngredient(ctx, server.config.DB, req.GetId())
 	if err != nil {
 		return nil, err
 	}
