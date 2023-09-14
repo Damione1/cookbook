@@ -2,10 +2,12 @@ package grpcApi
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/Damione1/portfolio-playground/db/models"
 	"github.com/Damione1/portfolio-playground/pkg/pb"
 	"github.com/Damione1/portfolio-playground/pkg/pbx"
+	"github.com/Damione1/portfolio-playground/util"
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
@@ -28,6 +30,7 @@ func (server *Server) CreateRecipe(ctx context.Context, req *pb.CreateRecipeRequ
 		Description: null.NewString(req.Recipe.GetDescription(), true),
 		Directions:  null.NewString(req.Recipe.GetInstructions(), true),
 		AuthorID:    authorizeUserPayload.ID.String(),
+		Slug:        util.Slugify(fmt.Sprintf("%s-%s", req.Recipe.Title, util.RandomString(6))),
 	}
 
 	for _, ingredient := range req.Recipe.Ingredients {

@@ -865,7 +865,7 @@ func (x *LogoutResponse) GetSuccess() bool {
 	return false
 }
 
-// reset password
+//reset password
 type ResetPasswordRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

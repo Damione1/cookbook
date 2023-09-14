@@ -1189,7 +1189,7 @@
         "createTime": {
           "type": "string",
           "format": "date-time",
-          "description": "Thumbnail is the post's thumbnail.\nstring thumbnail = 4;\nCreatedAt is the post's creation time."
+          "description": "Thumbnail is the post's thumbnail.\r\nstring thumbnail = 4;\r\nCreatedAt is the post's creation time."
         },
         "updateTime": {
           "type": "string",
@@ -1212,7 +1212,10 @@
           "type": "string"
         },
         "instructions": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "ingredients": {
           "type": "array",

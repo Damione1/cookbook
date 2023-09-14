@@ -38,7 +38,7 @@ type Post struct {
 	// Post excerpt is the post's excerpt.
 	Excerpt string `protobuf:"bytes,5,opt,name=excerpt,proto3" json:"excerpt,omitempty"`
 	// Thumbnail is the post's thumbnail.
-	// string thumbnail = 4;
+	//string thumbnail = 4;
 	// CreatedAt is the post's creation time.
 	CreateTime *timestamp.Timestamp `protobuf:"bytes,6,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
 	// UpdatedAt is the post's last update time.

@@ -32,7 +32,7 @@ message Recipe {
   int64 id = 1;
   string title = 2;
   string description = 3;
-  string instructions = 4;
+  repeated string instructions = 4;
   repeated Ingredient ingredients = 5;
   string author_id = 6;
 }
