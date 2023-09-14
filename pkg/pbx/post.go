@@ -10,7 +10,7 @@ import (
 
 func DbPostToProto(post *models.Post) *pb.Post {
 	postPb := &pb.Post{
-		Id:         int32(post.ID),
+		Id:         post.ID,
 		Title:      post.Title,
 		Slug:       post.Slug,
 		Content:    post.Content.String,
@@ -26,8 +26,8 @@ func ProtoPostToDb(post *pb.Post) *models.Post {
 		Title:   post.GetTitle(),
 		Content: null.NewString(post.GetContent(), post.GetContent() != ""),
 	}
-	if post.GetId() != 0 {
-		postDb.ID = int(post.GetId())
+	if post.GetId() != "" {
+		postDb.ID = post.GetId()
 	}
 	if post.GetExcerpt() != "" {
 		postDb.Excerpt = null.StringFrom(post.GetExcerpt())

@@ -2,12 +2,14 @@ package grpcApi
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 
 	"github.com/Damione1/portfolio-playground/db/models"
 	"github.com/Damione1/portfolio-playground/pkg/pb"
 	"github.com/Damione1/portfolio-playground/pkg/pbx"
 	"github.com/Damione1/portfolio-playground/util"
+	"github.com/friendsofgo/errors"
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
@@ -28,37 +30,42 @@ func (server *Server) CreateRecipe(ctx context.Context, req *pb.CreateRecipeRequ
 	recipe := &models.Recipe{
 		Title:       req.Recipe.Title,
 		Description: null.NewString(req.Recipe.GetDescription(), true),
-		Directions:  null.NewString(req.Recipe.GetInstructions(), true),
-		AuthorID:    authorizeUserPayload.ID.String(),
+		Directions:  req.Recipe.Instruction,
+		AuthorID:    authorizeUserPayload.UserID,
 		Slug:        util.Slugify(fmt.Sprintf("%s-%s", req.Recipe.Title, util.RandomString(6))),
 	}
 
 	for _, ingredient := range req.Recipe.Ingredients {
-
-		if ingredient.Id == 0 {
-			ingredientDb := &models.Ingredient{
-				Name: ingredient.Name,
+		if ingredient.Id == "" {
+			ingredientDb, err := models.Ingredients(models.IngredientWhere.Name.EQ(ingredient.Name)).One(ctx, server.config.DB)
+			if err != nil && !errors.Is(err, sql.ErrNoRows) {
+				return nil, errors.Wrap(err, "models.Ingredients")
 			}
 
-			err := ingredientDb.Insert(ctx, server.config.DB, boil.Infer())
-			if err != nil {
-				return nil, err
+			if ingredientDb.ID == "" {
+				ingredientDb = &models.Ingredient{
+					Name: ingredient.Name,
+				}
+				err = ingredientDb.Insert(ctx, server.config.DB, boil.Infer())
+				if err != nil {
+					return nil, errors.Wrap(err, "ingredientDb.Insert")
+				}
 			}
-
-			ingredient.Id = int64(ingredientDb.ID)
+			ingredient.Id = ingredientDb.ID
 		}
 
 		recipeIngredient := &models.RecipeIngredient{
 			RecipeID:     recipe.ID,
 			Quantity:     float64(ingredient.Quantity),
-			IngredientID: int(ingredient.Id),
+			IngredientID: ingredient.Id,
+			Unit:         pbx.UnitProtoToDb(ingredient.Unit),
 		}
 		recipe.AddRecipeIngredients(ctx, server.config.DB, true, recipeIngredient)
 	}
 
 	err = recipe.Insert(ctx, server.config.DB, boil.Infer())
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "recipe.Insert")
 	}
 
 	return &pb.CreateRecipeResponse{
@@ -70,7 +77,7 @@ func (server *Server) GetRecipe(ctx context.Context, req *pb.GetRecipeRequest) (
 	if err := validateGetRecipeRequest(req); err != nil {
 		return nil, err
 	}
-	recipe, err := models.Recipes(models.RecipeWhere.ID.EQ(int(req.Id))).One(ctx, server.config.DB)
+	recipe, err := models.Recipes(models.RecipeWhere.ID.EQ(req.Id)).One(ctx, server.config.DB)
 	if err != nil {
 		return nil, err
 	}
@@ -89,14 +96,14 @@ func (server *Server) ListRecipes(ctx context.Context, req *pb.ListRecipesReques
 		return nil, err
 	}
 
-	response := &pb.ListRecipesResponse{}
-	response.Recipes = make([]*pb.Recipe, len(recipes))
-
+	recipesResponse := make([]*pb.Recipe, len(recipes))
 	for i, recipe := range recipes {
-		response.Recipes[i] = pbx.DbRecipeToProto(recipe)
+		recipesResponse[i] = pbx.DbRecipeToProto(recipe)
 	}
 
-	return response, nil
+	return &pb.ListRecipesResponse{
+		Recipes: recipesResponse,
+	}, nil
 }
 
 func (server *Server) DeleteRecipe(ctx context.Context, req *pb.DeleteRecipeRequest) (*pb.DeleteRecipeResponse, error) {
@@ -110,7 +117,7 @@ func (server *Server) DeleteRecipe(ctx context.Context, req *pb.DeleteRecipeRequ
 	}
 
 	id := req.Id
-	recipe, err := models.Recipes(models.RecipeWhere.ID.EQ(int(id))).One(ctx, server.config.DB)
+	recipe, err := models.Recipes(models.RecipeWhere.ID.EQ(id)).One(ctx, server.config.DB)
 	if err != nil {
 		return nil, err
 	}
