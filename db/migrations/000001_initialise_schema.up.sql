@@ -1,7 +1,7 @@
 CREATE EXTENSION "uuid-ossp";
 -- Media table
 CREATE TABLE media (
-  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   original_filename VARCHAR(255) NOT NULL,
   original_url VARCHAR(255) NOT NULL,
   thumbnail_url VARCHAR(255) NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE media (
 
 -- User table
 CREATE TABLE users (
-  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+ id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   email VARCHAR(255) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
   name VARCHAR(255) NOT NULL,
@@ -27,8 +27,8 @@ CREATE INDEX users_email_idx ON users (email);
 
 -- Session table
 CREATE TABLE sessions (
-  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-  email varchar NOT NULL,
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   refresh_token varchar NOT NULL,
   user_agent varchar NOT NULL,
   client_ip varchar NOT NULL,
@@ -41,7 +41,7 @@ CREATE INDEX sessions_refresh_token_idx ON sessions (refresh_token);
 
 -- Password reset table
 CREATE TABLE password_resets (
-  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   reset_token VARCHAR(255) NOT NULL,
   expiration TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW() + INTERVAL '1 day',
@@ -50,7 +50,7 @@ CREATE TABLE password_resets (
 
 -- Blog post table
 CREATE TABLE posts (
-  id SERIAL PRIMARY KEY,
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
   slug VARCHAR(255) NOT NULL UNIQUE,
   content TEXT,
@@ -64,8 +64,8 @@ CREATE INDEX posts_slug_idx ON posts (slug);
 
 -- Blog post tag table
 CREATE TABLE post_tags (
-  id SERIAL PRIMARY KEY,
-  post_id SERIAL REFERENCES posts(id) ON DELETE CASCADE,
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  post_id UUID REFERENCES posts(id) ON DELETE CASCADE,
   tag VARCHAR(255) NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -74,7 +74,7 @@ CREATE TABLE post_tags (
 
 -- Ingredient table
 CREATE TABLE ingredients (
-  id SERIAL PRIMARY KEY,
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   name VARCHAR(255) NOT NULL UNIQUE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -84,11 +84,11 @@ CREATE INDEX ingredients_name_idx ON ingredients (name);
 
 -- Recipe table
 CREATE TABLE recipes (
-  id SERIAL PRIMARY KEY,
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
   slug VARCHAR(255) NOT NULL UNIQUE,
   description TEXT,
-  directions TEXT,
+  directions TEXT[],
   author_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -99,7 +99,7 @@ CREATE INDEX recipes_name_idx ON recipes (title);
 
 -- Recipe media relationship table
 CREATE TABLE recipe_media (
-  recipe_id SERIAL NOT NULL REFERENCES recipes(id) ON DELETE CASCADE,
+  recipe_id UUID NOT NULL REFERENCES recipes(id) ON DELETE CASCADE,
   media_id uuid NOT NULL REFERENCES media(id) ON DELETE CASCADE,
   PRIMARY KEY (recipe_id, media_id)
 );
@@ -133,8 +133,8 @@ CREATE TYPE ingredient_unit_enum AS ENUM (
 
 -- Recipe ingredient relationship table
 CREATE TABLE recipe_ingredients (
-  recipe_id SERIAL NOT NULL REFERENCES recipes(id) ON DELETE CASCADE,
-  ingredient_id SERIAL REFERENCES ingredients(id) ON DELETE CASCADE,
+  recipe_id UUID NOT NULL REFERENCES recipes(id) ON DELETE CASCADE,
+  ingredient_id UUID REFERENCES ingredients(id) ON DELETE CASCADE,
   quantity FLOAT NOT NULL,
   unit ingredient_unit_enum NOT NULL,
   manual_name VARCHAR(255),

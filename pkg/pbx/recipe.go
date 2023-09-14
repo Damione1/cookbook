@@ -7,10 +7,10 @@ import (
 
 func DbRecipeToProto(recipe *models.Recipe) *pb.Recipe {
 	recipePb := &pb.Recipe{
-		Id:           int64(recipe.ID),
+		Id:           recipe.ID,
 		Title:        recipe.Title,
 		Description:  recipe.Description.String,
-		Instructions: recipe.Directions.String,
+		Instructions: recipe.Directions,
 		AuthorId:     recipe.AuthorID,
 	}
 
@@ -27,15 +27,15 @@ func ProtoRecipeToDb(recipe *pb.Recipe) *models.Recipe {
 	recipeDb := &models.Recipe{
 		Title: recipe.GetTitle(),
 	}
-	if recipe.GetId() != 0 {
-		recipeDb.ID = int(recipe.GetId())
+	if recipe.GetId() != "" {
+		recipeDb.ID = recipe.GetId()
 	}
 	return recipeDb
 }
 
 func DbIngredientToProto(ingredient *models.RecipeIngredient) *pb.Ingredient {
 	ingredientPb := &pb.Ingredient{
-		Id:       int64(ingredient.IngredientID),
+		Id:       ingredient.IngredientID,
 		Name:     ingredient.R.Ingredient.Name,
 		Quantity: float32(ingredient.Quantity),
 		Unit:     UnitEnumToProto(ingredient.Unit),
@@ -61,8 +61,6 @@ func UnitEnumToProto(unit models.IngredientUnitEnum) pb.Unit {
 		return pb.Unit_CUP
 	case models.IngredientUnitEnumPINCH:
 		return pb.Unit_PINCH
-	case models.IngredientUnitEnumPIECE:
-		return pb.Unit_PIECE
 	default:
 		return pb.Unit_UNIT_UNSPECIFIED
 	}
@@ -86,8 +84,6 @@ func UnitProtoToDb(unit pb.Unit) models.IngredientUnitEnum {
 		return models.IngredientUnitEnumCUP
 	case pb.Unit_PINCH:
 		return models.IngredientUnitEnumPINCH
-	case pb.Unit_PIECE:
-		return models.IngredientUnitEnumPIECE
 	default:
 		return models.IngredientUnitEnumUNIT_UNSPECIFIED
 	}
