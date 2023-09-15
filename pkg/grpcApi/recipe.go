@@ -28,23 +28,22 @@ func (server *Server) CreateRecipe(ctx context.Context, req *pb.CreateRecipeRequ
 	}
 
 	recipe := &models.Recipe{
-		Title:       req.Recipe.Title,
-		Description: null.NewString(req.Recipe.GetDescription(), true),
-		Directions:  req.Recipe.Instruction,
+		Title:       req.GetRecipe().GetTitle(),
+		Description: null.NewString(req.GetRecipe().GetDescription(), true),
+		Directions:  req.Recipe.GetInstructions(),
 		AuthorID:    authorizeUserPayload.UserID,
-		Slug:        util.Slugify(fmt.Sprintf("%s-%s", req.Recipe.Title, util.RandomString(6))),
+		Slug:        util.Slugify(fmt.Sprintf("%s-%s", req.GetRecipe().GetTitle(), util.RandomString(6))),
 	}
 
-	for _, ingredient := range req.Recipe.Ingredients {
-		if ingredient.Id == "" {
-			ingredientDb, err := models.Ingredients(models.IngredientWhere.Name.EQ(ingredient.Name)).One(ctx, server.config.DB)
+	for _, ingredient := range req.GetRecipe().GetIngredients() {
+		if ingredient.GetId() == "" {
+			ingredientDb, err := models.Ingredients(models.IngredientWhere.Name.EQ(ingredient.GetName())).One(ctx, server.config.DB)
 			if err != nil && !errors.Is(err, sql.ErrNoRows) {
 				return nil, errors.Wrap(err, "models.Ingredients")
 			}
-
 			if ingredientDb.ID == "" {
 				ingredientDb = &models.Ingredient{
-					Name: ingredient.Name,
+					Name: ingredient.GetName(),
 				}
 				err = ingredientDb.Insert(ctx, server.config.DB, boil.Infer())
 				if err != nil {
@@ -56,9 +55,9 @@ func (server *Server) CreateRecipe(ctx context.Context, req *pb.CreateRecipeRequ
 
 		recipeIngredient := &models.RecipeIngredient{
 			RecipeID:     recipe.ID,
-			Quantity:     float64(ingredient.Quantity),
-			IngredientID: ingredient.Id,
-			Unit:         pbx.UnitProtoToDb(ingredient.Unit),
+			Quantity:     float64(ingredient.GetQuantity()),
+			IngredientID: ingredient.GetId(),
+			Unit:         pbx.UnitProtoToDb(ingredient.GetUnit()),
 		}
 		recipe.AddRecipeIngredients(ctx, server.config.DB, true, recipeIngredient)
 	}
