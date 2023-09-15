@@ -32,24 +32,35 @@ func ConnectDb(config *util.Config) (*sql.DB, error) {
 	return db, nil
 }
 
-func RunDBMigration(migrationURL string, db *sql.DB) {
+func RunDBMigration(db *sql.DB) {
 	driver, err := postgres.WithInstance(db, &postgres.Config{})
 	if err != nil {
 		log.Fatal().Err(err).Msg("🥝 Failed to create migration driver")
 	}
 
-	m, err := migrate.NewWithDatabaseInstance(migrationURL, "postgres", driver)
+	m, err := migrate.NewWithDatabaseInstance("file://db/migrations", "postgres", driver)
 	if err != nil {
 		log.Fatal().Err(err).Msg("🥝 Failed to create migration instance")
 	}
 
-	err = m.Up()
-	if err != nil {
-		if err == migrate.ErrNoChange {
-			log.Print("🥝 No migration to run")
-		} else {
-			log.Fatal().Err(err).Msg("🥝 Failed to run migration")
+	retryCount := 3
+	for i := 1; i <= retryCount; i++ {
+		err = m.Up()
+		if err != nil {
+			if err == migrate.ErrNoChange {
+				log.Print("🥝 No migration to run")
+				return
+			} else {
+				log.Warn().Err(err).Msgf("🥝 Migration failed (attempt %d/%d)", i, retryCount)
+				if revertErr := m.Down(); revertErr != nil {
+					log.Error().Err(revertErr).Msg("🥝 Failed to revert migration")
+				}
+				continue
+			}
 		}
+		// Migration succeeded
+		return
 	}
-	return
+
+	log.Fatal().Msg("🥝 Failed to run migration after multiple attempts")
 }

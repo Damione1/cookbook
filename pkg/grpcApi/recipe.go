@@ -41,7 +41,7 @@ func (server *Server) CreateRecipe(ctx context.Context, req *pb.CreateRecipeRequ
 			if err != nil && !errors.Is(err, sql.ErrNoRows) {
 				return nil, errors.Wrap(err, "models.Ingredients")
 			}
-			if ingredientDb.ID == "" {
+			if ingredientDb == nil {
 				ingredientDb = &models.Ingredient{
 					Name: ingredient.GetName(),
 				}

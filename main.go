@@ -30,7 +30,7 @@ func main() {
 		log.Fatal().Err(err).Msg("👋 Failed to connect to database")
 	}
 
-	database.RunDBMigration(config.MigrationPath, db)
+	database.RunDBMigration(db)
 
 	go runGatewayServer(config, db)
 	runGrpcServer(config, db)

@@ -36,7 +36,6 @@ CREATE TABLE sessions (
   expires_at timestamptz NOT NULL,
   created_at timestamptz NOT NULL DEFAULT now()
 );
-ALTER TABLE "sessions" ADD FOREIGN KEY ("email") REFERENCES "users" ("email");
 CREATE INDEX sessions_refresh_token_idx ON sessions (refresh_token);
 
 -- Password reset table
